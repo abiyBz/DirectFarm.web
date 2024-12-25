@@ -1,0 +1,84 @@
+.top-bar {
+    color: #008000;
+    background-color: #f4f4f4;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+  }
+  
+  .top-bar a {
+    color: #008000;
+    font-weight: bold;
+    margin-left: 10px;
+    text-decoration: none;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 1px 15px 10px 15px;
+    background-color: white;
+  }
+
+  .logo{
+    display: flex;
+    background-color: white;
+    justify-content: center;
+  }
+
+  .Title {
+    font-family: fantasy;
+    font-size: 35px;
+    font-weight: bolder;
+    color: black;
+    -webkit-text-stroke: 1px burlywood;
+    justify-items: center;
+    margin-top: 5px;
+  }
+
+  .logoo {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background-color: white;
+    color: white;
+    text-align: center;
+    vertical-align: bottom;
+    transition: transform 0.5s;
+    animation: logo-spin 3s infinite linear;
+  }
+
+  @keyframes logo-spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+  }
+  
+  .navbar ul {
+    font-weight: bold;
+    list-style: none;
+    display: flex;
+    gap: 100px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar a {
+    text-decoration: none;
+    color: black;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .navbar a.active {
+    color: #008000;
+    border-bottom: 2px solid #008000;
+  }
+  
+  .language-select {
+    position: absolute;
+    right: 15px;
+    background-color: white;
+    color: #000;
+  }
