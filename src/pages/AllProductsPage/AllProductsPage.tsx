@@ -1,178 +1,109 @@
-import React from "react";
-import "./AllProductsPage.css";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../../Context/LanguageContext";
-//import image from "../assets/farmer-with-hat-and-rake-logo-free-vector-removebg.png";
-import image from "../../assets/DALL·E 2024-12-25 00.14.06 - A realistic image of fresh, ripe apples arranged in a wooden basket with a farm-themed background. The apples are vibrant red with natural shine, surr.webp";
-import image1 from "../../assets/DALL·E 2024-12-25 00.15.23 - A hyper-realistic image of fresh, vibrant carrots with green tops, arranged in a rustic wooden crate. The carrots have rich orange color, visible soil.webp";
-import image2 from "../../assets/teff.jpg";
-import image3 from "../../assets/photo_2024-12-25_09-53-32.jpg";
-import image4 from "../../assets/photo_2024-12-25_09-53-25 (2).jpg";
-import image5 from "../../assets/photo_2024-12-25_09-53-28.jpg";
-import image6 from "../../assets/photo_2024-12-25_09-53-29.jpg";
-import image7 from "../../assets/photo_2024-12-25_09-53-22.jpg";
-import image8 from "../../assets/photo_2024-12-25_09-53-36.jpg";
-import image9 from "../../assets/photo_2024-12-25_09-53-37.jpg";
-import image10 from "../../assets/photo_2024-12-25_09-53-38.jpg";
-import image11 from "../../assets/photo_2024-12-25_09-53-39.jpg";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 interface Product {
-  id: number;
+  id: string; // UUID as a string
   name: string;
-  price: number;
-  image: string;
+  description: string;
+  category: string;
+  pricePerUnit: number; // Ensure this matches your API response structure
+  unit: string;
+  createdAt: string; // Use string for date representation
+  status: string;
+  image?: string; // Optional image property
 }
-
-const generateProducts = (): Product[] => {
-  const products: Product[] = [];
-  for (let i = 1; i <= 50; i++) {
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image1,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image2,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image3,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image4,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image5,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image6,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image7,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image8,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image9,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image10,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image11,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image3,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image5,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image7,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image9,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image11,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image2,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image4,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image6,
-    });
-    products.push({
-      id: i,
-      name: `Product ${i}`,
-      price: Math.floor(Math.random() * 100) + 10,
-      image: image8,
-    });
-  }
-  return products;
-};
 
 const AllProductsPage: React.FC = () => {
   const { language } = useLanguage();
-  const products = generateProducts();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get<Product[]>(`http://localhost:5122/api/Product/GetAllProducts`);
+
+        // Fetch products and images concurrently
+        const productsWithImages = await Promise.all(response.data.data.map(async (product) => {
+          try {
+            // Fetch the image for each product using its ID
+            const imageResponse = await axios.post(`http://localhost:5122/api/Product/GetProductImage`, {
+              id: product.id // Sending the product ID
+            });
+            return {
+              ...product,
+              image: `data:image/jpg;base64,${imageResponse.data.data}`, // Assuming the API returns just the base64 string
+              createdAt: new Date(product.createdAt) // Convert ISO string to Date object if needed
+            };
+          } catch (imageError) {
+            console.error("Image fetch error:", imageError);
+            return { ...product, image: null }; // Fallback if image fetch fails
+          }
+        }));
+
+        setProducts(productsWithImages);
+      } catch (error) {
+        console.error("Fetch error:", error); // Log fetch error details
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    
+  }, []);
+
+  if (loading) {
+    return <div className="text-center text-lg">Loading products...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-lg text-red-600">Error fetching products: {error}</div>;
+  }
 
   return (
-    <div className="products-container">
-      <h1>{language === "en" ? "All Products" : "ሁሉም ምርቶች"}</h1>
-      <div className="products-grid">
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold text-center mb-6">
+        {language === "en" ? "All Products" : "ሁሉም ምርቶች"}
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="product-card ">
-            <img src={product.image} alt={product.name} />
-            <h2>{product.name}</h2>
-            <p>
-              {language === "en"
-                ? `Price: Br ${product.price}`
-                : `ዋጋ፡ ${product.price} ብር`}
-            </p>
-            <button>{language === "en" ? "View Details" : "ዝርዝር እይ"}</button>
+          <div key={product.id} className="relative m-5 flex w-full max-w-[250px] flex-col overflow-hidden rounded-lg bg-white shadow-md"> {/* Changed to max-w-[150px] */}
+            <Link to={`/product/${product.id}`}>
+              <img 
+                className="h-48 rounded-t-lg object-cover" 
+                src={product.image || 'path/to/placeholder/image.png'} 
+                alt={product.name} 
+              />
+            </Link>
+            <div className="mt-4 px-3 pb-5"> {/* Adjusted padding for a more compact look */}
+              <Link to={`/product/${product.id}`}>
+                <h5 className="text-lg font-semibold tracking-tight text-slate-900">{product.name}</h5>
+              </Link>
+              <div className="mt-2.5 mb-5 flex items-center">
+                <span className="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">5.0</span>
+                {/* Star ratings */}
+                {[...Array(4)].map((_, index) => (
+                  <svg key={index} aria-hidden="true" className="h-5 w-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                  </svg>
+                ))}
+              </div>
+              <div className="flex items-center justify-between">
+                <p>
+                  <span className="text-xl font-bold text-slate-900">${product.pricePerUnit.toFixed(2)}</span>
+                  {/* Uncomment if you have a regular price */}
+                  {/* <span className="text-sm text-slate-900 line-through">$699</span> */}
+                </p>
+                <Link to={`/cart`} className="flex items-center rounded-md bg-slate-900 px-4 py-2 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring focus:ring-blue-300">
+                  Add to cart
+                </Link>
+              </div>
+            </div>
           </div>
         ))}
       </div>
