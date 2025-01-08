@@ -8,7 +8,7 @@ const App: React.FC = () => {
     <Router> 
       {/* The Router is only placed here */}
       <Routes>
-        <Route path="/" element={<MainLayout />} />
+        <Route path="*" element={<MainLayout />} />
         <Route path="/admin" element={<AdminLayout />} />
       </Routes>
     </Router>

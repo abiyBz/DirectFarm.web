@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from './LoginAdmin'; // Your admin page component
 import "./adminpage.css";
 import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
 import ManageUsers from "./Manageuser";
 import Transactions from "./Transactions";
@@ -12,10 +11,7 @@ import ProductListing from "./Productlistings";
 import CreateAdmin from "./CreateAdmin";
 const AdminLayout: React.FC = () => {
     return (
- 
           <div style={{display:"flex", flexDirection: "column"}}>
-          
-
           <div className="parent-container">
           <Sidebar/>
           <Routes>

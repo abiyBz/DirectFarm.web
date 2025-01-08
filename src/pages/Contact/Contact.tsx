@@ -1,21 +1,24 @@
 import React from 'react';
+import { useLanguage } from "../../Context/LanguageContext";
+
 
 const Contact: React.FC = () => {
+  const { language } = useLanguage();
   return (
     <div className="bg-gray-100 min-h-screen p-8">
-      <div className="container mx-auto text-center py-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Contact Us</h1>
+      <div className="container mx-auto text-center py-4">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">{language === 'en'? 'Contact Us' : 'ያነጋግሩን'}</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Have questions or need help? Feel free to reach out to us anytime. We're here to assist you!
+          {language === 'en'? 'Have questions or need help? Feel free to reach out to us anytime. We\'re here to assist you!' : 'ጥያቄዎች አሉዎት ወይም እርዳታ ይፈልጋሉ? በማንኛውም ጊዜ እኛን ለማግኘት ነፃነት ይሰማዎ። እኛ እርስዎን ለመርዳት ዝግጁ ነን!'}
         </p>
       </div>
 
       {/* Contact Form */}
       <div className="container mx-auto mt-8 max-w-lg bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4 text-center">Send us a Message</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">{language === 'en'? 'Send us a Message' : 'መልእክት ላኩልን'}</h2>
         <form>
           <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1">Name</label>
+            <label className="block text-gray-700 font-medium mb-1">{language === 'en'? 'Name' : 'ስም'}</label>
             <input 
               type="text" 
               placeholder="Your Name" 
@@ -23,7 +26,7 @@ const Contact: React.FC = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1">Email</label>
+            <label className="block text-gray-700 font-medium mb-1">{language === 'en'? 'Email' : 'ኢሜል አድራሻ'}</label>
             <input 
               type="email" 
               placeholder="Your Email" 
