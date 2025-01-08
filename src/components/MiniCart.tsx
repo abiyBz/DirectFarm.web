@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import './MiniCart.css';
 
 const MiniCart: React.FC = () => {
   const { cart, removeFromCart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const cartRef = useRef<HTMLDivElement>(null); // Reference for Mini Cart
+  const cartRef = useRef<HTMLDivElement>(null);
 
   const toggleCart = () => setIsOpen(!isOpen);
 
@@ -26,24 +25,60 @@ const MiniCart: React.FC = () => {
   }, []);
 
   return (
-    <div className="mini-cart" ref={cartRef}>
-      <div className="mini-cart-icon" onClick={toggleCart}>
-        🛒 <span className="mini-cart-count">{cart.length}</span>
+    <div className="relative" ref={cartRef}>
+      {/* Cart Icon */}
+      <div
+        className="relative cursor-pointer text-gray-700 hover:text-gray-900"
+        onClick={toggleCart}
+      >
+        🛒
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
+          {cart.length}
+        </span>
       </div>
+
+      {/* Cart Dropdown */}
       {isOpen && (
-        <div className="mini-cart-dropdown">
-          <h4>Cart Preview</h4>
-          {cart.map((item) => (
-            <div key={item.id} className="mini-cart-item">
-              <img src={item.image} alt={item.name} />
-              <div>
-                <p>{item.name}</p>
-                <p>{item.price} ETB</p>
-              </div>
-              <button onClick={() => removeFromCart(item.id)}>❌</button>
-            </div>
-          ))}
-          <button onClick={() => navigate('/cart')}>View Cart</button>
+        <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <div className="p-4 border-b border-gray-200">
+            <h4 className="text-lg font-semibold text-gray-800">🛍️ Cart Preview</h4>
+          </div>
+          <div className="max-h-60 overflow-y-auto divide-y divide-gray-200">
+            {cart.length > 0 ? (
+              cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between p-2 hover:bg-gray-100"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-12 h-12 object-cover rounded-md"
+                  />
+                  <div className="flex-1 ml-3">
+                    <p className="text-sm font-medium text-gray-800">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.price} ETB</p>
+                  </div>
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ❌
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="p-4 text-sm text-gray-500">Your cart is empty 🛒</p>
+            )}
+          </div>
+          <div className="p-4 border-t border-gray-200">
+            <button
+              onClick={() => navigate('/cart')}
+              className="w-full text-center bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md"
+            >
+              View Cart
+            </button>
+          </div>
         </div>
       )}
     </div>

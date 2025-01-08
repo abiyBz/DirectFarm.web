@@ -1,32 +1,3 @@
-/*import React from 'react';
-import './Newsletter.css';
-import { useLanguage } from "../Context/LanguageContext";
-
-const Newsletter: React.FC = () => {
-  const { language } = useLanguage();
-
-  return (
-    <section className="newsletter">
-      <h2>{language === "en"
-                  ? "Subscribe to receive Latest Offers & Updates"
-                  : "አዳዲስ ቅናሾች እና ማሻሻያዎችን ለማግኘት ለደንበኝነት ይመዝገቡ"} </h2>
-      <p>{language === "en"
-                  ? "Join our newsletter for exclusive deals and updates straight to your inbox!"
-                  : "ለልዩ ልዩ ቅናሾች እና ዝመናዎች በቀጥታ ወደ መልእክት ሳጥንዎ የእኛን መረጃ መረብመረብ ይቀላቀሉ"} </p>
-      <form>
-        <input type="email" placeholder={language === "en"
-                  ? "Enter your e-mail address"
-                  : "የኢሜል አድራሻዎን ያስገቡ"}/>
-        <button type="submit">{language === "en"
-                  ? "Subscribe"
-                  : "መዝግብ"}</button>
-      </form>
-    </section>
-  );
-};
-
-export default Newsletter;
-*/
 import React from 'react';
 import { useLanguage } from "../Context/LanguageContext";
 
