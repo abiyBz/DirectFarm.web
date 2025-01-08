@@ -40,7 +40,7 @@ const Header: React.FC = () => {
           <li>
             <button className='auth-button'>
               <Link to="/login">{language === "en" 
-                  ? "Login/Sign-Up" : "ግባ/ተመዝገብ"}</Link>
+                  ? "Sign-In" : "ግባ/ተመዝገብ"}</Link>
             </button>
           </li>
         </ul>

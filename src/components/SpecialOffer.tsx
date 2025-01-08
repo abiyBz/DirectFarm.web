@@ -49,7 +49,6 @@ const specialOffers_amh: Offer_amh[] = [
 const SpecialOffers: React.FC = () => {
   const { language } = useLanguage();
 
-
   return (
     <section className="special-offers">
       <h1>{language === "en"

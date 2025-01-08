@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "../../Context/LanguageContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useCart } from '../../Context/CartContext';
 
 interface Product {
   id: string; // UUID as a string
@@ -13,6 +14,8 @@ interface Product {
   createdAt: string; // Use string for date representation
   status: string;
   image?: string; // Optional image property
+  nameAmharic: string; // Optional name
+  descriptionAmharic: string; // Optional description
 }
 
 const AllProductsPage: React.FC = () => {
@@ -20,6 +23,7 @@ const AllProductsPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -82,7 +86,7 @@ const AllProductsPage: React.FC = () => {
             </Link>
             <div className="mt-4 px-3 pb-5"> {/* Adjusted padding for a more compact look */}
               <Link to={`/product/${product.id}`}>
-                <h5 className="text-lg font-semibold tracking-tight text-slate-900">{product.name}</h5>
+                <h5 className="text-lg font-semibold tracking-tight text-slate-900">{language === "en" ? product.name : product.nameAmharic}</h5>
               </Link>
               <div className="mt-2.5 mb-5 flex items-center">
                 <span className="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">5.0</span>
@@ -95,13 +99,23 @@ const AllProductsPage: React.FC = () => {
               </div>
               <div className="flex items-center justify-between">
                 <p>
-                  <span className="text-xl font-bold text-slate-900">${product.pricePerUnit.toFixed(2)}</span>
+                  <span className="text-xl font-bold text-slate-900">Br. {product.pricePerUnit.toFixed(2)}</span>
                   {/* Uncomment if you have a regular price */}
                   {/* <span className="text-sm text-slate-900 line-through">$699</span> */}
                 </p>
-                <Link to={`/cart`} className="flex items-center rounded-md bg-slate-900 px-4 py-2 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring focus:ring-blue-300">
-                  Add to cart
-                </Link>
+                <button className="flex items-center rounded-md bg-slate-900 px-4 py-2 text-center text-sm font-medium text-white hover:bg-gray-700 focus:ring focus:ring-blue-300"
+                onClick={(e) => {
+                  e.preventDefault(); 
+                  addToCart({ 
+                    ...product, 
+                    price: product.pricePerUnit, 
+                    quantity: 1, 
+                    image: product.image || 'path/to/placeholder/image.png' 
+                  });
+                }}
+              >
+                {language === "en" ? "Add to Cart" : "ወደ ጋሪ አክል"}
+              </button>
               </div>
             </div>
           </div>

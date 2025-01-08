@@ -48,7 +48,7 @@ const LoginPage: React.FC = () => {
       //alert(data.data.customer.email);
       navigate("/");
 
-    } catch (error) {
+    } catch {
       setError("An unexpected error occurred.");
     }
   };
