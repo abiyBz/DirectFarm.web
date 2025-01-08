@@ -10,6 +10,7 @@ const HomePage: React.FC = () => {
       <ImageSlider />
       <SpecialOffers />
       <Newsletter />
+      
     </div>
   );
 };

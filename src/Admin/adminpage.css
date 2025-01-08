@@ -1,0 +1,570 @@
+/* src/styles/AdminPage.css */
+
+/* Main container for the layout */
+.main-container {
+  display: flex; /* Use flexbox to arrange elements horizontally */
+  min-height: 100vh; /* Ensure the container takes full viewport height */
+  flex-direction: row; /* Align sidebar and content in a row */
+}
+
+.parent-container {
+  display: flex;
+  /* flex-direction: row; */
+}
+
+/* Navbar Styling */
+.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Keep navbar on top */
+  /* Add any additional styling for your navbar */
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 250px; /* Fixed width for the sidebar */
+  background-color: #052b10;
+  color: white;
+  height: 1000px;
+  flex-direction: column;
+  /*position: fixed;  Make the sidebar fixed */
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 999; /* Keep sidebar under navbar */
+  padding-top: 60px; /* Add space for navbar height */
+  transition: width 0.3s; /* Smooth transition if you resize */
+}
+.sidebar a{
+  text-decoration: none;
+  color: white;
+  padding: 15px;
+  display: block;
+}
+.sidebar a:hover {
+  background-color: #0e6e29;
+}
+
+/* Content Area Styling */
+.content {
+  margin-left: 250px; /* Give the content area space for the sidebar */
+  flex-grow: 1; /* Let the content take the remaining space */
+  padding: 20px;
+  background-color: #f4f4f9; /* Background color for the content */
+  padding-top: 60px; /* Offset the content below the navbar */
+}
+
+/* Optional: Sidebar collapses when screen width is small */
+@media screen and (max-width: 768px) {
+  .main-container {
+    flex-direction: column; /* Stack elements vertically on smaller screens */
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%; /* Make the sidebar full width on small screens */
+    height: auto;
+    padding-top: 0; /* Adjust padding */
+  }
+
+  .content {
+    margin-left: 0; /* Content takes full width */
+    margin-top: 0; /* Reset the margin */
+  }
+}
+/* Navbar */
+.navbar {
+  height: 40px;
+  background-color: #0e6e29;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+  /* Dashboard Styles */
+.dashboard {
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.chart {
+  height: 200px;
+  background-color: #f9f9f9;
+  border: 1px dashed #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+/* Key Metrics */
+.metrics {
+  display: flex;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  background: #ffffff;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ 
+}
+
+.metric-card h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #555;
+}
+
+.metric-card p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+.manage-users {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+button {
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.activate-btn {
+  background-color: green;
+  color: white;
+}
+
+.deactivate-btn {
+  background-color: red;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+button:focus {
+  outline: none;
+}
+
+
+.transaction-monitor {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.transaction-monitor h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.filter-container label {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.transaction-table th,
+.transaction-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.transaction-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.transaction-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.transaction-table .success {
+  color: green;
+}
+
+.transaction-table .pending {
+  color: orange;
+}
+
+.transaction-table .failed {
+  color: red;
+}
+.report-module {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.report-module h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filter-container label {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+}
+
+.filter-container input,
+.filter-container select {
+  padding: 5px;
+  font-size: 14px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-table th,
+.report-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.report-table th {
+  background-color: #f4f4f4;
+}
+
+.report-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.report-table .completed {
+  color: green;
+}
+
+.report-table .pending {
+  color: orange;
+}
+
+.report-table .cancelled {
+  color: red;
+}
+
+.download-btn {
+  margin-top: 20px;
+  display: block;
+  width: 100%;
+}
+/* Container for the manage products page */
+.admin-manage-products {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Title for the section */
+.admin-manage-products h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #0e6e29;
+}
+
+/* Styling for the form to add or edit a product */
+.product-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin-bottom: 30px;
+}
+
+.product-form input,
+.product-form select,
+.product-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Textarea for product description */
+.product-form textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+/* Styling for file input (image upload) */
+.product-form input[type="file"] {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.product-form button {
+  background-color: #0e6e29;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.product-form button:hover {
+  background-color: #074e1e;
+}
+
+/* Table for displaying products */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.product-table th,
+.product-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.product-table th {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.product-table td img {
+  width: 50px;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Button styles for Edit/Delete in table */
+.product-table button {
+  padding: 5px 10px;
+  margin: 5px;
+  background-color: #0e6e29;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.product-table button:hover {
+  background-color: #074e1e;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .product-form {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .product-table th,
+  .product-table td {
+    padding: 8px;
+  }
+}
+/* Styling for the price input field and the ETB label */
+.product-form .price-container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.product-form .price-container input {
+  width: 120px; /* Make the price input smaller */
+  padding: 10px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.product-form .price-container span {
+  font-size: 14px;
+  color: #333;
+  margin-left: 5px;
+}
+General Auth Container
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url("../assets/an-eco-friendly-greenhouse-with-a-variety-of-vegetables-growing-in-orderly-rows-photo.jpeg");
+  font-family: 'Arial', sans-serif;
+}
+
+/* Authentication Box */
+.auth-box {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+  filter: invert(100%);
+}
+
+/* Header */
+.auth-box h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+/* Input Group */
+.input-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #4e54c8;
+}
+
+/* Buttons */
+.auth-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background: #288428;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.auth-btn:hover {
+  background: #3ca741;
+}
+
+/* Footer Links */
+.auth-footer {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.auth-footer a {
+  color: #4e54c8;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+
