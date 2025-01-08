@@ -112,8 +112,8 @@ const Report: React.FC = () => {
       </div>
 
       {/* Report Table */}
-      <table className="min-w-full bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
-        <thead className="bg-gray-100 text-left text-gray-700">
+      <table className="min-w-full bg-gray-50 border border-gray-200 rounded-lg shadow-sm text-black">
+        <thead className="bg-gray-100 text-left text-black">
           <tr>
             <th className="px-4 py-3">ID</th>
             <th className="px-4 py-3">Name</th>

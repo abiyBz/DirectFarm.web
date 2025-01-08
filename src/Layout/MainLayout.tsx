@@ -22,7 +22,6 @@ const MainLayout: React.FC = () => {
   return (
     <LanguageProvider>
       <CartProvider>
-      <Router>
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -40,7 +39,6 @@ const MainLayout: React.FC = () => {
         </Routes>
         <Features />
         <Footer />
-      </Router>
       </CartProvider>
     </LanguageProvider>
   );

@@ -13,7 +13,6 @@ import CreateAdmin from "./CreateAdmin";
 const AdminLayout: React.FC = () => {
     return (
  
-        <Router >
           <div style={{display:"flex", flexDirection: "column"}}>
           
 
@@ -30,8 +29,6 @@ const AdminLayout: React.FC = () => {
           </Routes>
           </div>
           </div>
-                </Router>
-    
 
             );
           };
