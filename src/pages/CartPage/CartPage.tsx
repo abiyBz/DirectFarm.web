@@ -129,7 +129,7 @@ const CartPage: React.FC = () => {
       </h1>
 
       {cart.length === 0 ? (
-        <div className="text-center py-10 text-gray-800">
+        <div className="text-center py-10">
           <p className="text-gray-500 text-lg mb-4">
             {language === "en" ? "Cart is empty!" : "ቅርጫትዎ ባዶ ነው!"}
           </p>
@@ -144,7 +144,7 @@ const CartPage: React.FC = () => {
         <>
           {/* Cart Table */}
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+            <table className="text-gray-800 min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="p-3 text-left">{language === "en" ? "Product" : "ምርት"}</th>
@@ -159,7 +159,7 @@ const CartPage: React.FC = () => {
                     <td className="p-3">{item.name}</td>
                     <td className="p-3 text-center flex items-center justify-center gap-2">
                       <button
-                        className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded-md"
+                        className="px-2 py-1 bg-gray-700 hover:bg-gray-900 rounded-md"
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                         disabled={item.quantity <= 1}
                       >
@@ -173,7 +173,7 @@ const CartPage: React.FC = () => {
                         className="w-12 text-center border rounded-md"
                       />
                       <button
-                        className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded-md"
+                        className="px-2 py-1 bg-gray-700 hover:bg-gray-900 rounded-md"
                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                       >
                         +
@@ -183,7 +183,7 @@ const CartPage: React.FC = () => {
                     <td className="p-3 text-center">
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-red-500 hover:text-red-700"
+                        className="bg-red-500 hover:bg-red-600 text-white"
                       >
                         {language === "en" ? "Remove" : "አስወግድ"}
                       </button>
@@ -195,7 +195,7 @@ const CartPage: React.FC = () => {
           </div>
 
           {/* Cart Summary */}
-          <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-6 text-gray-800">
             <h2 className="text-xl font-semibold">
               {language === "en" ? "Total:" : "ጠቅላላ"} Br {totalPrice.toFixed(2)}
             </h2>
