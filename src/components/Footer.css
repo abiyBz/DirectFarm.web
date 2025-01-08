@@ -1,12 +1,11 @@
 footer {
-    background-color: #2e7d32;
-    color: white;
-    text-align: center;
-    padding: 15px 0;
-    font-size: 14px;
-  }
-  
-  footer p {
-    margin: 0;
-  }
-  
+  background-image: url(../assets/111.jpg);
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 14px;
+}
+
+footer p {
+  margin: 0;
+}

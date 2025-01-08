@@ -4,24 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./ImageSlider.css";
 import { useLanguage } from "../Context/LanguageContext";
-/*
-const images = [
-  "/assets/Heroimage.jpg",
-  "/assets/hero1.jpeg",
-  "/assets/hero2.jpg",
-  "/assets/hero3.jpg",
-];
 
-
-<div className="slide-container-text">
-              <h2>
-                {language === "en"
-                  ? "Discover the best products at unbeatable prices."
-                  : "በምንም ዋጋ እንደማታገኙት ምርቶችን አግኙ።"}
-              </h2>
-            </div>
-
-*/
 const images = [
   {
     image: "/assets/Heroimage.jpg",
@@ -74,17 +57,16 @@ const ImageSlider: React.FC = () => {
         {images.map((image, index) => (
           <div key={index}>
             <img src={image.image} alt={`Slide ${index + 1}`} className="slider-image" />
-            <h2 style={{marginTop: "19px", color: "darkgreen", textAlign: "center", fontSize: "2rem", fontWeight: "bold", textShadow: "2px 2px 4px #000000"}}>
+            <p style={{color: "darkgreen", textAlign: "center", fontSize: "2rem", fontWeight: "bold", marginTop: "10px",marginBottom: "0.1px"}}>
                 {language === "en"
                   ? image.titleen
                   : image.titleam}
-              </h2>
-              <p style={{color: "darkgreen", textAlign: "center", fontSize: "2rem", fontWeight: "bold", textShadow: "2px 2px 4px #000000"}}>
+              </p>
+              <p style={{color: "darkgreen", textAlign: "center", fontSize: "2rem", fontWeight: "bold", marginBottom: "0.5rem", marginTop: "10px"}}>
                 {language === "en"
                   ? image.descriptionen
                   : image.descriptionam}
               </p>
-          
           </div>
         ))}
       </Slider>

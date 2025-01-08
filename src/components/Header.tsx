@@ -2,6 +2,7 @@ import React from 'react';
 import './Header.css';
 import { Link } from 'react-router-dom';
 import { useLanguage } from "../Context/LanguageContext";
+import MiniCart from "./MiniCart";
 
 const Header: React.FC = () => {
   const { language, setLanguage } = useLanguage();
@@ -22,39 +23,29 @@ const Header: React.FC = () => {
         <option value="am">አማርኛ (Amharic)</option>
       </select>
       </div>
-      <div className="logo">
-      <img src="../assets/farmer-with-hat-and-rake-logo-free-vector-removebg.png" alt="Logo" className="logoo" />
-        <h1 className="Title"> DIRECT FARM </h1>
-      </div>
       <nav className="navbar">
+        <div className="logo">
+            <img src="../logo-bg-removed.png" alt="Logo" className="logoo" />
+            <h1 className="Title"> DIRECT FARM </h1>
+        </div>
         <ul className='nav-list'>
           <li>
             <Link to="/">{language === "en" ? "Home" : "መነሻ"}</Link>
           </li>
           <li>
-            <Link to="/grains">{language === "en" ? "Grains" : "ጥራጥሬ"}</Link>
+            <Link to="/all-products">{language === "en"
+                  ? "View All Products"
+                  : "ሁሉንም ምርቶች ይመልከቱ"}</Link>
           </li>
           <li>
-            <Link to="/field-crops">{language === "en" ? "Vegetable" : "አትክልት"}</Link>
-          </li>
-          <li>
-            <Link to="/dairy-products">{language === "en" ? "Fruits" : "ፍራፍሬ"}</Link>
-          </li>
-          <li>
-            <Link to="/">{language === "en" ? "Coffee" : "ቡና"}</Link>
-          </li>
-          <li>
-            <Link to="/grains">{language === "en" ? "Grains" : "ጥራጥሬ"}</Link>
-          </li>
-          <li>
-            <Link to="/field-crops">{language === "en" ? "Field Crops" : "የእርሻ ሰብል"}</Link>
-          </li>
-          <li>
-            <Link to="/dairy-products">{language === "en" ? "Dairy Products" : "የወተት ተዋጽኦዎች"}</Link>
+            <button className='auth-button'>
+              <Link to="/login">{language === "en" 
+                  ? "Login/Sign-Up" : "ግባ/ተመዝገብ"}</Link>
+            </button>
           </li>
         </ul>
+        <MiniCart />
       </nav>
-      
     </header>
   );
 };

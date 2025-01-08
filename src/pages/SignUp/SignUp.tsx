@@ -72,7 +72,7 @@ const SignUpPage: React.FC = () => {
       // Assuming the API returns a token on successful registration
       localStorage.setItem('authToken', JSON.stringify(data)); // Store token
       dispatch(loginSuccess(data.token)); // Update Redux state with token
-      
+
       navigate("/");
 
     } catch (error) {

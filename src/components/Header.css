@@ -1,30 +1,35 @@
-.top-bar {
-    color: #008000;
-    background-color: #f4f4f4;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}.top-bar {
+    color: white;
+    background-color: black;
     text-align: center;
-    padding: 8px 0;
+    padding: 5px 0;
     font-size: 14px;
   }
   
   .top-bar a {
+    font-size: 16px;
     color: #008000;
-    font-weight: bold;
+    font-weight: bolder;
     margin-left: 10px;
     text-decoration: none;
   }
   
   .navbar {
     display: flex;
-    justify-content: space-evenly;
     align-items: center;
-    padding: 1px 15px 10px 15px;
+    vertical-align: middle;
     background-color: white;
   }
 
   .logo{
     display: flex;
-    background-color: white;
-    justify-content: center;
+    justify-content: left;
+    margin-right: 25%;
   }
 
   .Title {
@@ -32,36 +37,30 @@
     font-size: 35px;
     font-weight: bolder;
     color: black;
-    -webkit-text-stroke: 1px burlywood;
+    -webkit-text-stroke: 1px #004f00;
     justify-items: center;
     margin-top: 5px;
+    vertical-align: middle;
   }
 
   .logoo {
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     margin-right: 10px;
-    border-radius: 50%;
-    background-color: white;
-    color: white;
-    text-align: center;
-    vertical-align: bottom;
-    transition: transform 0.5s;
-    animation: logo-spin 3s infinite linear;
-  }
-
-  @keyframes logo-spin {
-    from {transform: rotate(0deg);}
-    to {transform: rotate(360deg);}
+    margin-left: 10px;
   }
   
   .navbar ul {
     font-weight: bold;
     list-style: none;
     display: flex;
-    gap: 100px;
-    margin: 0;
-    padding: 0;
+    align-items: center;
+    gap: 50px;
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow-y: hidden;
+    padding-left: 80px;
+    padding-right: 80px;
   }
   
   .navbar a {
@@ -81,4 +80,18 @@
     right: 15px;
     background-color: white;
     color: #000;
+  }
+
+  .auth-button {
+    background-color: #008000;
+    border: none;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    outline: none;
+    &:hover {
+      background-color: #4caf50;
+    }
   }

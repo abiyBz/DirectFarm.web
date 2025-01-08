@@ -52,7 +52,9 @@ const SpecialOffers: React.FC = () => {
 
   return (
     <section className="special-offers">
-      <h1>Special Offers</h1>
+      <h1>{language === "en"
+                  ? "Special Offers"
+                  : "ምርጥ ምርጡን ለናንተ"}</h1>
 
       <ul className="offers-grid">
         {specialOffers.map((offer, index) => (
@@ -85,79 +87,3 @@ const SpecialOffers: React.FC = () => {
 };
 
 export default SpecialOffers;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-const offers: Offer[] = [
-  { title: "TEFF", quality: 4, source: "Daily Mart", image: imageteff },
-  { title: "Teff", quality: 2, source: "Purpose Black", image: imageteff },
-  { title: "TEFF", quality: 5, source: "Marketplace", image: imageteff },
-  { title: "Teff", quality: 3, source: "Purpose Black", image: imageteff },
-  { title: "TEFF", quality: 1, source: "Marketplace", image: imageteff },
-];
-
-
-const offers_amh: Offer_amh[] = [
-  { titleamh: "ጤፍ", qualityam: 4, sourceam: "ዴዴይሊ-ማርት", image: imageteff },
-  { titleamh: "ጤፍ", qualityam: 2, sourceam: "ፐርፐዝ-ብላክ", image: imageteff },
-  { titleamh: "ጤፍ", qualityam: 5, sourceam: "ማርኬት-ፕሌስ", image: imageteff },
-  { titleamh: "ጤፍ", qualityam: 3, sourceam: "ፐርፐዝ-ብላክ", image: imageteff },
-  { titleamh: "ጤፍ", qualityam: 1, sourceam: "ማርኬት-ፕሌስ", image: imageteff },
-];
-
-
-
-const handleLanguageChange = (e: React.FormEvent<HTMLSelectElement>) => {
-    setLanguage(e.target.value);
-  };
-
-
-
-<section className="special-offers">
-        <h2>Special Offers</h2>
-        <div className="offers-container">
-          {specialOffers.map((product) => (
-            <div key={product.id} className="product-card">
-              <Link to={`/product/${product.id}`} >
-                <img src={product.image} alt={product.name} />
-                <h3>{product.name}</h3>
-                <p>Quality: {product.quality}</p>
-                <p>Store: {product.store}</p>
-                <button>View Product</button>
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
-
-
-
-
-      import imageteff from "../images/teff.jpg"
-
-
-      const specialOffers = [
-  { id: 1, name: "TEFF", quality: 4, store: "Daily Mart", image: imageteff },
-  { id: 2, name: "Teff", quality: 2, store: "Purpose Black", image: imageteff },
-  { id: 3, name: "TEFF", quality: 5, store: "Marketplace", image: imageteff },
-  { id: 4, name: "Teff", quality: 3, store: "Purpose Black", image: imageteff },
-  { id: 5, name: "TEFF", quality: 1, store: "Marketplace",  image: imageteff},
-];
-
-
-*/

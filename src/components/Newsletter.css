@@ -1,46 +1,45 @@
 .newsletter {
-    background-image: url("../../assets/111.jpg");
-    padding: 30px 20px;
-    text-align: center;
-  }
-  
-  .newsletter h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: white;
-  }
-  
-  .newsletter p {
-    font-size: 16px;
-    color: #7a7979;
-    margin-bottom: 20px;
-  }
-  
-  .newsletter form {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-  
-  .newsletter input {
-    padding: 10px;
-    font-size: 14px;
-    width: 300px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .newsletter button {
-    background-color: #008000;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .newsletter button:hover {
-    background-color: #006600;
-  }
-  
+  background-image: url("../assets/111.jpg");
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.newsletter h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.newsletter p {
+  font-size: 16px;
+  color: #7a7979;
+  margin-bottom: 20px;
+}
+
+.newsletter form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.newsletter input {
+  padding: 10px;
+  font-size: 14px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.newsletter button {
+  background-color: #008000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.newsletter button:hover {
+  background-color: #006600;
+}

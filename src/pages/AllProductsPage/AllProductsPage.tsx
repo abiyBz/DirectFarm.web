@@ -27,7 +27,7 @@ const AllProductsPage: React.FC = () => {
         const response = await axios.get<Product[]>(`http://localhost:5122/api/Product/GetAllProducts`);
 
         // Fetch products and images concurrently
-        const productsWithImages = await Promise.all(response.data.data.map(async (product) => {
+        const productsWithImages = await Promise.all(response.data.data.map(async (product: Product) => {
           try {
             // Fetch the image for each product using its ID
             const imageResponse = await axios.post(`http://localhost:5122/api/Product/GetProductImage`, {
