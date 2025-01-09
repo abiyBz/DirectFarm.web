@@ -1,12 +1,45 @@
+import { useState } from "react";
 import React from "react";
 import { useCart } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 const CartPage: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const checkoutCart = cart.map(item => ({
+    productID: item.id, // Assuming id is used as productID
+    quantity: item.quantity
+}));
+  interface CheckoutData {
+    id: string;
+    customerID: string;
+    details: any[];
+}
+
+const authToken = localStorage.getItem('authToken');
+let customer = null;
+
+if (authToken) {
+  try {
+    const parsedToken = JSON.parse(authToken); // Parse the string to JSON
+    customer = parsedToken.data?.customer; // Safely access customer
+  } catch (error) {
+    console.error('Failed to parse authToken:', error);
+  }
+}
+
+// Ensure customerID is set safely
+const customerID = customer ? customer.id : ''; // Use an empty string if customer is null
+
+const [checkoutData, setCheckoutData] = useState<CheckoutData>({
+  id: '00000000-0000-0000-0000-000000000000',
+  customerID: customerID, // Use the safe value here
+  details: checkoutCart // Pass the existing array here
+});
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -18,6 +51,24 @@ const CartPage: React.FC = () => {
       updateQuantity(id, value);
     }
   };
+
+  const handleCheckout = async () => {
+    const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
+    const orderID = saveProductResponse.data.data.id;
+    // const OrderResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', orderID);
+    console.log(orderID)
+    const PaymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, {id: orderID});
+
+    const url = PaymentResponse.data.data;
+    
+    window.open(url, "_blank");
+    
+    const PaymentVerify = await axios.post(`http://localhost:5122/api/Order/VerifyPayment?orderId=${orderID}`);
+    if(PaymentVerify.data.isFailed == false){
+      navigate("/");
+      
+    }
+    };
 
   return (
     <div className="container mx-auto p-6">
@@ -98,7 +149,7 @@ const CartPage: React.FC = () => {
             </h2>
             <div className="flex gap-4">
               <button
-                onClick={() => navigate("/checkout")}
+                onClick={handleCheckout}
                 className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-md"
               >
                 {language === "en" ? "Proceed to Checkout" : "ወደ ክፍያ ቀጥል"}

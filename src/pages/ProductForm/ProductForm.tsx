@@ -15,6 +15,15 @@ interface Product {
   descriptionAmharic: string;
 }
 
+// Define the categories structure
+const categories = [
+  { id: "1", en: "Vegetables", am: "አትክልት" },
+  { id: "2", en: "Fruits", am: "ፍራፍሬ" },
+  { id: "3", en: "Dairy Products", am: "የእንስሳት ምርቶች" },
+  { id: "4", en: "Grains", am: "እህል" },
+  { id: "5", en: "Meat", am: "ሥጋ" }
+];
+
 const ProductForm: React.FC = () => {
   const [product, setProduct] = useState<Product>({
     id: '00000000-0000-0000-0000-000000000000', // Default ID
@@ -33,8 +42,7 @@ const ProductForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProduct({
       ...product,
@@ -143,15 +151,20 @@ const ProductForm: React.FC = () => {
 
       <div>
         <label htmlFor="category">Category:</label>
-        <input
-          type="text"
+        <select
           id="category"
           name="category"
           value={product.category}
           onChange={handleChange}
-          placeholder="Enter product category"
           required
-        />
+        >
+          <option value="">Select a category</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.en} / {cat.am} {/* Display both English and Amharic */}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>

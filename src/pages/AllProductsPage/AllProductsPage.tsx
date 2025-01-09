@@ -356,7 +356,7 @@ const AllProductsPage: React.FC = () => {
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 1000 }); // Default range
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
-
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {

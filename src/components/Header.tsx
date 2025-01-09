@@ -1,16 +1,54 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {useEffect} from "react";
+import { useSelector,useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../Context/LanguageContext";
 import MiniCart from "./MiniCart";
+import { logout } from '../redux/authSlice';
+import { loginSuccess } from "../redux/authSlice";
+import { RootState } from '../redux/store';
 
 const Header: React.FC = () => {
   const { language, setLanguage } = useLanguage();
+
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
+ useEffect(() => {
+     const token = localStorage.getItem('authToken');
+     if (token) {
+       dispatch(loginSuccess(token)); // Update Redux state if token exists
+        // Redirect if already logged in
+       
+     }
+   });
+
+
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear the token from local storage
+    localStorage.removeItem('authToken');
+    
+    // Dispatch logout action to Redux
+    dispatch(logout());
+    
+    // Navigate to login page
+    navigate("/"); // Adjust this path based on your routing structure
+  };
+
+  const handleButtonClick = () => {
+    navigate('/login'); // Replace '/new-page' with your desired route
+};
+  
 
   return (
     <header className="shadow-md bg-white">
       {/* Top Bar */}
       <div className="bg-black text-white text-sm py-2 px-4 flex items-center justify-between">
-        <span>
+      {!isLoggedIn && (
+        <div>
+            <span>
           {language === "en" 
             ? "Up to 20% Discount for new customers" 
             : "ለአዳዲስ ደንበኞች እስከ 20% ቅናሽ"}
@@ -20,6 +58,9 @@ const Header: React.FC = () => {
             ? "Sign Up Now to Redeem!" 
             : "ለመውሰድ አሁን ይመዝገቡ"}
         </Link>
+        </div>
+      )}
+        
         <select
           className="bg-white text-black rounded-md px-2 py-1 border border-gray-300"
           value={language}
@@ -63,19 +104,39 @@ const Header: React.FC = () => {
             </Link>
           </li>
           <li>
-            <Link 
-              to="/login" 
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-            >
-              {language === "en" 
-                ? "Sign-In" 
-                : "ግባ/ተመዝገብ"}
-            </Link>
+          {isLoggedIn ? (
+                <button 
+                    onClick={handleLogout} 
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+                >
+                    {language === "en" ? "Log Out" : "ውጣ"}
+                </button>
+            ) : (
+                <button 
+                    onClick={handleButtonClick} 
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                >
+                    {language === "en" ? "Sign-In" : "ግባ/ተመዝገብ"}
+                </button>
+            )}
           </li>
+          {isLoggedIn && (
+        <div>
+        <Link 
+              to="/profilepage" 
+              className="hover:text-green-600 transition-colors"
+            >
+              👤
+            </Link>  
+        
+        </div>
+      )}
+          
         </ul>
 
         {/* Mobile Menu Icon */}
           <MiniCart />
+          
       </nav>
     </header>
   );

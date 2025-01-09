@@ -36,6 +36,7 @@ const MainLayout: React.FC = () => {
           <Route path="/profilepage" element={<ProfilePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/profilepage" element={<ProfilePage />} />
         </Routes>
         <Features />
         <Footer />

@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguage } from "../../Context/LanguageContext";
+import axios from 'axios';
 
-interface Order {
-  id: string;
-  date: string;
-  status: string;
-  total: number;
+interface OrderResponse {
+    id: string;                   // Order ID
+    customer: null;              // Assuming customer details are not provided in this response
+    totalAmount: number;         // Total amount for the order
+    status: string;              // Current status of the order (e.g., "pending", "delivered", "success")
+    orderdate: string;           // Date when the order was placed (ISO date string)
+    paymentDate: string | null;  // Date when payment was made (ISO date string or null)
+    productOrders: null;         // Assuming product orders are not provided in this response
 }
+
+interface ApiResponse {
+    responseStatus: number;
+    systemMessage: string | null;
+    isFailed: boolean;
+    message: string;
+    data: OrderResponse[];       // Array of orders
+}
+
 const authToken = localStorage.getItem('authToken');
 let customer = null;
 
@@ -20,7 +33,8 @@ if (authToken) {
 }
 
 const user = customer
-  ? {
+  ? { 
+      id: customer.id,
       name: customer.name,
       email: customer.email,
       phone: customer.phone,
@@ -35,16 +49,38 @@ const user = customer
       joined: '',
     };
 
-
-
-const orders: Order[] = [
-  { id: 'ORD123', date: '2024-01-10', status: 'Delivered', total: 250 },
-  { id: 'ORD124', date: '2024-02-05', status: 'Pending', total: 100 },
-  { id: 'ORD125', date: '2024-03-02', status: 'Cancelled', total: 50 },
-];
-
 const ProfilePage: React.FC = () => {
-    const { language } = useLanguage();
+  const { language } = useLanguage();
+  const [orders, setOrders] = useState<OrderResponse[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (customer && customer.id) { 
+        const cust = user.id; // Ensure customer ID is available
+        try {
+          console.log('Fetching orders for customer ID:', cust); // Debugging statement
+          const orderresponse = await axios.post<ApiResponse>(`http://localhost:5122/api/Customer/GetCustomerOrders`, { id: cust });
+          
+          console.log(orderresponse);
+
+          if (!orderresponse.data.isFailed) {
+            console.log('Fetched Orders:', orderresponse.data.data); // Log fetched orders
+            setOrders(orderresponse.data.data); // Set orders with the data array from response
+          } else {
+            setError(orderresponse.data.message || 'Failed to fetch orders.');
+          }
+        } catch (err) {
+          console.error('Error fetching orders:', err);
+          setError('Failed to fetch orders. Please try again later.');
+        }
+      } else {
+        setError('No customer ID found.');
+      }
+    };
+
+    fetchOrders();
+  }, []); // Empty dependency array means this runs once when the component mounts
 
   return (
     <div className="bg-gray-100 min-h-screen p-6 text-gray-800">
@@ -68,7 +104,7 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
           <p className="mt-4 text-gray-500 text-sm">
-          {language === "en" ? "Member since:" : "አባል:"} {user.joined}
+            {language === "en" ? "Member since:" : "አባል:"} {user.joined}
           </p>
         </div>
 
@@ -77,37 +113,46 @@ const ProfilePage: React.FC = () => {
         {/* Order History Section */}
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-4">{language === "en" ? "Order History" : "የትዕዛዝ ታሪክ"}</h2>
+          {error && <p className="text-red-500">{error}</p>}
           <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-200">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border p-2 text-left">{language === "en" ? "Order ID" : "የትዕዛዝ መታወቂያ"}</th>
-                  <th className="border p-2 text-left">{language === "en" ? "Date" : "ቀን "}</th>
+                  <th className="border p-2 text-left">{language === "en" ? "Date" : "ቀን"}</th>
                   <th className="border p-2 text-left">{language === "en" ? "Status" : "አሁናዊ ሁኔታ"}</th>
-                  <th className="border p-2 text-left">{language === "en" ? "Total" : "ጠቅላላ ድምር"}</th>
+                  <th className="border p-2 text-left">{language === "en" ? "Total Amount" : "ጠቅላላ ድምር"}</th>
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="border p-2">{order.id}</td>
-                    <td className="border p-2">{order.date}</td>
-                    <td className="border p-2">
-                      <span
-                        className={`px-2 py-1 text-sm font-medium rounded-md ${
-                          order.status === 'Delivered'
-                            ? 'bg-green-100 text-green-800'
-                            : order.status === 'Pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="border p-2">Br {order.total}</td>
+                {orders.length > 0 ? (
+                  orders.map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-50">
+                      <td className="border p-2">{order.id}</td>
+                      <td className="border p-2">{new Date(order.orderdate).toLocaleDateString()}</td>
+                      <td className="border p-2">
+                        <span
+                          className={`px-2 py-1 text-sm font-medium rounded-md ${
+                            order.status === 'Delivered'
+                              ? 'bg-green-100 text-green-800'
+                              : order.status === 'Pending'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : order.status === 'Success' // New condition for Success
+                              ? 'bg-green-200 text-green-800' // Light green for Success
+                              : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="border p-2">Br {order.totalAmount.toFixed(2)}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="border p-2 text-center">No orders found.</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

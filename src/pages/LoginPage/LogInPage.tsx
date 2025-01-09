@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginSuccess } from '../../redux/authSlice';
+import { logout } from '../../redux/authSlice';
 
 const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -10,6 +11,8 @@ const LoginPage: React.FC = () => {
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  
 
   // Check local storage for token on component mount
   useEffect(() => {
