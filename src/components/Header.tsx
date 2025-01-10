@@ -50,13 +50,13 @@ const Header: React.FC = () => {
         <div>
             <span>
           {language === "en" 
-            ? "Up to 20% Discount for new customers" 
-            : "ለአዳዲስ ደንበኞች እስከ 20% ቅናሽ"}
+            ? "Up to 20% Discount for new customers, " 
+            : "ለአዳዲስ ደንበኞች እስከ 20% ቅናሽ  "}
         </span>
         <Link to="/signup" className="underline hover:text-yellow-300">
           {language === "en" 
-            ? "Sign Up Now to Redeem!" 
-            : "ለመውሰድ አሁን ይመዝገቡ"}
+            ? " Sign Up Now to Redeem!" 
+            : "  ለመውሰድ አሁን ይመዝገቡ"}
         </Link>
         </div>
       )}

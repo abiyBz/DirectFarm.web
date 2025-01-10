@@ -17,6 +17,8 @@ import ProductForm from "../pages/ProductForm/ProductForm";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
+import ProductPage from "../pages/ProductPage/ProductPage";
+
 
 const MainLayout: React.FC = () => {
   return (
@@ -27,7 +29,7 @@ const MainLayout: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          
+          <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/all-products" element={<AllProductsPage />} />
           
           <Route path="/minicart" element={<MiniCart />} />
