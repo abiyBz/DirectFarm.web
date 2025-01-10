@@ -20,48 +20,48 @@ interface ApiResponse {
     data: OrderResponse[];       // Array of orders
 }
 
-const authToken = localStorage.getItem('authToken');
-let customer = null;
-
-if (authToken) {
-  try {
-    const parsedToken = JSON.parse(authToken); // Parse the string to JSON
-    customer = parsedToken.data?.customer; // Safely access customer
-  } catch (error) {
-    console.error('Failed to parse authToken:', error);
-  }
-}
-
-const user = customer
-  ? { 
-      id: customer.id,
-      name: customer.name,
-      email: customer.email,
-      phone: customer.phone,
-      address: customer.address,
-      joined: customer.registrationDate,
-    }
-  : {
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      joined: '',
-    };
-
 const ProfilePage: React.FC = () => {
   const { language } = useLanguage();
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null); // User state to hold customer information
+
+  useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+
+    if (authToken) {
+      try {
+        const parsedToken = JSON.parse(authToken);
+        const customer = parsedToken.data?.customer;
+
+        if (customer) {
+          setUser({
+            id: customer.id,
+            name: customer.name,
+            email: customer.email,
+            phone: customer.phone,
+            address: customer.address,
+            joined: customer.registrationDate,
+          });
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Failed to parse authToken:', error);
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
+  }, []); // This effect runs once on mount
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (customer && customer.id) { 
-        const cust = user.id; // Ensure customer ID is available
+      if (user && user.id) {
         try {
-          console.log('Fetching orders for customer ID:', cust); // Debugging statement
-          const orderresponse = await axios.post<ApiResponse>(`http://localhost:5122/api/Customer/GetCustomerOrders`, { id: cust });
-          
+          console.log('Fetching orders for customer ID:', user.id); // Debugging statement
+          const orderresponse = await axios.post<ApiResponse>(`http://localhost:5122/api/Customer/GetCustomerOrders`, { id: user.id });
+
           console.log(orderresponse);
 
           if (!orderresponse.data.isFailed) {
@@ -75,12 +75,12 @@ const ProfilePage: React.FC = () => {
           setError('Failed to fetch orders. Please try again later.');
         }
       } else {
-        setError('No customer ID found.');
+        setOrders([]); // Clear orders if no user is found
       }
     };
 
     fetchOrders();
-  }, []); // Empty dependency array means this runs once when the component mounts
+  }, [user]); // Dependency array includes user to refetch orders when it changes
 
   return (
     <div className="bg-gray-100 min-h-screen p-6 text-gray-800">
@@ -95,16 +95,16 @@ const ProfilePage: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">{language === "en" ? "User Information" : "የተጠቃሚ መረጃ"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p><strong>{language === "en" ? "Name:" : "ስም:"}</strong> {user.name}</p>
-              <p><strong>{language === "en" ? "Email:" : "ኢሜል አድራሻ:"}</strong> {user.email}</p>
+              <p><strong>{language === "en" ? "Name:" : "ስም:"}</strong> {user?.name || 'N/A'}</p>
+              <p><strong>{language === "en" ? "Email:" : "ኢሜል አድራሻ:"}</strong> {user?.email || 'N/A'}</p>
             </div>
             <div>
-              <p><strong>{language === "en" ? "Phone:" : "ስልክ:"}</strong> {user.phone}</p>
-              <p><strong>{language === "en" ? "Address:" : "አድራሻ:"}</strong> {user.address}</p>
+              <p><strong>{language === "en" ? "Phone:" : "ስልክ:"}</strong> {user?.phone || 'N/A'}</p>
+              <p><strong>{language === "en" ? "Address:" : "አድራሻ:"}</strong> {user?.address || 'N/A'}</p>
             </div>
           </div>
           <p className="mt-4 text-gray-500 text-sm">
-            {language === "en" ? "Member since:" : "አባል:"} {user.joined}
+            {language === "en" ? "Member since:" : "አባል:"} {user?.joined || 'N/A'}
           </p>
         </div>
 
@@ -113,7 +113,7 @@ const ProfilePage: React.FC = () => {
         {/* Order History Section */}
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-4">{language === "en" ? "Order History" : "የትዕዛዝ ታሪክ"}</h2>
-          {error && <p className="text-red-500">{error}</p>}
+          
           <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-gray-200">
               <thead>
@@ -135,10 +135,10 @@ const ProfilePage: React.FC = () => {
                           className={`px-2 py-1 text-sm font-medium rounded-md ${
                             order.status === 'Delivered'
                               ? 'bg-green-100 text-green-800'
-                              : order.status === 'Pending'
+                              : order.status === 'pending'
                               ? 'bg-yellow-100 text-yellow-800'
-                              : order.status === 'Success' // New condition for Success
-                              ? 'bg-green-200 text-green-800' // Light green for Success
+                              : order.status === 'success' 
+                              ? 'bg-green-200 text-green-800' 
                               : 'bg-red-100 text-red-800'
                           }`}
                         >
@@ -156,6 +156,13 @@ const ProfilePage: React.FC = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Error Message Display */}
+          {error && (
+            <div className="mt-4 text-red-600 font-semibold">
+              {error}
+            </div>
+          )}
         </div>
       </div>
     </div>

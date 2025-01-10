@@ -14,7 +14,7 @@ const SignUpPage: React.FC = () => {
     password: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -91,6 +91,7 @@ const SignUpPage: React.FC = () => {
           </p>
         )}
         <form onSubmit={handleSubmit} className="mt-6">
+          {/* Input fields with consistent styling */}
           <input
             type="text"
             name="firstName"
@@ -98,9 +99,9 @@ const SignUpPage: React.FC = () => {
             value={formData.firstName}
             onChange={handleChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
-          
+
           <input
             type="text"
             name="lastName"
@@ -108,7 +109,7 @@ const SignUpPage: React.FC = () => {
             value={formData.lastName}
             onChange={handleChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
           <input
             type="email"
@@ -117,7 +118,7 @@ const SignUpPage: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
           <input
             type="text"
@@ -126,7 +127,7 @@ const SignUpPage: React.FC = () => {
             value={formData.phone}
             onChange={handleChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
           <input
             type="text"
@@ -135,7 +136,7 @@ const SignUpPage: React.FC = () => {
             value={formData.address}
             onChange={handleChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
           <input
             type="password"
@@ -144,7 +145,7 @@ const SignUpPage: React.FC = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
           <input
             type="password"
@@ -153,7 +154,7 @@ const SignUpPage: React.FC = () => {
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
           <button 
             type="submit" 

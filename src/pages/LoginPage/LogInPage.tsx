@@ -2,17 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginSuccess } from '../../redux/authSlice';
-import { logout } from '../../redux/authSlice';
 
 const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   
-  
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  
 
   // Check local storage for token on component mount
   useEffect(() => {
@@ -20,7 +16,6 @@ const LoginPage: React.FC = () => {
     if (token) {
       dispatch(loginSuccess(token)); // Update Redux state if token exists
       navigate("/"); // Redirect if already logged in
-      
     }
   }, [dispatch, navigate]);
 
@@ -48,9 +43,7 @@ const LoginPage: React.FC = () => {
 
       localStorage.setItem('authToken', JSON.stringify(data)); // Store token
       dispatch(loginSuccess(data.data.accessToken)); // Update Redux state with token
-      //alert(data.data.customer.email);
       navigate("/");
-
     } catch {
       setError("An unexpected error occurred.");
     }
@@ -61,7 +54,9 @@ const LoginPage: React.FC = () => {
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
         <h1 className="text-2xl font-bold text-center text-gray-800">Log In</h1>
         <p className="mt-2 text-center text-gray-600">Welcome back! Log in to continue.</p>
-        {error && (<p className="mt-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-md p-3">{error}</p>)}
+        {error && (
+          <p className="mt-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-md p-3">{error}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-6">
           <input
@@ -71,7 +66,7 @@ const LoginPage: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500 text-black"
           />
           <input
             type="password"
@@ -80,7 +75,7 @@ const LoginPage: React.FC = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            className="mt-4 w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+            className="mt-4 w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500 text-black"
           />
           <button 
             type="submit" 

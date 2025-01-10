@@ -3,48 +3,56 @@ import React from "react";
 import { useCart } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-
+import { loginSuccess } from "../../redux/authSlice";
+import { RootState } from '../../redux/store';
 
 const CartPage: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
   const checkoutCart = cart.map(item => ({
-    productID: item.id, // Assuming id is used as productID
+    productID: item.id,
     quantity: item.quantity
-}));
+  }));
+
   interface CheckoutData {
     id: string;
     customerID: string;
     details: any[];
-}
-
-const authToken = localStorage.getItem('authToken');
-let customer = null;
-
-if (authToken) {
-  try {
-    const parsedToken = JSON.parse(authToken); // Parse the string to JSON
-    customer = parsedToken.data?.customer; // Safely access customer
-  } catch (error) {
-    console.error('Failed to parse authToken:', error);
   }
-}
 
-// Ensure customerID is set safely
-const customerID = customer ? customer.id : ''; // Use an empty string if customer is null
+  const authToken = localStorage.getItem('authToken');
+  let customer = null;
 
-const [checkoutData, setCheckoutData] = useState<CheckoutData>({
-  id: '00000000-0000-0000-0000-000000000000',
-  customerID: customerID, // Use the safe value here
-  details: checkoutCart // Pass the existing array here
-});
+  if (authToken) {
+    try {
+      const parsedToken = JSON.parse(authToken);
+      customer = parsedToken.data?.customer;
+    } catch (error) {
+      console.error('Failed to parse authToken:', error);
+    }
+  }
+
+  const customerID = customer ? customer.id : '';
+
+  const [checkoutData] = useState<CheckoutData>({
+    id: '00000000-0000-0000-0000-000000000000',
+    customerID: customerID,
+    details: checkoutCart
+  });
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  // State to track payment status
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   const handleQuantityChange = (id: string, value: number) => {
     if (value > 0) {
@@ -53,22 +61,46 @@ const [checkoutData, setCheckoutData] = useState<CheckoutData>({
   };
 
   const handleCheckout = async () => {
-    const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
-    const orderID = saveProductResponse.data.data.id;
-    // const OrderResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', orderID);
-    console.log(orderID)
-    const PaymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, {id: orderID});
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        navigate("/login");
+    } else {
+        try {
+            // Step 1: Place order and get order ID
+            const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
+            const orderID = saveProductResponse.data.data.id;
 
-    const url = PaymentResponse.data.data;
-    
-    window.open(url, "_blank");
-    
-    const PaymentVerify = await axios.post(`http://localhost:5122/api/Order/VerifyPayment?orderId=${orderID}`);
-    if(PaymentVerify.data.isFailed == false){
-      navigate("/");
-      
+            // Step 2: Initialize payment and get payment URL
+            const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderID });
+            const url = paymentResponse.data.data;
+
+            // Step 3: Open the payment URL in a new tab
+            window.open(url, "_blank");
+
+            // Step 4: Wait for a specified time before verifying payment
+            setTimeout(async () => {
+                try {
+                    // Verify payment status using order ID
+                    const paymentVerifyResponse = await axios.post(`http://localhost:5122/api/Order/VerifyPayment?orderId=${orderID}`);
+                    if (!paymentVerifyResponse.data.isFailed) {
+                        setPaymentStatus("success"); // Set status to success
+                        navigate("/");
+                    } else {
+                        setPaymentStatus("failed"); // Set status to failed
+                        console.error('Payment verification failed:', paymentVerifyResponse.data.message);
+                    }
+                } catch (verificationError) {
+                    console.error('Error verifying payment:', verificationError);
+                    setPaymentStatus("failed"); // Set status to failed on error
+                }
+            }, 10000); // Wait for 10 seconds
+
+        } catch (error) {
+            console.error('Error during checkout:', error);
+        }
     }
-    };
+};
+
 
   return (
     <div className="container mx-auto p-6">
@@ -162,6 +194,16 @@ const [checkoutData, setCheckoutData] = useState<CheckoutData>({
               </button>
             </div>
           </div>
+
+          {/* Order Status Section */}
+          {/* Displaying payment status */}
+          {paymentStatus && (
+            <div className={`mt-4 font-semibold ${paymentStatus === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+              {paymentStatus === 'success' 
+                ? (language === 'en' ? 'Payment Successful!' : 'ክፍያ ተከናውኗል!')
+                : (language === 'en' ? 'Payment Failed!' : 'ክፍያ ተቋርጧል!')}
+            </div>
+          )}
         </>
       )}
     </div>
