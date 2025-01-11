@@ -39,7 +39,7 @@ const Header: React.FC = () => {
   return (
     <header className="shadow-md bg-white  z-50 w-full top-0">
       {/* Top Bar */}
-      <div className="bg-black  text-white text-sm py-2 px-4 flex items-center justify-between">
+      <div className="bg-black  text-white text-sm py-2 pl-96 pr-4 flex items-center justify-between">
         {!isLoggedIn && (
           <div>
             <span>
@@ -80,7 +80,7 @@ const Header: React.FC = () => {
       <p className="font-semibold text-green-500">DIRECT FARM</p>
     </Link> 
                 
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', left: '30px' }}>
                   <input 
                     className="rounded-3xl py-3 px-3 outline-none text-xs w-[350px] pr-10 hidden lg:block md:block bg-gray-100 text-green-900" 
                     placeholder="Search for Grocery, Stores, Vegetable, or Meat" 

@@ -1,88 +1,115 @@
-import React from 'react';
-import './SpecialOffer.css';
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../Context/LanguageContext";
-import image6 from "../assets/photo_2024-12-25_09-53-29.jpg";
-import image7 from "../assets/photo_2024-12-25_09-53-22.jpg";
-import image8 from "../assets/photo_2024-12-25_09-53-36.jpg";
-import image9 from "../assets/photo_2024-12-25_09-53-37.jpg";
-import image10 from "../assets/photo_2024-12-25_09-53-39.jpg";
-import { Link } from 'react-router-dom';
+import axios from "axios";
+import { Link } from "react-router-dom";
 
-interface Offer {
-  id: number;
-  title: string;
-  quality: number;
-  source: string;
-  image: string;
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  pricePerUnit: number;
+  unit: string;
+  createdAt: string;
+  status: string;
+  image?: string;
+  nameAmharic: string;
+  descriptionAmharic: string;
 }
 
-const specialOffers: Offer[] = [
-  { id: 1, title: "TOMATO", quality: 4, source: "Daily Mart", image: image10 },
-  { id: 2, title: "APPLE", quality: 2, source: "Purpose Black", image: image6 },
-  { id: 3, title: "COFFEE", quality: 5, source: "Marketplace", image: image7 },
-  { id: 4, title: "TEFF", quality: 3, source: "Purpose Black", image: image8 },
-  { id: 5, title: "JAL", quality: 1, source: "Marketplace",  image: image9},
-];
-
-
-interface Offer_amh {
-  id: number;
-  titleamh: string;
-  quality: number;
-  sourceam: string;
-  image: string;
-}
-
-const specialOffers_amh: Offer_amh[] = [
-  { id: 1, titleamh: "ጤፍ", quality: 4, sourceam: "ዴዴይሊ-ማርት", image: image10 },
-  { id: 2, titleamh: "ካሮት", quality: 2, sourceam: "ፐርፐዝ-ብላክ", image: image6 },
-  { id: 3, titleamh: "አፕል", quality: 5, sourceam: "ማርኬት-ፕሌስ", image: image7 },
-  { id: 4, titleamh: "ጤፍ", quality: 3, sourceam: "ፐርፐዝ-ብላክ", image: image8 },
-  { id: 5, titleamh: "አፕል", quality: 1, sourceam: "ማርኬት-ፕሌስ",  image: image9},
-];
-
-
-
-
-
-
-const SpecialOffers: React.FC = () => {
+const LatestProductsPage: React.FC = () => {
   const { language } = useLanguage();
+  const [latestProducts, setLatestProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLatestProducts = async () => {
+      try {
+        const response = await axios.get<Product[]>(`http://localhost:5122/api/Product/GetAllProducts`);
+
+        const productsWithImages = await Promise.all(
+          response.data.data.map(async (product: Product) => {
+            try {
+              const imageResponse = await axios.post(`http://localhost:5122/api/Product/GetProductImage`, { id: product.id });
+              return {
+                ...product,
+                image: `data:image/jpg;base64,${imageResponse.data.data}`,
+                createdAt: new Date(product.createdAt),
+              };
+            } catch (imageError) {
+              console.error("Image fetch error:", imageError);
+              return { ...product, image: null };
+            }
+          })
+        );
+
+        // Sort products by creation date (latest first) and take the top 5
+        const sortedProducts = productsWithImages.sort((a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) => (new Date(b.createdAt) as any) - (new Date(a.createdAt) as any));
+        setLatestProducts(sortedProducts.slice(0, 5));
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLatestProducts();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center text-lg">Loading latest products...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-lg text-red-600">Error fetching products: {error}</div>;
+  }
 
   return (
-    <section className="special-offers">
-      <h1>{language === "en"
-                  ? "Special Offers"
-                  : "ምርጥ ምርጡን ለናንተ"}</h1>
-
-      <ul className="offers-grid">
-        {specialOffers.map((offer, index) => (
-          <li className="offer-card" key={index}>
-            <Link to={`/product/${offer.id}`} >
-              <img src={offer.image} alt={offer.title} />
-              <h3>{language === "en"
-                  ? offer.title
-                  : specialOffers_amh[index].titleamh}</h3>
-              <p>{language === "en"
-                  ? `Quality: ${offer.quality}`
-                  : specialOffers_amh[index].quality}</p>
-              <span>{language === "en"
-                  ? `Source: ${offer.source}`
-                  : specialOffers_amh[index].sourceam}</span>
-              <br />
-              <button>{language === "en"
-                  ? "View Details..."
-                  : "ምርቱን ይመልከቱ"}</button>
+    <div className="px-6 py-12 bg-gray-100">
+      <h1 className="text-3xl font-semibold mb-8">{language === "en" ? "Latest Products" : "አዳዲስ ምርቶች"}</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {latestProducts.map((product) => (
+          <div key={product.id} className="group relative rounded-md block overflow-hidden">
+            <Link to={`/product/${product.id}`}>
+              <img
+                className="h-32 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-36"
+                src={product.image || 'path/to/placeholder/image.png'}
+                alt={product.name}
+              />
             </Link>
-          </li>
+            <div className="relative border border-gray-100 bg-white p-3">
+              {language === "en" ? (
+                <span className="whitespace-nowrap bg-yellow-400 px-2 py-1 text-xs font-medium"> New </span>
+              ) : (
+                <span className="whitespace-nowrap bg-yellow-400 px-2 py-1 text-xs font-medium"> አዳዲስ </span>
+              )}
+              <h3 className="mt-2 text-lg font-medium text-gray-900">
+                {language === "en" ? product.name : product.nameAmharic}
+              </h3>
+              <p className="mt-1 text-sm text-gray-700">Br. {product.pricePerUnit.toFixed(2)}</p>
+              <Link
+                to={`/product/${product.id}`}
+                className="block w-full mt-2 text-center bg-green-500 text-white rounded p-2 font-medium transition hover:scale-105"
+              >
+                {language === "en" ? "View Details" : "ዝርዝር አሳይ"}
+              </Link>
+            </div>
+          </div>
+          
         ))}
-        
-      </ul>
-      <Link to="/all-products"><button className ="btn-all-product">{language === "en"
-                  ? "View All Products"
-                  : "ሁሉንም ምርቶች ይመልከቱ"}</button></Link>
-    </section>
+      </div>
+      <div className="flex justify-center items-center">
+      <Link to="/all-products"><button className="flex mt-5 text-center bg-green-500 text-white rounded p-4 font-medium transition hover:scale-105">
+        {language === "en"
+                   ? "View All Products"
+                   : "ሁሉንም ምርቶች ይመልከቱ"}</button></Link>
+      </div>{/* Divider */}
+    <div className="border-t-2 border-white mt-16"></div>
+    </div>
+    
   );
 };
 
-export default SpecialOffers;
+export default LatestProductsPage;
