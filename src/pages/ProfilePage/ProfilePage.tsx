@@ -26,6 +26,9 @@ const ProfilePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null); // User state to hold customer information
 
+  
+
+
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
 
@@ -61,7 +64,8 @@ const ProfilePage: React.FC = () => {
         try {
           console.log('Fetching orders for customer ID:', user.id); // Debugging statement
           const orderresponse = await axios.post<ApiResponse>(`http://localhost:5122/api/Customer/GetCustomerOrders`, { id: user.id });
-
+          
+          
           console.log(orderresponse);
 
           if (!orderresponse.data.isFailed) {
