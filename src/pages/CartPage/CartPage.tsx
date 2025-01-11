@@ -103,110 +103,134 @@ const CartPage: React.FC = () => {
 
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">
-        {language === "en" ? "Your Cart" : "የእርስዎ ቅርጫት"}
+    <div className="bg-gray-100 h-screen py-8 text-black">
+    <div className="container mx-auto px-4">
+      <h1 className="text-2xl font-semibold mb-4">
+        {language === "en" ? "Shopping Cart" : "የእርስዎ ቅርጫት"}
       </h1>
-
+      
       {cart.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-gray-500 text-lg mb-4">
             {language === "en" ? "Cart is empty!" : "ቅርጫትዎ ባዶ ነው!"}
           </p>
           <button
-            onClick={() => navigate("/all-products")}
+            onClick={() => navigate("/all-products")} // Navigate to products
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
           >
-            {language === "en" ? "Back to Products" : "ወደ ምርቶች ተመለስ"}
+            {language === "en" ? "Go to Products" : "ወደ ምርቶች ይሂዱ"}
           </button>
         </div>
       ) : (
-        <>
-          {/* Cart Table */}
-          <div className="overflow-x-auto">
-            <table className="text-gray-800 min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="p-3 text-left">{language === "en" ? "Product" : "ምርት"}</th>
-                  <th className="p-3 text-center">{language === "en" ? "Quantity" : "ብዛት"}</th>
-                  <th className="p-3 text-center">{language === "en" ? "Price" : "ዋጋ"}</th>
-                  <th className="p-3 text-center">{language === "en" ? "Actions" : "እርምጃዎች"}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cart.map((item) => (
-                  <tr key={item.id} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="p-3">{item.name}</td>
-                    <td className="p-3 text-center flex items-center justify-center gap-2">
-                      <button
-                        className="px-2 py-1 bg-gray-700 hover:bg-gray-900 rounded-md"
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                        disabled={item.quantity <= 1}
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) => handleQuantityChange(item.id, Number(e.target.value))}
-                        className="w-12 text-center border rounded-md"
-                      />
-                      <button
-                        className="px-2 py-1 bg-gray-700 hover:bg-gray-900 rounded-md"
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                      >
-                        +
-                      </button>
-                    </td>
-                    <td className="p-3 text-center">Br {(item.price * item.quantity).toFixed(2)}</td>
-                    <td className="p-3 text-center">
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white"
-                      >
-                        {language === "en" ? "Remove" : "አስወግድ"}
-                      </button>
-                    </td>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="md:w-3/4">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+              <table className="w-full">
+                <thead>
+                  <tr>
+                    <th className="text-left font-semibold">{language === "en" ? "Product" : "ምርት"}</th>
+                    <th className="text-left font-semibold">{language === "en" ? "Price" : "ዋጋ"}</th>
+                    <th className="text-left font-semibold">{language === "en" ? "Quantity" : "ብዛት"}</th>
+                    <th className="text-left font-semibold">{language === "en" ? "Total" : "ጠቅላላ"}</th>
+                    <th className="text-left font-semibold">{language === "en" ? "Actions" : "እርምጃዎች"}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {cart.map((item) => (
+                    <tr key={item.id}>
+                      <td className="py-4">
+                        <div className="flex items-center">
+                          <img
+                            className="h-16 w-16 mr-4"
+                            src={item.image || "https://via.placeholder.com/150"}
+                            alt={item.name}
+                          />
+                          <span className="font-semibold">{item.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-4">${item.price.toFixed(2)}</td>
+                      <td className="py-4">
+                        <div className="flex items-center">
+                          <button
+                            className="border rounded-md py-2 px-4 mr-2"
+                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                            disabled={item.quantity <= 1}
+                          >
+                            -
+                          </button>
+                          <span className="text-center w-8">{item.quantity}</span>
+                          <button
+                            className="border rounded-md py-2 px-4 ml-2"
+                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td className="py-4">${(item.price * item.quantity).toFixed(2)}</td>
+                      <td className="py-4 text-center">
+                        <button
+                          onClick={() => removeFromCart(item.id)} // Existing remove function
+                          className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md"
+                        >
+                          {language === "en" ? "Remove" : "አስወግድ"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-          {/* Cart Summary */}
-          <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-6 text-gray-800">
-            <h2 className="text-xl font-semibold">
-              {language === "en" ? "Total:" : "ጠቅላላ"} Br {totalPrice.toFixed(2)}
-            </h2>
-            <div className="flex gap-4">
+              {/* Clear Cart Button */}
               <button
-                onClick={handleCheckout}
-                className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-md"
-              >
-                {language === "en" ? "Proceed to Checkout" : "ወደ ክፍያ ቀጥል"}
-              </button>
-              <button
-                onClick={clearCart}
-                className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md"
+                onClick={clearCart} // Existing clear function
+                className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md mt-4"
               >
                 {language === "en" ? "Clear Cart" : "ጋሪን አጽዳ"}
               </button>
+
             </div>
           </div>
 
-          {/* Order Status Section */}
-          {/* Displaying payment status */}
-          {paymentStatus && (
-            <div className={`mt-4 font-semibold ${paymentStatus === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-              {paymentStatus === 'success' 
-                ? (language === 'en' ? 'Payment Successful!' : 'ክፍያ ተከናውኗል!')
-                : (language === 'en' ? 'Payment Failed!' : 'ክፍያ ተቋርጧል!')}
+          {/* Summary Section */}
+          <div className="md:w-1/4">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold mb-4">{language === "en" ? "Summary" : "አጠቃላይ"}</h2>
+              {/* Example summary values */}
+              <div className="flex justify-between mb-2">
+                <span>{language === "en" ? "Subtotal" : "እንደ አጠቃላይ"}:</span>
+                {/* Replace with actual subtotal variable */}
+                <span>${cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</span> 
+              </div>
+              {/* Add taxes and shipping cost here */}
+              {/* Example Total */}
+              <hr className="my-2" />
+              <div className="flex justify-between mb-2">
+                <span className="font-semibold">{language === "en" ? "Total" : "ጠቅላላ"}:</span>
+                {/* Replace with actual total price variable */}
+                <span className="font-semibold">${totalPrice.toFixed(2)}</span> 
+              </div>
+
+              {/* Checkout Button */}
+              <button
+                onClick={handleCheckout}
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full"
+              >
+                {language === "en" ? "Checkout" : "ክፍያ"}
+              </button>
+
             </div>
-          )}
-        </>
+          </div>
+
+        </div>
       )}
     </div>
+  </div>
+
+
+
+
+
   );
 };
 

@@ -1,68 +1,62 @@
-import React, {useEffect} from "react";
-import { useSelector,useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../Context/LanguageContext";
 import MiniCart from "./MiniCart";
-import { logout } from '../redux/authSlice';
-import { loginSuccess } from "../redux/authSlice";
+import { logout, loginSuccess } from '../redux/authSlice';
 import { RootState } from '../redux/store';
+import { CiUser } from "react-icons/ci";
 
 const Header: React.FC = () => {
   const { language, setLanguage } = useLanguage();
-
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-
- useEffect(() => {
-     const token = localStorage.getItem('authToken');
-     if (token) {
-       dispatch(loginSuccess(token)); // Update Redux state if token exists
-        // Redirect if already logged in
-       
-     }
-   });
-
-
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const [isOpen, setIsOpen] = useState(false); // State for managing mobile menu visibility
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      dispatch(loginSuccess(token)); // Update Redux state if token exists
+    }
+  }, [dispatch]);
 
   const handleLogout = () => {
-    // Clear the token from local storage
     localStorage.removeItem('authToken');
-    
-    // Dispatch logout action to Redux
     dispatch(logout());
-    
-    // Navigate to login page
     navigate("/"); // Adjust this path based on your routing structure
   };
 
   const handleButtonClick = () => {
-    navigate('/login'); // Replace '/new-page' with your desired route
-};
-  
+    navigate('/login'); // Navigate to login page
+  };
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen); // Toggle mobile menu
+  };
 
   return (
-    <header className="shadow-md bg-white">
+    <header className="shadow-md bg-white  z-50 w-full top-0">
       {/* Top Bar */}
-      <div className="bg-black text-white text-sm py-2 px-4 flex items-center justify-between">
-      {!isLoggedIn && (
-        <div>
+      <div className="bg-black  text-white text-sm py-2 px-4 flex items-center justify-between">
+        {!isLoggedIn && (
+          <div>
             <span>
-          {language === "en" 
-            ? "Up to 20% Discount for new customers, " 
-            : "ለአዳዲስ ደንበኞች እስከ 20% ቅናሽ  "}
-        </span>
-        <Link to="/signup" className="underline hover:text-yellow-300">
-          {language === "en" 
-            ? " Sign Up Now to Redeem!" 
-            : "  ለመውሰድ አሁን ይመዝገቡ"}
-        </Link>
-        </div>
-      )}
+              {language === "en" 
+                ? "Up to 20% Discount for new customers, " 
+                : "ለአዳዲስ ደንበኞች እስከ 20% ቅናሽ"}
+            </span>
+            <Link to="/signup" className="underline hover:text-yellow-300">
+              {language === "en" 
+                ? " Sign Up Now to Redeem!" 
+                : "  ለመውሰድ አሁን ይመዝገቡ"}
+            </Link>
+          </div>
+        )}
         
         <select
-          className="bg-white text-black rounded-md px-2 py-1 border border-gray-300"
+          className="bg-white  text-black rounded-md px-2 py-1 border border-gray-300"
           value={language}
           onChange={(e) => setLanguage(e.target.value as "en" | "am")}
         >
@@ -72,72 +66,121 @@ const Header: React.FC = () => {
       </div>
 
       {/* Navigation Bar */}
-      <nav className="flex items-center justify-between py-4 px-6 bg-white">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <img 
-            src="../logo-bg-removed.png" 
-            alt="Logo" 
-            className="w-12 h-12 object-contain"
-          />
-          <h1 className="text-xl font-bold text-gray-800">DIRECT FARM</h1>
-        </div>
-
-        {/* Navigation Links */}
-        <ul className="hidden md:flex space-x-6 items-center text-gray-700">
-          <li>
-            <Link 
-              to="/" 
-              className="hover:text-green-600 transition-colors"
-            >
-              {language === "en" ? "Home" : "መነሻ"}
-            </Link>
-          </li>
-          <li>
-            <Link 
-              to="/all-products" 
-              className="hover:text-green-600 transition-colors"
-            >
-              {language === "en" 
-                ? "View All Products" 
-                : "ሁሉንም ምርቶች ይመልከቱ"}
-            </Link>
-          </li>
-          <li>
-          {isLoggedIn ? (
-                <button 
-                    onClick={handleLogout} 
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-                >
-                    {language === "en" ? "Log Out" : "ውጣ"}
-                </button>
-            ) : (
-                <button 
-                    onClick={handleButtonClick} 
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-                >
-                    {language === "en" ? "Sign-In" : "ግባ/ተመዝገብ"}
-                </button>
-            )}
-          </li>
-          {isLoggedIn && (
+      <div className="grid xl:grid-cols-1 grid-cols-1">
         <div>
-        <Link 
-              to="/profilepage" 
-              className="hover:text-green-600 transition-colors"
-            >
-              👤
-            </Link>  
-        
-        </div>
-      )}
-          
-        </ul>
+        <div className="w-full   bg-white py-3 px-3 transition-transform duration-300">
+            <div className="flex justify-between items-center">
+              <div className="flex justify-items-center items-center gap-2">
+                <img 
+                  src="../logo-bg-removed.png" 
+                  alt="Logo" 
+                  className="w-12 h-12 object-contain"
+                />
+                <Link to="/" >
+      <p className="font-semibold text-green-500">DIRECT FARM</p>
+    </Link> 
+                
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    className="rounded-3xl py-3 px-3 outline-none text-xs w-[350px] pr-10 hidden lg:block md:block bg-gray-100 text-green-900" 
+                    placeholder="Search for Grocery, Stores, Vegetable, or Meat" 
+                  />
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5 text-green-900 absolute right-3 top-1/2 transform -translate-y-1/2 hidden lg:block md:block">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                  
+                </div>
+              </div>
 
-        {/* Mobile Menu Icon */}
-          <MiniCart />
-          
-      </nav>
+              {/* Desktop Navigation Links */}
+              <div className="hidden md:flex justify-items-center items-center gap-8 text-white"> {/* Added text-white for all items */}
+  <Link to="/" className=" font-extralight block text-green-500 hover:text-green-600 transition-colors">
+    {language === "en" ? "Home" : "መነሻ"}
+  </Link>
+  
+  <Link to="/all-products" className=" font-extralight block text-green-500 hover:text-green-600 transition-colors">
+    {language === "en" ? "All Products" : "ሁሉንም ምርቶች ይመልከቱ"}
+  </Link>
+  
+  {isLoggedIn ? (
+    <button 
+      onClick={handleLogout} 
+      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+    >
+      {language === "en" ? "Log Out" : "ውጣ"}
+    </button>
+  ) : (
+    <button 
+      onClick={handleButtonClick} 
+      
+      className="bg-green-500 text-white px-4 py-2 rounded-lg border-2 border-green-700 hover:bg-green-300 hover:text-green-900 transition"
+    >
+      {language === "en" ? "Sign-In" : "ግባ/ተመዝገብ"}
+    </button>
+  )}
+
+  {isLoggedIn && (
+    <Link 
+      to="/profilepage" 
+      className="hover:text-green-600 transition-colors"
+    >
+      <CiUser size={24} color="black"/>
+    </Link>  
+  )}
+  
+  <MiniCart />
+</div>
+
+
+              {/* Mobile Menu Icon */}
+              <button onClick={toggleMenu} className="md:hidden text-gray-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="none" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" stroke="white" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Mobile Menu */}
+            {isOpen && (
+              <div className="md:hidden bg-white shadow-lg rounded-lg p-4 mt-4">
+                {/* Mobile Navigation Links */}
+                <ul className="space-y-2">
+                  <li>
+                    <Link to="/" className="font-bold block text-green-600 transition-colors ">
+                      {language === "en" ? "Home" : "መነሻ"}
+                    </Link>
+                    
+                  </li>
+                  <li>
+                    <Link to="/all-products" className=" font-bold block text-green-600 transition-colors ">
+                      {language === "en" ? "View All Products" : "ሁሉንም ምርቶች ይመልከቱ"}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/profilepage" className="block text-green-600 transition-colors">
+                      {language === "en" ? "Profile" : "የግል ገጽ"}
+                    </Link>
+                  </li>
+                  <li>
+                    {isLoggedIn ? (
+                      <button onClick={handleLogout} className="bg-red-600 text-white w-full px-4 py-2 rounded-lg hover:bg-red-700 transition">
+                        {language === "en" ? "Log Out" : "ውጣ"}
+                      </button>
+                    ) : (
+                      <button onClick={handleButtonClick} className="bg-green-600 text-white w-full px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                        {language === "en" ? "Sign-In" : "ግባ/ተመዝገብ"}
+                      </button>
+                    )}
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </header>
   );
 };

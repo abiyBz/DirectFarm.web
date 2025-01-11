@@ -81,94 +81,107 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-center text-gray-800">Sign Up</h1>
-        <p className="mt-2 text-center text-gray-600">Create your account to get started!</p>
-        {error && (
-          <p className="mt-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-md p-3">
-            {error}
-          </p>
-        )}
-        <form onSubmit={handleSubmit} className="mt-6">
-          {/* Input fields with consistent styling */}
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-          />
+    <>
+  
+  <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center items-center">
+      <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+        <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+          <div className="mt-12 flex flex-col items-center">
+            <h1 className="text-2xl xl:text-3xl font-extrabold">Sign Up</h1>
+            <p className="mt-2 text-center text-gray-600">Create your account to get started!</p>
 
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-          />
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-          />
-          <input
-            type="text"
-            name="address"
-            placeholder="Address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            required
-            className="mt-4 w-full p-3 bg-white text-black border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-          />
-          <button 
-            type="submit" 
-            className="mt-6 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded-md"
-          >
-            Sign Up
-          </button>
-        </form>
-        <p className="mt-4 text-center text-gray-600">
-          Already have an account? 
-          <Link to="/login" className="text-blue-500 hover:underline"> Log In</Link>
-        </p>
+            <div className="w-full flex-1 mt-8">
+              <div className="mx-auto max-w-lg"> {/* Change max-w-xs to max-w-lg */}
+                {error && (
+                  <p className="mt-4 text-sm text-red-600 bg-red-100 border border-red-300 rounded-md p-3">
+                    {error}
+                  </p>
+                )}
+                <form onSubmit={handleSubmit}>
+                  <input
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                    name="phone"
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                    name="address"
+                    placeholder="Address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    required
+                  />
+                  <button
+                    className="mt-5 tracking-wide font-semibold bg-green-500 text-gray-100 w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                    type="submit"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0 -3.75 3.75M21 12H3" />
+                    </svg>
+                    <span className="ml-3">Sign Up</span>
+                  </button>
+                </form>
+              </div>
+
+              <div className="my-12 border-b text-center">
+                
+                <div className="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2">
+                Already have an account? <Link to="/login" className="text-blue-500 hover:underline"> Sign In</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    </>
   );
 };
 

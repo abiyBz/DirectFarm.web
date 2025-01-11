@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { CiShoppingCart } from "react-icons/ci";
 
 const MiniCart: React.FC = () => {
   const { cart, removeFromCart } = useCart();
@@ -31,7 +32,7 @@ const MiniCart: React.FC = () => {
         className="relative cursor-pointer text-gray-700 hover:text-gray-900"
         onClick={toggleCart}
       >
-        🛒
+        <CiShoppingCart size={24} color="black" />
         <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
           {cart.length}
         </span>
