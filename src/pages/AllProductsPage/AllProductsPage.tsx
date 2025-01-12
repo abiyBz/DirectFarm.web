@@ -49,6 +49,8 @@ const AllProductsPage: React.FC = () => {
         }));
 
         setProducts(productsWithImages);
+        sessionStorage.removeItem('products');
+        sessionStorage.setItem('products', JSON.stringify(productsWithImages));
         setFilteredProducts(productsWithImages);
 
         const uniqueCategories = Array.from(new Set<string>(productsWithImages.map(p => p.category)));

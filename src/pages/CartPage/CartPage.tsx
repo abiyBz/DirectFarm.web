@@ -14,6 +14,9 @@ const CartPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const [verified, setVerified] = useState<boolean>(false);
+  
+  const [newOrder, setNewOrder] = useState<string | null>(null);
 
   const checkoutCart = cart.map(item => ({
     productID: item.id,
@@ -52,7 +55,7 @@ const CartPage: React.FC = () => {
   );
 
   // State to track payment status
-  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  
 
   const handleQuantityChange = (id: string, value: number) => {
     if (value > 0) {
@@ -60,6 +63,7 @@ const CartPage: React.FC = () => {
     }
   };
 
+  
   const handleCheckout = async () => {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -68,37 +72,41 @@ const CartPage: React.FC = () => {
         try {
             // Step 1: Place order and get order ID
             const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
-            const orderID = saveProductResponse.data.data.id;
-
+            const orderId = saveProductResponse.data.data.id; // Get order ID directly
+            setNewOrder(saveProductResponse.data.data.id); // Store the new order ID
+            console.log(newOrder)
             // Step 2: Initialize payment and get payment URL
-            const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderID });
+            const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderId });
             const url = paymentResponse.data.data;
 
             // Step 3: Open the payment URL in a new tab
             window.open(url, "_blank");
 
-            // Step 4: Wait for a specified time before verifying payment
-            setTimeout(async () => {
-                try {
-                    // Verify payment status using order ID
-                    const paymentVerifyResponse = await axios.post(`http://localhost:5122/api/Order/VerifyPayment?orderId=${orderID}`);
-                    if (!paymentVerifyResponse.data.isFailed) {
-                        setPaymentStatus("success"); // Set status to success
-                        navigate("/");
-                    } else {
-                        setPaymentStatus("failed"); // Set status to failed
-                        console.error('Payment verification failed:', paymentVerifyResponse.data.message);
-                    }
-                } catch (verificationError) {
-                    console.error('Error verifying payment:', verificationError);
-                    setPaymentStatus("failed"); // Set status to failed on error
-                }
-            }, 10000); // Wait for 10 seconds
+            // Optional: You can also show a message to the user about the payment link
 
         } catch (error) {
             console.error('Error during checkout:', error);
         }
     }
+};
+
+const handleVerification = async () => {
+  if (!newOrder) {
+      console.error('No order ID available for verification.');
+      return;
+  }
+
+  try {
+      // Step 4: Verify payment using the stored order ID
+      const verificationResponse = await axios.post(`http://localhost:5122/api/Order/VerifyPayment`, { id: newOrder });
+      if(verificationResponse.data.data)
+      setVerified(true);
+      setNewOrder('')
+      // Handle verification response as needed (e.g., update UI or notify user)
+
+  } catch (error) {
+      console.error('Error verifying payment:', error);
+  }
 };
 
 
@@ -219,11 +227,22 @@ const CartPage: React.FC = () => {
                 {language === "en" ? "Checkout" : "ወደ ክፍያ"}
               </button>
               <button 
-              className="text-blue-500 hover:text-blue-600 py-2 px-4 rounded-lg mt-4 w-full" 
-              onClick={handleCheckout}
+              className="text-white hover:text-blue-600 py-2 px-4 rounded-lg mt-4 w-full" 
+              onClick={handleVerification}
               >
-                {language === "en" ? "Proceed to Shipping" : "ወደ አገልግሎት ቀጥል"}
+                {language === "en" ? "Verify Payment" : "ክፍያዎትን ያረጋግጡ"}
               </button>
+              {verified ? (
+                  <div className="text-green-600">
+                      {language === "en" ? "VERIFIED" : "ክፍያዎትን ተረጋግጧል"}
+                  </div>
+                  
+                ) : (
+                  <div className="text-red-500">
+                      {language === "en" ? "NOT VERIFIED" : "ክፍያዎት አልተከፈለም"}
+                      
+                  </div>
+                )}
 
             </div>
           </div>
