@@ -216,7 +216,13 @@ const CartPage: React.FC = () => {
                 onClick={handleCheckout}
                 className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full"
               >
-                {language === "en" ? "Checkout" : "ክፍያ"}
+                {language === "en" ? "Checkout" : "ወደ ክፍያ"}
+              </button>
+              <button 
+              className="text-blue-500 hover:text-blue-600 py-2 px-4 rounded-lg mt-4 w-full" 
+              onClick={handleCheckout}
+              >
+                {language === "en" ? "Proceed to Shipping" : "ወደ አገልግሎት ቀጥል"}
               </button>
 
             </div>

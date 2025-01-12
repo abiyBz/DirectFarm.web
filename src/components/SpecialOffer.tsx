@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "../Context/LanguageContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useCart } from '../Context/CartContext';
 
 interface Product {
   id: string;
@@ -22,6 +23,7 @@ const LatestProductsPage: React.FC = () => {
   const [latestProducts, setLatestProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchLatestProducts = async () => {
@@ -69,12 +71,12 @@ const LatestProductsPage: React.FC = () => {
   return (
     <div className="px-6 py-12 bg-gray-100">
       <h1 className="text-3xl font-semibold mb-8">{language === "en" ? "Latest Products" : "አዳዲስ ምርቶች"}</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {latestProducts.map((product) => (
-          <div key={product.id} className="group relative rounded-md block overflow-hidden">
-            <Link to={`/product/${product.id}`}>
+          <div key={product.id} className="relative bg-white shadow-md rounded-lg overflow-hidden group hover:shadow-lg transition-shadow">
+            <Link to={`/product/${product.id}`} className="block overflow-hidden">
               <img
-                className="h-32 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-36"
+                className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-110"
                 src={product.image || 'path/to/placeholder/image.png'}
                 alt={product.name}
               />
@@ -85,23 +87,31 @@ const LatestProductsPage: React.FC = () => {
               ) : (
                 <span className="whitespace-nowrap bg-yellow-400 px-2 py-1 text-xs font-medium"> አዳዲስ </span>
               )}
-              <h3 className="mt-2 text-lg font-medium text-gray-900">
+              <h3 className="mt-2 font-semibold text-gray-900 text-lg leading-tight">
                 {language === "en" ? product.name : product.nameAmharic}
               </h3>
-              <p className="mt-1 text-sm text-gray-700">Br. {product.pricePerUnit.toFixed(2)}</p>
-              <Link
-                to={`/product/${product.id}`}
-                className="block w-full mt-2 text-center bg-green-500 text-white rounded p-2 font-medium transition hover:scale-105"
-              >
-                {language === "en" ? "View Details" : "ዝርዝር አሳይ"}
-              </Link>
+              <p className="mt-1 text-green-600 font-bold text-sm">Br. {product.pricePerUnit.toFixed(2)}</p>
+              <button
+                className="mt-3 w-full bg-green-700 text-white outline hover:bg-white hover:text-green-700 text-sm font-medium py-2 rounded transition transform hover:scale-105"
+                onClick={(e) => {
+                  e.preventDefault();
+                  addToCart({
+                    ...product,
+                    price: product.pricePerUnit,
+                    quantity: 1,
+                    image: product.image || 'path/to/placeholder/image.png',
+            });
+          }}
+        >
+          {language === "en" ? "Add to Cart" : "ወደ ጋሪ አክል"}
+        </button>
             </div>
           </div>
           
         ))}
       </div>
       <div className="flex justify-center items-center">
-      <Link to="/all-products"><button className="flex mt-5 text-center bg-green-500 text-white rounded p-4 font-medium transition hover:scale-105">
+      <Link to="/all-products"><button className="flex mt-5 text-center bg-green-700 text-white outline hover:bg-white hover:text-green-500 rounded p-4 font-medium transition hover:scale-105">
         {language === "en"
                    ? "View All Products"
                    : "ሁሉንም ምርቶች ይመልከቱ"}</button></Link>

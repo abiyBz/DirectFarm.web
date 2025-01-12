@@ -164,72 +164,82 @@ const AllProductsPage: React.FC = () => {
   <div className="w-4 md:w-6 lg:w-8"></div>
 
   {/* Products Grid */}
-  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-6 gap-3">
-    {filteredProducts.map((product) => (
-      <div key={product.id} className="group relative block overflow-hidden">
-        <Link to={`/product/${product.id}`}>
-          <img 
-            className="h-32 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-36" 
-            src={product.image || 'path/to/placeholder/image.png'} 
-            alt={product.name} 
-          />
-        </Link>
+  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+  {filteredProducts.map((product) => (
+    <div
+      key={product.id}
+      className="relative bg-white shadow-md rounded-lg overflow-hidden group hover:shadow-lg transition-shadow"
+    >
+      {/* Product Image */}
+      <Link to={`/product/${product.id}`} className="block overflow-hidden">
+        <img
+          className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-110"
+          src={product.image || 'path/to/placeholder/image.png'}
+          alt={product.name}
+        />
+      </Link>
 
-        <button
-          className="absolute end-4 top-4 z-10 rounded-full bg-white p-1 text-gray-900 transition hover:text-gray-900/75"
+      {/* Wishlist Button */}
+      <button
+        className="absolute top-3 right-3 bg-white rounded-full p-2 text-gray-500 hover:text-gray-800 transition"
+      >
+        <span className="sr-only">Add to Wishlist</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-5 h-5"
         >
-          <span className="sr-only">Wishlist</span>
+          <path d="M20.8 4.6c-1.3-1.5-3.4-1.6-5 0L12 8.4l-3.8-3.8c-1.6-1.6-3.8-1.5-5 0-1.3 1.5-1.4 3.8 0 5.2l9 9 9-9c1.4-1.5 1.3-3.7 0-5.2z" />
+        </svg>
+      </button>
 
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            className="size-3"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-            />
-          </svg>
+      {/* Product Details */}
+      <div className="p-4">
+        {/* Badge */}
+        {language === "en" ? (
+          <span className="text-xs font-semibold bg-yellow-300 text-yellow-800 px-2 py-1 rounded-full">
+            New
+          </span>
+        ) : (
+          <span className="text-xs font-semibold bg-yellow-300 text-yellow-800 px-2 py-1 rounded-full">
+            አዳዲስ
+          </span>
+        )}
+
+        {/* Product Name */}
+        <h3 className="mt-2 font-semibold text-gray-900 text-lg leading-tight">
+          {language === "en" ? product.name : product.nameAmharic}
+        </h3>
+
+        {/* Price */}
+        <p className="mt-1 text-green-600 font-bold text-sm">
+          Br. {product.pricePerUnit.toFixed(2)}
+        </p>
+
+        {/* Add to Cart Button */}
+        <button
+          className="mt-3 w-full bg-green-500 hover:bg-green-600 text-white text-sm font-medium py-2 rounded transition transform hover:scale-105"
+          onClick={(e) => {
+            e.preventDefault();
+            addToCart({
+              ...product,
+              price: product.pricePerUnit,
+              quantity: 1,
+              image: product.image || 'path/to/placeholder/image.png',
+            });
+          }}
+        >
+          {language === "en" ? "Add to Cart" : "ወደ ጋሪ አክል"}
         </button>
-
-        <div className="relative border border-gray-100 bg-white p-3">
-          {language === "en" && (
-            <span className="whitespace-nowrap bg-yellow-400 px-2 py-1 text-xs font-medium"> New </span>
-          )}
-          {language !== "en" && (
-            <span className="whitespace-nowrap bg-yellow-400 px-2 py-1 text-xs font-medium"> አዳዲስ </span>
-          )}
-
-          <h3 className="mt-2 text-lg font-medium text-gray-900">
-            {language === "en" ? product.name : product.nameAmharic}
-          </h3>
-
-          <p className="mt-1 text-sm text-gray-700">Br. {product.pricePerUnit.toFixed(2)}</p>
-
-          <form className="mt-2">
-            <button
-              className="block w-full rounded bg-green-500 p-2 text-sm font-medium transition hover:scale-105 text-white"
-              onClick={(e) => {
-                e.preventDefault(); 
-                addToCart({ 
-                  ...product, 
-                  price: product.pricePerUnit, 
-                  quantity: 1, 
-                  image: product.image || 'path/to/placeholder/image.png' 
-                });
-              }}
-            >
-              {language === "en" ? "Add to Cart" : "ወደ ጋሪ አክል"}
-            </button>
-          </form>
-        </div>
       </div>
-    ))}
-  </div>
+    </div>
+  ))}
+</div>
 </div>
 
 

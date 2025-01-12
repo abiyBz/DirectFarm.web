@@ -5,7 +5,7 @@ const Newsletter: React.FC = () => {
   const { language } = useLanguage();
 
   return (
-    <section className="bg-gray-100 py-10 px-5 md:px-20 text-center">
+    <section className="bg-gray-100 py-5 px-5 md:px-20 text-center">
       <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800">
         {language === "en"
           ? "Subscribe to receive Latest Offers & Updates"

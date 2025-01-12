@@ -78,8 +78,7 @@ const Header: React.FC = () => {
                 />
                 <Link to="/" >
       <p className="font-semibold text-green-500">DIRECT FARM</p>
-    </Link> 
-                
+    </Link>
                 <div style={{ position: 'relative', left: '30px' }}>
                   <input 
                     className="rounded-3xl py-3 px-3 outline-none text-xs w-[350px] pr-10 hidden lg:block md:block bg-gray-100 text-green-900" 

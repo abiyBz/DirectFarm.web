@@ -4,7 +4,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import HomePage from "../pages/HomePage/HomePage";
 import "./MainLayout.css";
-
 import LoginPage from "../pages/LoginPage/LogInPage";
 import SignUpPage from "../pages/SignUp/SignUp";
 import Features from "../components/Features";
@@ -31,15 +30,12 @@ const MainLayout: React.FC = () => {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/all-products" element={<AllProductsPage />} />
-          
           <Route path="/minicart" element={<MiniCart />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/productForm" element={<ProductForm />} />
           <Route path="/profilepage" element={<ProfilePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          
-          
         </Routes>
         <Features />
         <Footer />
