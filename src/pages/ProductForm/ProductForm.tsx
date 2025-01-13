@@ -21,7 +21,9 @@ const categories = [
   { id: "2", en: "Fruits", am: "ፍራፍሬ" },
   { id: "3", en: "Dairy Products", am: "የእንስሳት ምርቶች" },
   { id: "4", en: "Grains", am: "እህል" },
-  { id: "5", en: "Meat", am: "ሥጋ" }
+  { id: "5", en: "Meat", am: "ሥጋ" },
+  { id: "6", en: "Legumes", am: "አተርና አተር ዝርያዎች" },
+  { id: "7", en: "Oilseeds", am: "ዘይት እህል" }
 ];
 
 const ProductForm: React.FC = () => {

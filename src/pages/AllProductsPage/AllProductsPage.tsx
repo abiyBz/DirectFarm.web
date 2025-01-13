@@ -170,7 +170,7 @@ const AllProductsPage: React.FC = () => {
   {filteredProducts.map((product) => (
     <div
       key={product.id}
-      className="relative bg-white shadow-md rounded-lg overflow-hidden group hover:shadow-lg transition-shadow"
+      className="relative bg-white shadow-md rounded-lg overflow-hidden group hover:shadow-lg transition-shadow flex flex-col max-h-fit"
     >
       {/* Product Image */}
       <Link to={`/product/${product.id}`} className="block overflow-hidden">

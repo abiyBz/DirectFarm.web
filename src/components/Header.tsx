@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../Context/LanguageContext";
@@ -12,7 +12,6 @@ const Header: React.FC = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
   const [isOpen, setIsOpen] = useState(false); // State for managing mobile menu visibility
   const [products, setProducts] = useState<any[]>([]); // State for products
   const [searchTerm, setSearchTerm] = useState(''); // State for search input
@@ -61,20 +60,30 @@ const Header: React.FC = () => {
     setIsOpen(!isOpen); // Toggle mobile menu
   };
 
+  // Debounce search term updates
+  const debounceSearch = useCallback(
+    (input: string) => {
+      const timer = setTimeout(() => {
+        if (input) {
+          const results = products.filter((product) =>
+            product.nameAmharic.toLowerCase().includes(input.toLowerCase()) ||
+            product.name.toLowerCase().includes(input.toLowerCase())
+          );
+          setFilteredProducts(results);
+        } else {
+          setFilteredProducts([]);
+        }
+      }, 300); // 300ms debounce delay
+      return () => clearTimeout(timer);
+    },
+    [products]
+  );
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    
-    // Filter products based on the search term
-    if (event.target.value) {
-      const results = products.filter(product =>
-        product.nameAmharic.toLowerCase().includes(event.target.value) || 
-        product.name.toLowerCase().includes(event.target.value)
-      );
-      setFilteredProducts(results);
-    } else {
-      setFilteredProducts([]);
-    }
+    debounceSearch(event.target.value);
   };
+
 
   return (
     <header className="shadow-md bg-white z-50 w-full top-0">
@@ -237,3 +246,205 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState, useRef, useCallback } from "react";
+// import { useSelector, useDispatch } from "react-redux";
+// import { Link, useNavigate } from "react-router-dom";
+// import { useLanguage } from "../Context/LanguageContext";
+// import MiniCart from "./MiniCart";
+// import { logout, loginSuccess } from "../redux/authSlice";
+// import { RootState } from "../redux/store";
+// import { CiUser } from "react-icons/ci";
+
+// const Header: React.FC = () => {
+//   const { language, setLanguage } = useLanguage();
+//   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const [isOpen, setIsOpen] = useState(false); // Mobile menu state
+//   const [products, setProducts] = useState<any[]>([]); // All products
+//   const [searchTerm, setSearchTerm] = useState(''); // Search input
+//   const [filteredProducts, setFilteredProducts] = useState<any[]>([]); // Filtered results
+//   const dropdownRef = useRef<HTMLDivElement>(null);
+
+//   // Load products from session storage once
+//   useEffect(() => {
+//     const storedProducts = sessionStorage.getItem('products');
+//     setProducts(storedProducts ? JSON.parse(storedProducts) : []);
+//   }, []);
+
+//   // Persist login state if token exists
+//   useEffect(() => {
+//     const token = localStorage.getItem('authToken');
+//     if (token) dispatch(loginSuccess(token));
+//   }, [dispatch]);
+
+//   // Close dropdown when clicking outside
+//   useEffect(() => {
+//     const handleClickOutside = (event: MouseEvent) => {
+//       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+//         setFilteredProducts([]);
+//       }
+//     };
+//     document.addEventListener('mousedown', handleClickOutside);
+//     return () => {
+//       document.removeEventListener('mousedown', handleClickOutside);
+//     };
+//   }, []);
+
+//   // Debounce search term updates
+//   const debounceSearch = useCallback(
+//     (input: string) => {
+//       const timer = setTimeout(() => {
+//         if (input) {
+//           const results = products.filter((product) =>
+//             product.nameAmharic.toLowerCase().includes(input.toLowerCase()) ||
+//             product.name.toLowerCase().includes(input.toLowerCase())
+//           );
+//           setFilteredProducts(results);
+//         } else {
+//           setFilteredProducts([]);
+//         }
+//       }, 300); // 300ms debounce delay
+//       return () => clearTimeout(timer);
+//     },
+//     [products]
+//   );
+
+//   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     setSearchTerm(event.target.value);
+//     debounceSearch(event.target.value);
+//   };
+
+//   const handleLogout = () => {
+//     localStorage.removeItem('authToken');
+//     dispatch(logout());
+//     navigate("/");
+//   };
+
+//   const toggleMenu = () => setIsOpen(!isOpen);
+
+//   return (
+//     <header className="shadow-md bg-white z-50 w-full top-0">
+//       {/* Top Bar */}
+//       <div className="bg-black text-white text-sm py-2 pl-96 pr-4 flex items-center justify-between">
+//         {!isLoggedIn && (
+//           <div>
+//             <span>
+//               {language === "en"
+//                 ? "Up to 20% Discount for new customers, "
+//                 : "ለአዳዲስ ደንበኞች እስከ 20% ቅናሽ"}
+//             </span>
+//             <Link to="/signup" className="underline hover:text-yellow-300">
+//               {language === "en"
+//                 ? " Sign Up Now to Redeem!"
+//                 : " ለመውሰድ አሁን ይመዝገቡ"}
+//             </Link>
+//           </div>
+//         )}
+
+//         <select
+//           className="bg-white text-black rounded-md px-2 py-1 border border-gray-300"
+//           value={language}
+//           onChange={(e) => setLanguage(e.target.value as "en" | "am")}
+//         >
+//           <option value="en">English</option>
+//           <option value="am">አማርኛ (Amharic)</option>
+//         </select>
+//       </div>
+
+//       {/* Search Bar */}
+//       <div style={{ position: "relative", left: "30px" }}>
+//         <input
+//           className="rounded-3xl py-3 px-3 outline-none text-xs w-[350px] pr-10 hidden lg:block md:block bg-gray-100 text-green-900"
+//           placeholder="Search for Grocery, Stores, Vegetable, or Meat"
+//           value={searchTerm}
+//           onChange={handleSearchChange}
+//         />
+//         <svg
+//           xmlns="http://www.w3.org/2000/svg"
+//           fill="none"
+//           viewBox="0 0 24 24"
+//           strokeWidth="1.5"
+//           stroke="currentColor"
+//           className="w-5 h-5 text-green-900 absolute right-3 top-1/2 transform -translate-y-1/2 hidden lg:block md:block"
+//         >
+//           <path
+//             strokeLinecap="round"
+//             strokeLinejoin="round"
+//             d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+//           />
+//         </svg>
+
+//         {/* Dropdown for search results */}
+//         {filteredProducts.length > 0 && (
+//           <div
+//             ref={dropdownRef}
+//             className="absolute z-10 w-[350px] bg-white border border-gray-300 rounded-md mt-2 shadow-lg"
+//           >
+//             {filteredProducts.map((product) => (
+//               <Link
+//                 key={product.id}
+//                 to={`/product/${product.id}`}
+//                 className="flex items-center py-4 px-8 hover:bg-gray-100 cursor-pointer block"
+//               >
+//                 <img
+//                   src={product.image}
+//                   alt={product.name}
+//                   className="w-8 h-8 mr-2 object-cover"
+//                 />
+//                 <span className="text-black">
+//                   {product.nameAmharic}/{product.name}
+//                 </span>
+//               </Link>
+//             ))}
+//           </div>
+//         )}
+//       </div>
+//     </header>
+//   );
+// };
+
+// export default Header;
