@@ -14,7 +14,7 @@ const CartPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const [verified, setVerified] = useState(null);
+  const [verified, setVerified] = useState<string | null>(null);
   const [urlSent, setUrlSent] = useState<boolean>(false);
   
   const [newOrder, setNewOrder] = useState<string | null>(null);

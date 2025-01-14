@@ -126,6 +126,7 @@ const ProfilePage: React.FC = () => {
                   <th className="border p-2 text-left">{language === "en" ? "Date" : "ቀን"}</th>
                   <th className="border p-2 text-left">{language === "en" ? "Status" : "አሁናዊ ሁኔታ"}</th>
                   <th className="border p-2 text-left">{language === "en" ? "Total Amount" : "ጠቅላላ ድምር"}</th>
+                  
                 </tr>
               </thead>
               <tbody>
@@ -150,6 +151,7 @@ const ProfilePage: React.FC = () => {
                         </span>
                       </td>
                       <td className="border p-2">Br {order.totalAmount.toFixed(2)}</td>
+                      
                     </tr>
                   ))
                 ) : (
