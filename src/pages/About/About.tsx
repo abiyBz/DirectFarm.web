@@ -32,22 +32,29 @@ const About: React.FC = () => {
       {/* Team Section */}
       <div className="container mx-auto mt-12 text-center">
         <h2 className="text-3xl font-bold mb-6 text-gray-600">Meet Our Team</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Team Member */}
           <div className="bg-white shadow-md rounded-lg p-4">
-            <img src="../../assets/DALL·E 2024-12-25 00.14.06 - A realistic image of fresh, ripe apples arranged in a wooden basket with a farm-themed background. The apples are vibrant red with natural shine, surr.webp" alt="Abiy Bezuneh" className="rounded-full w-32 h-32 object-cover content-around" />
-            <h3 className="text-xl font-semibold text-gray-600">Abiy Bezuneh</h3>
+            <img src="../../assets/IMG_0268.PNG" alt="Yonatan Teshome" className="rounded-full w-32 h-32 object-cover content-around" />
+            <h3 className="text-xl font-semibold text-gray-600">Yonatan Teshome</h3>
+            <p className="text-gray-600">Chief Executive Officer</p>
             <p className="text-gray-600">CEO</p>
-            
           </div>
           <div className="bg-white shadow-md rounded-lg p-4">
-          <img src="../../assets/DALL·E 2024-12-25 00.14.06 - A realistic image of fresh, ripe apples arranged in a wooden basket with a farm-themed background. The apples are vibrant red with natural shine, surr.webp" alt="Abiy Bezuneh" className="rounded-full w-32 h-32 object-cover content-around" />
+            <img src="../../assets/image.jpeg" alt="Abiy Bezuneh" className="rounded-full w-32 h-32 object-cover content-around" />
+            <h3 className="text-xl font-semibold text-gray-600">Abiy Bezuneh</h3>
+            <p className="text-gray-600">Chief Corporate Service Officer</p>
+            <p className="text-gray-600">CCSO</p>
+          </div>
+          <div className="bg-white shadow-md rounded-lg p-4">
+          <img src="../../assets/image.jpeg" alt="Nebyou Yohannes" className="rounded-full w-32 h-32 object-cover content-around" />
             <h3 className="text-xl font-semibold text-gray-600">Nebyou Yohannes</h3>
+            <p className="text-gray-600">Chief Technologies Officer</p>
             <p className="text-gray-600">CTO</p>
           </div>
           <div className="bg-white shadow-md rounded-lg p-4">
-          <img src="../../assets/DALL·E 2024-12-25 00.14.06 - A realistic image of fresh, ripe apples arranged in a wooden basket with a farm-themed background. The apples are vibrant red with natural shine, surr.webp" alt="Abiy Bezuneh" className="rounded-full w-32 h-32 object-cover content-around" />
-            <h3 className="text-xl font-semibold text-gray-600">Soliyana Abreham</h3>
+          <img src="../../assets/1.jpg" alt="Soliyana Abraham" className="rounded-full w-32 h-32 object-cover content-around" />
+            <h3 className="text-xl font-semibold text-gray-600">Soliyana Abraham</h3>
             <p className="text-gray-600">Head of Marketing</p>
           </div>
         </div>

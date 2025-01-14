@@ -11,25 +11,19 @@ import WarehouseReport from "./WarehouseReport";
 
 const WarehouseLayout: React.FC = () => {
     return (
- 
           <div style={{display:"flex", flexDirection: "column"}}>
-          
-
           <div className="parent-container">
           <WareSide/>
           <Routes>
-
             <Route path="/" element={<WareDashboard />} /> 
             <Route path="/Inventory" element={<Inventory />} />
             <Route path="/delivery" element={<Delivery />} />
             <Route path="/registerfarmer" element={<FarmerRegistration />} />
             <Route path="/warehousereport" element={<WarehouseReport />} />
           </Routes>
-        
           </div>
           </div>
-
-            );
-          };
+  );
+};
           
-          export default WarehouseLayout;
+export default WarehouseLayout;

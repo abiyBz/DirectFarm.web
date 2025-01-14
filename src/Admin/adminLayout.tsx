@@ -25,7 +25,6 @@ const AdminLayout: React.FC = () => {
           </Routes>
           </div>
           </div>
-
             );
           };
           

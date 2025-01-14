@@ -6,6 +6,14 @@ const Sidebar: React.FC = () => {
   return (
     <div className="bg-green-950 text-white w-64 min-h-screen p-6">
       {/* Sidebar Header */}
+      <img 
+                        src="../logo-bg-removed.png" 
+                        alt="Logo" 
+                        className="w-12 h-12 object-contain"
+                      />
+                      <Link to="/">
+                        <p className="font-semibold text-green-500">DIRECT FARM</p>
+                      </Link>
       <h2 className="text-2xl font-bold mb-8">DirectFarm Warehouse</h2>
 
       {/* Sidebar Links */}
