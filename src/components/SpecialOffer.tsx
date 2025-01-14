@@ -70,7 +70,7 @@ const LatestProductsPage: React.FC = () => {
 
   return (
     <div className="px-6 py-12 bg-gray-100">
-      <h1 className="text-3xl font-semibold mb-8">{language === "en" ? "Latest Products" : "አዳዲስ ምርቶች"}</h1>
+      <h1 className="text-4xl font-semibold mb-8">{language === "en" ? "Latest Products" : "አዳዲስ ምርቶች"}</h1>
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {latestProducts.map((product) => (
           <div key={product.id} className="relative bg-white shadow-md rounded-lg overflow-hidden group hover:shadow-lg transition-shadow">
