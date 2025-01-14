@@ -14,7 +14,8 @@ const CartPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const [verified, setVerified] = useState<boolean>(false);
+  const [verified, setVerified] = useState(null);
+  const [urlSent, setUrlSent] = useState<boolean>(false);
   
   const [newOrder, setNewOrder] = useState<string | null>(null);
 
@@ -78,7 +79,7 @@ const CartPage: React.FC = () => {
             // Step 2: Initialize payment and get payment URL
             const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderId });
             const url = paymentResponse.data.data;
-
+            setUrlSent(true);
             // Step 3: Open the payment URL in a new tab
             window.open(url, "_blank");
 
@@ -100,7 +101,7 @@ const handleVerification = async () => {
       // Step 4: Verify payment using the stored order ID
       const verificationResponse = await axios.post(`http://localhost:5122/api/Order/VerifyPayment`, { id: newOrder });
       if(verificationResponse.data.data)
-      setVerified(true);
+      setVerified('verified');
       setNewOrder('')
       // Handle verification response as needed (e.g., update UI or notify user)
 
@@ -226,24 +227,30 @@ const handleVerification = async () => {
               >
                 {language === "en" ? "Checkout" : "ወደ ክፍያ"}
               </button>
+
+              {urlSent ? (
+                
               <button 
               className="text-white hover:text-blue-600 py-2 px-4 rounded-lg mt-4 w-full" 
               onClick={handleVerification}
               >
                 {language === "en" ? "Verify Payment" : "ክፍያዎትን ያረጋግጡ"}
               </button>
-              {verified ? (
-                  <div className="text-green-600">
-                      {language === "en" ? "VERIFIED" : "ክፍያዎትን ተረጋግጧል"}
-                  </div>
-                  
+              ): (
+                <p></p>
+              )}
+              {verified === null ? null : (
+                verified === "verified" ? (
+                    <div className="text-green-600">
+                        {language === "en" ? "VERIFIED" : "ክፍያዎትን ተረጋግጧል"}
+                    </div>
                 ) : (
-                  <div className="text-red-500">
-                      {language === "en" ? "NOT VERIFIED" : "ክፍያዎት አልተከፈለም"}
-                      
-                  </div>
-                )}
-
+                    <div className="text-red-500">
+                        {language === "en" ? "NOT VERIFIED" : "ክፍያዎት አልተከፈለም"}
+                    </div>
+                )
+            )}
+              
             </div>
           </div>
 
