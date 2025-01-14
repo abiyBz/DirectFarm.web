@@ -1,37 +1,39 @@
 import React from 'react';
+import { useLanguage } from "../../Context/LanguageContext";
 
 const About: React.FC = () => {
+  const { language } = useLanguage();
   return (
     <div className="bg-gray-100 min-h-screen p-8">
       <div className="container mx-auto text-center py-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">About Us</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Welcome to our company! We are committed to providing top-quality products and exceptional customer service. 
-          Our mission is to create value for our customers through innovation, integrity, and professionalism.
-        </p>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">{language === "en" ? "About Us" : "ስለ እኛ"}</h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">{language === "en" ? "Welcome to our company!" : "ወደ ኩባንያችን እንኳን በደህና መጡ!"}</p>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">{language === "en" ? "We are committed to providing top-quality products and exceptional customer service." : "ከፍተኛ ጥራት ያላቸውን ምርቶች እና ልዩ የደንበኞች አገልግሎት ለማቅረብ ቁርጠኞች ነን።"} </p>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">{language === "en" ? "Our mission is to create value for our customers through innovation, integrity, and professionalism." : "የእኛ ተልእኮ ለደንበኞቻችን በፈጠራ፣ በታማኝነት እና በሙያተኛነት እሴት መፍጠር ነው።"}</p>
       </div>
       
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
         {/* Our Mission */}
         <div className="p-6 bg-white shadow-md rounded-lg">
-          <h2 className="text-2xl font-bold mb-2 text-gray-600">Our Mission</h2>
+          <h2 className="text-2xl font-bold mb-2 text-gray-600">{language === "en" ? "Our Mission" : "ተልዕኮ"}</h2>
           <p className="text-gray-600">
-            Our mission is to deliver outstanding value to our customers by offering high-quality products and services that improve their lives.
+          {language === "en" ? "Our mission is to deliver outstanding value to our customers by offering high-quality products and services that improve their lives." : "የእኛ ተልእኮ ህይወታቸውን የሚያሻሽሉ ምርቶችን እና አገልግሎቶችን ከፍተኛ ጥራት ያላቸውን ምርቶች በማቅረብ ለደንበኞቻችን የላቀ ዋጋ መስጠት ነው።"}
           </p>
         </div>
 
         {/* Our Vision */}
         <div className="p-6 bg-white shadow-md rounded-lg">
-          <h2 className="text-2xl font-bold mb-2 text-gray-600">Our Vision</h2>
+          <h2 className="text-2xl font-bold mb-2 text-gray-600">{language === "en" ? "Our Vision" : "ራዕይ"}</h2>
           <p className="text-gray-600">
-            To be a globally recognized brand known for innovation, sustainability, and customer satisfaction.
+          {language === "en" ? "To be a globally recognized brand known for innovation, sustainability, and customer satisfaction." : "በፈጠራ፣ በዘላቂነት እና በደንበኛ እርካታ የሚታወቅ በአለም አቀፍ ደረጃ የሚታወቅ የምርት ስም ለመሆን።"}
           </p>
         </div>
       </div>
 
       {/* Team Section */}
       <div className="container mx-auto mt-12 text-center">
-        <h2 className="text-3xl font-bold mb-6 text-gray-600">Meet Our Team</h2>
+
+        <h2 className="text-3xl font-bold mb-6 text-gray-600">{language === "en" ? "Meet Our Team" : "ቡድናችንን ይመልከቱ"}</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Team Member */}
           <div className="bg-white shadow-md rounded-lg p-4">
