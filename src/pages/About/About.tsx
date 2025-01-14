@@ -32,6 +32,7 @@ const About: React.FC = () => {
 
       {/* Team Section */}
       <div className="container mx-auto mt-12 text-center">
+
         <h2 className="text-3xl font-bold mb-6 text-gray-600">{language === "en" ? "Meet Our Team" : "ቡድናችንን ይመልከቱ"}</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Team Member */}

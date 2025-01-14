@@ -93,7 +93,7 @@ const ProductPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-10">
-  <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg flex flex-col lg:flex-row gap-10">
+  <div className="max-w-7xl mx-36 p-6 bg-white shadow-lg rounded-lg flex flex-col lg:flex-row gap-10">
     {/* Product Image */}
     <div className="lg:w-1/2 flex items-center justify-center">
       <div className="relative w-full h-96 max-w-lg bg-gray-100 rounded-lg overflow-hidden shadow-sm">
@@ -123,6 +123,7 @@ const ProductPage = () => {
           <p className="text-lg text-gray-600">Price:</p>
           <p className="text-2xl font-bold text-gray-900">Br {product.pricePerUnit}</p>
         </div>
+        <div className="w-12 md:w-14 lg:w-16"></div>
         <div>
           <p className="text-lg text-gray-600">Unit:</p>
           <p className="text-xl font-semibold text-gray-800">{product.unit}</p>
@@ -137,8 +138,7 @@ const ProductPage = () => {
             {product.status}
           </p>
         </div>
-        <div>
-        </div>
+        <div className="w-12 md:w-14 lg:w-16"></div>
         <div>
           <p className="text-lg text-gray-600">Category:</p>
           <p className="text-xl font-semibold text-gray-800">{product.category}</p>

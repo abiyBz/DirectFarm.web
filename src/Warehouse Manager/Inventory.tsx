@@ -8,7 +8,7 @@ interface Product {
   price: number;
 }
 
-const WarehouseManagerPage: React.FC = () => {
+const Inventory: React.FC = () => {
   // State to store product details
   const [productName, setProductName] = useState<string>("");
   const [productDescription, setProductDescription] = useState<string>("");
@@ -39,11 +39,11 @@ const WarehouseManagerPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
+    <div className="max-w-6xl mx-auto p-8 text-black">
       <h1 className="text-3xl font-bold mb-6">Warehouse Manager - Add Product</h1>
 
       {/* Form to add a new product */}
-      <form onSubmit={handleAddProduct} className="space-y-6">
+      <form onSubmit={handleAddProduct} className="space-y-6 mb-8">
         <div>
           <label htmlFor="name" className="block text-lg font-semibold">Product Name:</label>
           <input
@@ -102,26 +102,29 @@ const WarehouseManagerPage: React.FC = () => {
         </button>
       </form>
 
-      {/* Display added products */}
-      <h2 className="text-2xl font-semibold mt-8">Products in Warehouse</h2>
+      {/* Inventory Table: Display added products */}
+      <h2 className="text-2xl font-semibold mb-4">Inventory in Warehouse</h2>
       {products.length > 0 ? (
-        <ul className="mt-4 space-y-4">
-          {products.map((product, index) => (
-            <li
-              key={index}
-              className="bg-white shadow-lg p-6 rounded-lg border border-gray-200"
-            >
-              <h3 className="text-xl font-bold">{product.name}</h3>
-              <p className="text-gray-600">{product.description}</p>
-              <p className="text-gray-800 mt-2">
-                <strong>Quantity:</strong> {product.quantity}
-              </p>
-              <p className="text-gray-800">
-                <strong>Price:</strong> ${product.price.toFixed(2)}
-              </p>
-            </li>
-          ))}
-        </ul>
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead className="bg-gray-100 text-left">
+            <tr>
+              <th className="px-4 py-3">Product Name</th>
+              <th className="px-4 py-3">Description</th>
+              <th className="px-4 py-3">Quantity</th>
+              <th className="px-4 py-3">Price ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product, index) => (
+              <tr key={index} className="hover:bg-gray-100">
+                <td className="px-4 py-3">{product.name}</td>
+                <td className="px-4 py-3">{product.description}</td>
+                <td className="px-4 py-3">{product.quantity}</td>
+                <td className="px-4 py-3">${product.price.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p className="mt-4 text-gray-600">No products added yet.</p>
       )}
@@ -129,4 +132,4 @@ const WarehouseManagerPage: React.FC = () => {
   );
 };
 
-export default WarehouseManagerPage;
+export default Inventory;

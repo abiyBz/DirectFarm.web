@@ -1,24 +1,6 @@
-// import React from "react";
-// import { Link } from "react-router-dom";
-
-// const Sidebar: React.FC = () => {
-//   return (
-//     <div className="sidebar">
-//       <h2>DirectFarm Admin</h2>
-//       <Link to="/">Dashboard</Link>
-//       <Link to="/manage-users">Manage Users</Link>
-//       <Link to="/transactions">Monitor Transactions</Link>
-//       <Link to="/reports">Generate Reports</Link>
-//       <Link to="/product-listings">Manage Product Listings</Link>
-//       <Link to="/createadmin">Create Admin</Link>
-//     </div>
-//   );
-// };
-
-// export default Sidebar;
-
 import React from "react";
 import { Link } from "react-router-dom";
+import "./Warehouse.css"
 
 const Sidebar: React.FC = () => {
   return (
@@ -32,63 +14,54 @@ const Sidebar: React.FC = () => {
                       <Link to="/">
                         <p className="font-semibold text-green-500">DIRECT FARM</p>
                       </Link>
-      <h2 className="text-2xl font-bold mb-8">DirectFarm Admin</h2>
+      <h2 className="text-2xl font-bold mb-8">DirectFarm Warehouse</h2>
 
       {/* Sidebar Links */}
       <ul className="space-y-6">
         {/* Dashboard Link */}
         <li>
           <Link
-            to="/"
+            to="/waredashboard"
             className="text-lg text-gray-300 hover:text-white transition duration-200"
           >
             Dashboard
           </Link>
         </li>
-        {/* manage users Link */}
+        {/* Inventory Management Link */}
         <li>
           <Link
-            to="/manage-users"
+            to="/inventory"
             className="text-lg text-gray-300 hover:text-white transition duration-200"
           >
-            Manage Users
+            Product Listings
           </Link>
         </li>
         <li>
-        {/* transactions */}
+        {/* Farmer registraion */}
           <Link
-            to="/transactions"
+            to="/registerfarmer"
             className="text-lg text-gray-300 hover:text-white transition duration-200"
           >
-            Monitor Transactions
+            Farmer Registration
           </Link>
         </li>
 
-        {/* Product Listings Link */}
+        {/* Deliveries Link */}
         <li>
           <Link
-            to="/product-listings"
+            to="/delivery"
             className="text-lg text-gray-300 hover:text-white transition duration-200"
           >
-            Manage Product Listings
+            Deliveries
           </Link>
         </li>
-        {/* Admin Reports Link */}
+        {/* Warehouse Reports Link */}
         <li>
           <Link
-            to="/reports"
+            to="/warehouse-reports"
             className="text-lg text-gray-300 hover:text-white transition duration-200"
           >
-            Generate Reports
-          </Link>
-        </li>
-                {/* Create admin Link */}
-                <li>
-          <Link
-            to="/createadmin"
-            className="text-lg text-gray-300 hover:text-white transition duration-200"
-          >
-            Create Admin
+            Warehouse Reports
           </Link>
         </li>
       </ul>
@@ -97,4 +70,3 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
-
