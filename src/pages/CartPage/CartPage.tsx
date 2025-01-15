@@ -157,7 +157,7 @@ const handleVerification = async () => {
                           <span className="font-semibold">{item.name}</span>
                         </div>
                       </td>
-                      <td className="py-4">${item.price.toFixed(2)}</td>
+                      <td className="py-4">Br. {item.price.toFixed(2)}</td>
                       <td className="py-4">
                         <div className="flex items-center">
                           <button
@@ -176,7 +176,7 @@ const handleVerification = async () => {
                           </button>
                         </div>
                       </td>
-                      <td className="py-4">${(item.price * item.quantity).toFixed(2)}</td>
+                      <td className="py-4">Br. {(item.price * item.quantity).toFixed(2)}</td>
                       <td className="py-4 text-center">
                         <button
                           onClick={() => removeFromCart(item.id)} // Existing remove function
@@ -209,7 +209,7 @@ const handleVerification = async () => {
               <div className="flex justify-between mb-2">
                 <span>{language === "en" ? "Subtotal" : "እንደ አጠቃላይ"}:</span>
                 {/* Replace with actual subtotal variable */}
-                <span>${cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</span> 
+                <span>Br. {cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</span> 
               </div>
               {/* Add taxes and shipping cost here */}
               {/* Example Total */}
@@ -217,7 +217,7 @@ const handleVerification = async () => {
               <div className="flex justify-between mb-2">
                 <span className="font-semibold">{language === "en" ? "Total" : "ጠቅላላ"}:</span>
                 {/* Replace with actual total price variable */}
-                <span className="font-semibold">${totalPrice.toFixed(2)}</span> 
+                <span className="font-semibold">Br. {totalPrice.toFixed(2)}</span> 
               </div>
 
               {/* Checkout Button */}

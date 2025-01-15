@@ -106,7 +106,7 @@ const AllProductsPage: React.FC = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen flex justify-between">
   {/* Sidebar for Filters */}
-  <div className="w-3/7 bg-white p-4 border-r border-gray-300 text-black">
+  <div className="rounded w-3/7 max-h-fit bg-white p-4 border-r border-gray-300 text-black">
     <h2 className="text-2xl font-semibold mb-4">{language === "en" ? "Categories" : "ምድቦች"}</h2>
     <div className="space-y-2">
       
@@ -180,39 +180,8 @@ const AllProductsPage: React.FC = () => {
           alt={product.name}
         />
       </Link>
-
-      {/* Wishlist Button */}
-      <button
-        className="absolute top-3 right-3 bg-white rounded-full p-2 text-gray-500 hover:text-gray-800 transition"
-      >
-        <span className="sr-only">Add to Wishlist</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5"
-        >
-          <path d="M20.8 4.6c-1.3-1.5-3.4-1.6-5 0L12 8.4l-3.8-3.8c-1.6-1.6-3.8-1.5-5 0-1.3 1.5-1.4 3.8 0 5.2l9 9 9-9c1.4-1.5 1.3-3.7 0-5.2z" />
-        </svg>
-      </button>
-
       {/* Product Details */}
       <div className="p-4">
-        {/* Badge */}
-        {language === "en" ? (
-          <span className="text-xs font-semibold bg-yellow-300 text-yellow-800 px-2 py-1 rounded-full">
-            New
-          </span>
-        ) : (
-          <span className="text-xs font-semibold bg-yellow-300 text-yellow-800 px-2 py-1 rounded-full">
-            አዳዲስ
-          </span>
-        )}
-
         {/* Product Name */}
         <h3 className="mt-2 font-semibold text-gray-900 text-lg leading-tight">
           {language === "en" ? product.name : product.nameAmharic}
