@@ -7,6 +7,7 @@ import { logout, loginSuccess } from '../redux/authSlice';
 import { RootState } from '../redux/store';
 import { CiUser } from "react-icons/ci";
 
+
 const Header: React.FC = () => {
   const { language, setLanguage } = useLanguage();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
@@ -24,6 +25,9 @@ const Header: React.FC = () => {
     const products = storedProducts ? JSON.parse(storedProducts) : [];
     setProducts(products);
   }, []);
+
+   const { items, status, error } = useSelector((state: RootState) => state.products);
+
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -64,19 +68,17 @@ const Header: React.FC = () => {
   const debounceSearch = useCallback(
     (input: string) => {
       const timer = setTimeout(() => {
-        if (input) {
-          const results = products.filter((product) =>
+        if (items) {
+          const results = items.filter((product) =>
             product.nameAmharic.toLowerCase().includes(input.toLowerCase()) ||
             product.name.toLowerCase().includes(input.toLowerCase())
           );
           setFilteredProducts(results);
-        } else {
-          setFilteredProducts([]);
         }
       }, 300); // 300ms debounce delay
       return () => clearTimeout(timer);
     },
-    [products]
+    [items]
   );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

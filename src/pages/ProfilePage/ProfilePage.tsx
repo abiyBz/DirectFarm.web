@@ -25,7 +25,7 @@ const ProfilePage: React.FC = () => {
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null); // User state to hold customer information
-
+ 
   
 
 
@@ -86,6 +86,9 @@ const ProfilePage: React.FC = () => {
     fetchOrders();
   }, [user]); // Dependency array includes user to refetch orders when it changes
 
+
+  
+
   return (
     <div className="bg-gray-100 min-h-screen p-6 text-gray-800">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
@@ -126,6 +129,7 @@ const ProfilePage: React.FC = () => {
                   <th className="border p-2 text-left">{language === "en" ? "Date" : "ቀን"}</th>
                   <th className="border p-2 text-left">{language === "en" ? "Status" : "አሁናዊ ሁኔታ"}</th>
                   <th className="border p-2 text-left">{language === "en" ? "Total Amount" : "ጠቅላላ ድምር"}</th>
+                  
                   
                 </tr>
               </thead>
