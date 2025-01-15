@@ -17,13 +17,13 @@ interface Product {
 
 // Define the categories structure
 const categories = [
-  { id: "1", en: "Vegetables", am: "አትክልት" },
-  { id: "2", en: "Fruits", am: "ፍራፍሬ" },
-  { id: "3", en: "Dairy Products", am: "የእንስሳት ምርቶች" },
-  { id: "4", en: "Grains", am: "እህል" },
-  { id: "5", en: "Meat", am: "ሥጋ" },
-  { id: "6", en: "Legumes", am: "አተርና አተር ዝርያዎች" },
-  { id: "7", en: "Oilseeds", am: "ዘይት እህል" }
+  { en: "Vegetables", am: "አትክልት" },
+  { en: "Fruits", am: "ፍራፍሬ" },
+  { en: "Dairy Products", am: "የእንስሳት ምርቶች" },
+  { en: "Grains", am: "እህል" },
+  { en: "Meat", am: "ሥጋ" },
+  { en: "Legumes", am: "አተርና አተር ዝርያዎች" },
+  { en: "Oilseeds", am: "ዘይት እህል" }
 ];
 
 const ProductForm: React.FC = () => {

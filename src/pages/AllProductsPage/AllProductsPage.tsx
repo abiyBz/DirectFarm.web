@@ -139,7 +139,7 @@ const AllProductsPage: React.FC = () => {
       <input 
         type="range"
         min="0"
-        max="1000"
+        max="5000"
         step="1"
         value={priceRange.min}
         onChange={(e) => handlePriceChange(e, "min")}
@@ -152,7 +152,7 @@ const AllProductsPage: React.FC = () => {
       <input 
         type="range"
         min="0"
-        max="1000"
+        max="5000"
         step="1"
         value={priceRange.max}
         onChange={(e) => handlePriceChange(e, "max")}
