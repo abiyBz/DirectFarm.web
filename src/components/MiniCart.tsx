@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useCart } from '../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { CiShoppingCart } from "react-icons/ci";
+import { useLanguage } from "../Context/LanguageContext";
 
 const MiniCart: React.FC = () => {
+  const { language } = useLanguage();
   const { cart, removeFromCart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -57,7 +59,7 @@ const MiniCart: React.FC = () => {
                     className="w-12 h-12 object-cover rounded-md"
                   />
                   <div className="flex-1 ml-3">
-                    <p className="text-sm font-medium text-gray-800">{item.name}</p>
+                    <p className="text-sm font-medium text-gray-800">{language === "en" ? item.name : item.nameAmharic}{}</p>
                     <p className="text-xs text-gray-500">{item.price} ETB</p>
                   </div>
                   <button
@@ -69,7 +71,7 @@ const MiniCart: React.FC = () => {
                 </div>
               ))
             ) : (
-              <p className="p-4 text-sm text-gray-500">Your cart is empty 🛒</p>
+              <p className="p-4 text-sm text-gray-500">{language === "en" ? "Your cart is empty 🛒" : "ጋሪዎ ባዶ ነው 🛒"}</p>
             )}
           </div>
           <div className="p-4 border-t border-gray-200">

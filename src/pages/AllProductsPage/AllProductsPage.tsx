@@ -258,13 +258,13 @@ const AllProductsPage: React.FC = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen flex justify-between">
   {/* Sidebar for Filters */}
-  <div className="rounded w-3/7 max-h-fit bg-white p-4 border-r border-gray-300 text-black">
+  <div className="rounded w-3/7 max-h-fit w-72 bg-white p-4 border-r border-gray-300 text-black">
     <h2 className="text-2xl font-semibold mb-4">{language === "en" ? "Categories" : "ምድቦች"}</h2>
-    <div className="rounded w-3/7 max-h-fit bg-white p-4 border-r border-gray-300 text-black">
+    <div className="rounded max-h-fit bg-white p-4 border-r border-gray-300 text-black">
   
-  <div className="space-y-2">
-    {categories.length > 0 ? (
-      categories.map((category) => (
+      <div className="space-y-2">
+        {categories.length > 0 ? (
+        categories.map((category) => (
         <div key={category}>
           <label className="flex items-center space-x-2">
             <input 
@@ -276,22 +276,19 @@ const AllProductsPage: React.FC = () => {
             <span>{category}</span>
           </label>
         </div>
-        
-
-      ))
-    ) : (
-      <div>No categories available</div>
-    )}
-           <div>
-        <button 
-          onClick={() => setSelectedCategories([])} 
-          className="w-3/4 text-center py-2 px-4 rounded-md bg-gray-600"
-        >
-          {language === "en" ? "Clear All" : "ሁሉንም አጽዳ"}
-        </button>
+        ))) : (
+        <div>No categories available</div>
+        )}
+        <div>
+          <button 
+            onClick={() => setSelectedCategories([])} 
+            className="w-3/4 text-center py-2 px-4 rounded-md bg-gray-600"
+          >
+            {language === "en" ? "Clear All" : "ሁሉንም አጽዳ"}
+          </button>
+        </div>
       </div>
-  </div>
-</div>
+    </div>
 
 
     <div className="border-t border-gray-700 my-6"></div>

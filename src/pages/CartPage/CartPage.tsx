@@ -133,7 +133,7 @@ const handleVerification = async () => {
       ) : (
         <div className="flex flex-col md:flex-row gap-4">
           <div className="md:w-3/4">
-            <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-4 flow-root">
               <table className="w-full">
                 <thead>
                   <tr>
@@ -154,7 +154,7 @@ const handleVerification = async () => {
                             src={item.image || "https://via.placeholder.com/150"}
                             alt={item.name}
                           />
-                          <span className="font-semibold">{item.name}</span>
+                          <span className="font-semibold">{language === "en" ? item.name : item.nameAmharic}</span>
                         </div>
                       </td>
                       <td className="py-4">Br. {item.price.toFixed(2)}</td>
@@ -193,7 +193,7 @@ const handleVerification = async () => {
               {/* Clear Cart Button */}
               <button
                 onClick={clearCart} // Existing clear function
-                className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md mt-4"
+                className="flex mt-4 bg-red-500 text-white outline hover:bg-white hover:text-red-600 rounded p-4 font-medium transition hover:scale-105 float-right"
               >
                 {language === "en" ? "Clear Cart" : "ጋሪን አጽዳ"}
               </button>
@@ -201,7 +201,7 @@ const handleVerification = async () => {
             </div>
           </div>
 
-          {/* Summary Section */}
+          {/* Summary Section */} 
           <div className="md:w-1/4">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-lg font-semibold mb-4">{language === "en" ? "Summary" : "አጠቃላይ"}</h2>
