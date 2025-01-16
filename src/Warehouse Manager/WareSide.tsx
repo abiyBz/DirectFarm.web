@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
         {/* Dashboard Link */}
         <li>
           <Link
-            to="/waredashboard"
+            to="/"
             className="text-lg text-gray-300 hover:text-white transition duration-200"
           >
             Dashboard
@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
         {/* Warehouse Reports Link */}
         <li>
           <Link
-            to="/warehouse-reports"
+            to="/warehousereport"
             className="text-lg text-gray-300 hover:text-white transition duration-200"
           >
             Warehouse Reports

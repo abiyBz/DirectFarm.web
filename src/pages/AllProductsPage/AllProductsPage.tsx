@@ -161,9 +161,11 @@
 // export default AllProductsPage;
 
 // src/pages/AllProductsPage.tsx
+
+
+
 import React, { useEffect, useState } from "react";
 import { useLanguage } from "../../Context/LanguageContext";
-
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../../redux/productsSlice';
 import ProductCard from '../../components/ProductCard';
@@ -255,8 +257,8 @@ const AllProductsPage: React.FC = () => {
   
   if (status === 'failed') return <div>Error: {error}</div>;
 
-  return (
-    <div className="p-6 bg-gray-100 min-h-screen flex justify-between">
+return (
+  <div className="p-6 bg-gray-100 min-h-screen flex justify-between">
   {/* Sidebar for Filters */}
   <div className="rounded w-3/7 max-h-fit w-72 bg-white p-4 border-r border-gray-300 text-black">
     <h2 className="text-2xl font-semibold mb-4">{language === "en" ? "Categories" : "ምድቦች"}</h2>

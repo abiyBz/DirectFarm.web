@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 const FarmerRegistration: React.FC = () => {
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,7 +15,6 @@ const FarmerRegistration: React.FC = () => {
     phone: "",
     location: "",
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
