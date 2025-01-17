@@ -44,7 +44,7 @@ const MiniCart: React.FC = () => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
           <div className="p-4 border-b border-gray-200">
-            <h4 className="text-lg font-semibold text-gray-800">🛍️ Cart Preview</h4>
+            <h4 className="text-lg font-semibold text-gray-800">{language === "en" ? "🛍️ Cart Preview" : "🛍️ ቅርጫት"}</h4>
           </div>
           <div className="max-h-60 overflow-y-auto divide-y divide-gray-200">
             {cart.length > 0 ? (
@@ -71,7 +71,7 @@ const MiniCart: React.FC = () => {
                 </div>
               ))
             ) : (
-              <p className="p-4 text-sm text-gray-500">{language === "en" ? "Your cart is empty 🛒" : "ጋሪዎ ባዶ ነው 🛒"}</p>
+              <p className="p-4 text-sm text-gray-500">{language === "en" ? "Your cart is empty 🛒" : "ቅርጫትዎ ባዶ ነው 🛒"}</p>
             )}
           </div>
           <div className="p-4 border-t border-gray-200">
@@ -79,7 +79,7 @@ const MiniCart: React.FC = () => {
               onClick={() => navigate('/cart')}
               className="w-full text-center bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md"
             >
-              View Cart
+              {language === "en" ? "View Cart 🛒" : "ቅርጫትዎን ይመልከቱ 🛒"}
             </button>
           </div>
         </div>
