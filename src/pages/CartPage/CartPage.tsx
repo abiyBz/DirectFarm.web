@@ -16,8 +16,9 @@ const CartPage: React.FC = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const [verified, setVerified] = useState<string | null>(null);
   const [urlSent, setUrlSent] = useState<boolean>(false);
-  
   const [newOrder, setNewOrder] = useState<string | null>(null);
+  const [deliveryOption, setDeliveryOption] = useState<string>(''); // State for delivery option
+
 
   const checkoutCart = cart.map(item => ({
     productID: item.id,
@@ -65,30 +66,56 @@ const CartPage: React.FC = () => {
   };
 
   
-  const handleCheckout = async () => {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        navigate("/login");
-    } else {
-        try {
-            // Step 1: Place order and get order ID
-            const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
-            const orderId = saveProductResponse.data.data.id; // Get order ID directly
-            setNewOrder(saveProductResponse.data.data.id); // Store the new order ID
-            console.log(newOrder)
-            // Step 2: Initialize payment and get payment URL
-            const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderId });
-            const url = paymentResponse.data.data;
-            setUrlSent(true);
-            // Step 3: Open the payment URL in a new tab
-            window.open(url, "_blank");
+//   const handleCheckout = async () => {
+//     const token = localStorage.getItem('authToken');
+//     if (!token) {
+//         navigate("/login");
+//     } else {
+//         try {
+//             // Step 1: Place order and get order ID
+//             const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
+//             const orderId = saveProductResponse.data.data.id; // Get order ID directly
+//             setNewOrder(saveProductResponse.data.data.id); // Store the new order ID
+//             console.log(newOrder)
+//             // Step 2: Initialize payment and get payment URL
+//             const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderId });
+//             const url = paymentResponse.data.data;
+//             setUrlSent(true);
+//             // Step 3: Open the payment URL in a new tab
+//             window.open(url, "_blank");
 
-            // Optional: You can also show a message to the user about the payment link
+//             // Optional: You can also show a message to the user about the payment link
 
-        } catch (error) {
-            console.error('Error during checkout:', error);
-        }
-    }
+//         } catch (error) {
+//             console.error('Error during checkout:', error);
+//         }
+//     }
+// };
+
+const handleCheckout = async () => {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+      navigate("/login");
+  } else if (deliveryOption === 'pickup') { // Only proceed if 'pickup' is selected
+      try {
+          // Step 1: Place order and get order ID
+          const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
+          const orderId = saveProductResponse.data.data.id; // Get order ID directly
+          setNewOrder(saveProductResponse.data.data.id); // Store the new order ID
+          console.log(newOrder)
+          // Step 2: Initialize payment and get payment URL
+          const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderId });
+          const url = paymentResponse.data.data;
+          setUrlSent(true);
+          // Step 3: Open the payment URL in a new tab
+          window.open(url, "_blank");
+
+      } catch (error) {
+          console.error('Error during checkout:', error);
+      }
+  } else {
+    alert(language === "en" ? "Please select a delivery option." : "እባክዎን የመረከቢያ አማራጭ ይምረጡ።");
+  }
 };
 
 const handleVerification = async () => {
@@ -205,6 +232,35 @@ const handleVerification = async () => {
           <div className="md:w-1/4">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-lg font-semibold mb-4">{language === "en" ? "Summary" : "አጠቃላይ"}</h2>
+              {/* Delivery Options */}
+              <div className="mb-4">
+                  <label className="block mb-2 font-semibold">{language === "en" ? "Delivery Option:" : "የማስረጃ ዝርዝር:"}</label>
+                  <div className="flex flex-col">
+                    <label>
+                      <input 
+                        type="radio" 
+                        name="deliveryOption" 
+                        value="pickup" 
+                        onChange={() => setDeliveryOption('pickup')}
+                        checked={deliveryOption === 'pickup'}
+                        className="mr-2"
+                      />
+                      {language === "en" ? "Pick Up" : "ማንሳት"}
+                    </label>
+                    <label>
+                      <input 
+                        type="radio" 
+                        name="deliveryOption" 
+                        value="delivery" 
+                        onChange={() => setDeliveryOption('delivery')}
+                        checked={deliveryOption === 'delivery'}
+                        className="mr-2"
+                        disabled
+                      />
+                      <span className="line-through">{language === "en" ? "Delivery" : "ማድረስ"}</span>
+                    </label>
+                  </div>
+                </div>
               {/* Example summary values */}
               <div className="flex justify-between mb-2">
                 <span>{language === "en" ? "Subtotal" : "እንደ አጠቃላይ"}:</span>
@@ -241,11 +297,11 @@ const handleVerification = async () => {
               )}
               {verified === null ? null : (
                 verified === "verified" ? (
-                    <div className="text-green-600">
+                    <div className="p-4 text-green-600">
                         {language === "en" ? "VERIFIED" : "ክፍያዎትን ተረጋግጧል"}
                     </div>
                 ) : (
-                    <div className="text-red-500">
+                    <div className="p-4 text-red-500">
                         {language === "en" ? "NOT VERIFIED" : "ክፍያዎት አልተከፈለም"}
                     </div>
                 )
