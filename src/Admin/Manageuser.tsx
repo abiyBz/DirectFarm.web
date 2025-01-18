@@ -1,105 +1,156 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-interface User {
-  id: number;
+type Farmer = {
+  id: string;
   name: string;
-  email: string;
-  role: string;
-  status: "active" | "inactive";
-}
-
-const ManageUsers: React.FC = () => {
-  // Sample users data
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, name: "John Doe", email: "john.doe@example.com", role: "Warehouse Manager", status: "active" },
-    { id: 2, name: "Jane Smith", email: "jane.smith@example.com", role: "User", status: "inactive" },
-    { id: 3, name: "Alice Johnson", email: "alice.johnson@example.com", role: "User", status: "active" },
-    { id: 4, name: "Bob Brown", email: "bob.brown@example.com", role: "User", status: "inactive" },
-  ]);
-
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // Function to toggle user status
-  const toggleUserStatus = (userId: number) => {
-    const updatedUsers = users.map((user) =>
-      user.id === userId
-        ? { ...user, status: user.status === "active" ? "inactive" : "active" }
-        : user
-    );
-    setUsers(updatedUsers);
-  };
-
-  // Filter users based on search term
-  const filteredUsers = users.filter((user) => {
-    const lowercasedTerm = searchTerm.toLowerCase();
-    return (
-      user.name.toLowerCase().includes(lowercasedTerm) || user.id.toString().includes(lowercasedTerm)
-    );
-  });
-
-  return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-semibold mb-4">Manage Users</h1>
-
-      {/* Search Bar */}
-      <input
-        type="text"
-        placeholder="Search by name or ID"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-md mb-6"
-      />
-
-      {/* Table */}
-      <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
-        <table className="min-w-full table-auto">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Name</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Email</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Role</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Status</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-600">No users found</td>
-              </tr>
-            ) : (
-              filteredUsers.map((user) => (
-                <tr key={user.id} className="border-t">
-                  <td className="px-6 py-4 text-sm text-gray-900">{user.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{user.email}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{user.role}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        user.status === "active" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
-                      }`}
-                    >
-                      {user.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <button
-                      className={`px-4 py-2 rounded-md text-white font-semibold ${
-                        user.status === "active" ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
-                      }`}
-                      onClick={() => toggleUserStatus(user.id)}
-                    >
-                      {user.status === "active" ? "Deactivate" : "Activate"}
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+  email: string | null;
+  phone: string;
+  location: string;
+  status: string;
 };
 
-export default ManageUsers;
+type Product = {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  pricePerUnit: number;
+  unit: string;
+  createdAt: string;
+  status: string;
+  nameAmharic: string;
+  descriptionAmharic: string;
+};
+
+type ApiResponse<T> = {
+  responseStatus: number;
+  systemMessage: {
+    culture: string;
+    messageType: number;
+    type: string;
+    message: string;
+    messageCode: string;
+    systemMessageCode: string;
+    hasDetail: boolean;
+    moduleCode: string;
+    exceptionMessage: string;
+  } | null;
+  isFailed: boolean;
+  message: string;
+  data: T;
+};
+
+const FarmersList: React.FC = () => {
+  const [farmers, setFarmers] = useState<Farmer[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [expandedFarmerId, setExpandedFarmerId] = useState<string | null>(null);
+  const [products, setProducts] = useState<{ [key: string]: Product[] }>({});
+
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        const response = await axios.post<ApiResponse<Farmer[]>>('http://localhost:5122/api/Farmer/GetAllFarmers', null, {
+          headers: {
+            'accept': 'text/plain',
+          }
+        });
+        if (response.data.isFailed) {
+          throw new Error(response.data.message || 'Failed to fetch farmers');
+        }
+        setFarmers(response.data.data);
+      } catch (err: any) {
+        setError(`Error fetching farmers: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFarmers();
+  }, []);
+
+  const fetchFarmerProducts = async (farmerId: string) => {
+    try {
+      const response = await axios.post<ApiResponse<Product[]>>('http://localhost:5122/api/Warehouse/GetFarmersProduct', {
+        id: farmerId
+      }, {
+        headers: {
+          'accept': 'text/plain',
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.data.isFailed) {
+        throw new Error(response.data.message || 'Failed to fetch products');
+      }
+      setProducts(prev => ({ ...prev, [farmerId]: response.data.data }));
+    } catch (err: any) {
+      console.error('Error fetching products:', err.message);
+    }
+  };
+
+  const toggleProducts = (farmerId: string) => {
+    if (expandedFarmerId === farmerId) {
+      setExpandedFarmerId(null);
+    } else {
+      setExpandedFarmerId(farmerId);
+      if (!products[farmerId]) {
+        fetchFarmerProducts(farmerId); // Fetch products if not already fetched
+      }
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+
+  return (
+
+    <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
+    <h1 className="text-4xl font-extrabold mb-8 text-center text-gray-800">Registered Farmers</h1>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {farmers.map((farmer) => (
+        <div key={farmer.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out">
+          <div 
+            onClick={() => toggleProducts(farmer.id)} 
+            className={`p-6 cursor-pointer relative hover:bg-green-50 ${farmer.status === 'active' ? 'border-4 border-green-500' : 'border-4 border-red-500'}`}
+          >
+            <h2 className="text-2xl font-semibold mb-2 text-black">{farmer.name}</h2>
+            <p className="text-gray-600 mb-2">
+              <span className="font-medium">Email:</span> {farmer.email || 'N/A'}
+            </p>
+            <p className="text-gray-600 mb-2">
+              <span className="font-medium">Location:</span> {farmer.location}
+            </p>
+            <p className="text-gray-600 mb-4">
+              <span className="font-medium">Status:</span> 
+              <span className={farmer.status === 'active' ? 'text-green-600' : 'text-red-600'}>{farmer.status}</span>
+            </p>
+            <span className="absolute bottom-4 right-4 text-blue-500 hover:underline">
+              {expandedFarmerId === farmer.id ? 'Hide Products' : 'Show Products'}
+            </span>
+          </div>
+          {expandedFarmerId === farmer.id && products[farmer.id] && (
+            <div className="p-4 bg-gray-50 border-t border-gray-200">
+              <ul className="space-y-2">
+                {products[farmer.id].map(product => (
+                  <li key={product.id} className="p-2 bg-white rounded-lg shadow-sm flex justify-between items-center">
+                    <div>
+                      <strong className="text-lg">{product.name}</strong>
+                      <p className="text-sm text-gray-600">{product.category}</p>
+                    </div>
+                    <span className="text-gray-700">{product.pricePerUnit} {product.unit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+);
+}
+
+export default FarmersList;

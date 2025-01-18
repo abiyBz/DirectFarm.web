@@ -1,184 +1,129 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 type Product = {
-  id: number;
+  id: string;
   name: string;
-  category: string;
-  price: number;
   description: string;
-  image: File | null;
+  category: string;
+  pricePerUnit: number;
+  unit: string;
+  createdAt: string; // ISO date string
+  status: string;
+  nameAmharic: string;
+  descriptionAmharic: string;
 };
 
-const initialProducts: Product[] = [
-  { id: 1, name: "Tomatoes", category: "Vegetables", price: 2.5, description: "", image: null },
-  { id: 2, name: "Milk", category: "Dairy", price: 1.5, description: "", image: null },
-  { id: 3, name: "Apples", category: "Fruits", price: 3.0, description: "", image: null },
-];
+type ApiResponse<T> = {
+  responseStatus: number;
+  systemMessage: null | string;
+  isFailed: boolean;
+  message: string;
+  data: T;
+};
 
-const ManageProducts: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [newProduct, setNewProduct] = useState<Product>({
-    id: 0,
-    name: "",
-    category: "",
-    price: 0,
-    description: "",
-    image: null,
-  });
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [editId, setEditId] = useState<number | null>(null);
+const Productlistings: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAddProduct = () => {
-    if (!newProduct.name || !newProduct.category || newProduct.price <= 0) {
-      alert("Please fill in all fields correctly.");
-      return;
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get<ApiResponse<Product[]>>('http://localhost:5122/api/Product/GetAllProducts', {
+          headers: {
+            'accept': 'text/plain',
+          }
+        });
+        if (response.data.isFailed) {
+          throw new Error(response.data.message || 'Failed to fetch products');
+        }
+        setProducts(response.data.data);
+      } catch (err: any) {
+        setError(`Error fetching products: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    if(window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        await axios.delete(`http://localhost:5122/api/Product/DeleteProduct/${id}`);
+        setProducts(products.filter(product => product.id !== id));
+      } catch (error) {
+        console.error('Error deleting product:', error);
+      }
     }
-
-    const product = { ...newProduct, id: Date.now() }; // Generate unique ID
-    setProducts([...products, product]);
-    setNewProduct({ id: 0, name: "", category: "", price: 0, description: "", image: null });
   };
 
-  const handleEditProduct = (id: number) => {
-    const product = products.find((p) => p.id === id);
-    if (product) {
-      setNewProduct(product);
-      setIsEditing(true);
-      setEditId(id);
-    }
-  };
-
-  const handleUpdateProduct = () => {
-    if (!newProduct.name || !newProduct.category || newProduct.price <= 0) {
-      alert("Please fill in all fields correctly.");
-      return;
-    }
-
-    const updatedProducts = products.map((product) =>
-      product.id === editId ? { ...newProduct, id: editId } : product
-    );
-    setProducts(updatedProducts);
-    setNewProduct({ id: 0, name: "", category: "", price: 0, description: "", image: null });
-    setIsEditing(false);
-    setEditId(null);
-  };
-
-  const handleDeleteProduct = (id: number) => {
-    const filteredProducts = products.filter((product) => product.id !== id);
-    setProducts(filteredProducts);
-  };
+  if (loading) return <div className="text-center mt-20 text-2xl text-gray-600">Loading...</div>;
+  if (error) return <div className="text-center mt-20 text-2xl text-red-500">{error}</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Manage Product Listings</h2>
-
-      {/* Product Form */}
-      <div className="space-y-4 mb-6">
-        <div>
-          <label htmlFor="name" className="block text-lg font-medium text-gray-700">Product Name</label>
-          <input
-            id="name"
-            type="text"
-            placeholder="Enter product name"
-            value={newProduct.name}
-            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="category" className="block text-lg font-medium text-gray-700">Category</label>
-          <select
-            id="category"
-            value={newProduct.category}
-            onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select Category</option>
-            <option value="Vegetables">Vegetables</option>
-            <option value="Fruits">Fruits</option>
-            <option value="Dairy">Dairy</option>
-            <option value="Poultry">Poultry</option>
-            <option value="Meats">Meats</option>
-            <option value="Grains">Grains</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="price" className="block text-lg font-medium text-gray-700">Price (ETB)</label>
-          <div className="flex items-center space-x-2">
-            <input
-              id="price"
-              type="number"
-              placeholder="Enter product price"
-              value={newProduct.price}
-              onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-            />
-            <span className="text-lg font-medium text-gray-700">ETB</span>
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="image" className="block text-lg font-medium text-gray-700">Product Image</label>
-          <input
-            id="image"
-            type="file"
-            onChange={(e) => setNewProduct({ ...newProduct, image: e.target.files ? e.target.files[0] : null })}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="description" className="block text-lg font-medium text-gray-700">Product Description</label>
-          <textarea
-            id="description"
-            placeholder="Enter product description"
-            value={newProduct.description}
-            onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <button
-          onClick={isEditing ? handleUpdateProduct : handleAddProduct}
-          className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
-        >
-          {isEditing ? "Update Product" : "Add Product"}
-        </button>
-      </div>
-
-      {/* Product Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-50 border border-gray-200 rounded-lg shadow-sm text-black">
-          <thead className="bg-gray-100 text-left text-black">
+    <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-br from-indigo-200 to-purple-200">
+      <h1 className="text-3xl font-bold mb-4 text-center text-gray-800">Product Catalog</h1>
+      <Link to="/ProductForm" className="mb-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+        Add New Product
+      </Link>
+      <div className="overflow-x-auto shadow-lg rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200 bg-white">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Price (ETB)</th>
-              <th className="px-4 py-3">Description</th>
-              <th className="px-4 py-3">Actions</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Name
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Category
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Price
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Unit
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Created At
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white divide-y divide-gray-200">
             {products.map((product) => (
-              <tr key={product.id} className="border-b hover:bg-gray-100">
-                <td className="px-4 py-3">{product.id}</td>
-                <td className="px-4 py-3">{product.name}</td>
-                <td className="px-4 py-3">{product.category}</td>
-                <td className="px-4 py-3">{product.price} ETB</td>
-                <td className="px-4 py-3">{product.description}</td>
-                <td className="px-4 py-3 space-x-2">
-                  <button
-                    onClick={() => handleEditProduct(product.id)}
-                    className="py-1 px-3 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteProduct(product.id)}
-                    className="py-1 px-3 bg-red-500 text-white rounded-md hover:bg-red-600"
+              <tr key={product.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {product.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {product.category}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {product.pricePerUnit}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {product.unit}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <span className={product.status === 'active' ? 'text-green-600' : 'text-red-600'}>
+                    {product.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(product.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button 
+                    onClick={() => handleDelete(product.id)} 
+                    className="text-red-600 hover:text-red-800"
                   >
                     Delete
                   </button>
@@ -192,4 +137,4 @@ const ManageProducts: React.FC = () => {
   );
 };
 
-export default ManageProducts;
+export default Productlistings;

@@ -61,7 +61,6 @@ export default LoginPage;
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './adminpage.css';
 
 
 const LogInPage: React.FC = () => {

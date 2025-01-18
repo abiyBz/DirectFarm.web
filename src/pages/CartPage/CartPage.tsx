@@ -64,34 +64,7 @@ const CartPage: React.FC = () => {
       updateQuantity(id, value);
     }
   };
-
   
-//   const handleCheckout = async () => {
-//     const token = localStorage.getItem('authToken');
-//     if (!token) {
-//         navigate("/login");
-//     } else {
-//         try {
-//             // Step 1: Place order and get order ID
-//             const saveProductResponse = await axios.post('http://localhost:5122/api/Order/PlaceOrder', checkoutData);
-//             const orderId = saveProductResponse.data.data.id; // Get order ID directly
-//             setNewOrder(saveProductResponse.data.data.id); // Store the new order ID
-//             console.log(newOrder)
-//             // Step 2: Initialize payment and get payment URL
-//             const paymentResponse = await axios.post(`http://localhost:5122/api/Order/IntializePayment`, { id: orderId });
-//             const url = paymentResponse.data.data;
-//             setUrlSent(true);
-//             // Step 3: Open the payment URL in a new tab
-//             window.open(url, "_blank");
-
-//             // Optional: You can also show a message to the user about the payment link
-
-//         } catch (error) {
-//             console.error('Error during checkout:', error);
-//         }
-//     }
-// };
-
 const handleCheckout = async () => {
   const token = localStorage.getItem('authToken');
   if (!token) {
@@ -136,7 +109,6 @@ const handleVerification = async () => {
       console.error('Error verifying payment:', error);
   }
 };
-
 
   return (
     <div className="bg-gray-100 h-screen py-8 text-black">
