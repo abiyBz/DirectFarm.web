@@ -137,7 +137,6 @@ const App: React.FC = () => {
         <Route path="*" element={<AdminLayout />} />
         <Route path="/warehouse" element={<WarehouseLayout />} />
        
-        
         {/* Use this to work on warehouse layouts */}
         {/* <Route path="/main" element={<MainLayout />} />
         <Route path="/admin" element={<AdminLayout />} />

@@ -247,6 +247,7 @@ const handleVerification = async () => {
                 {/* Replace with actual total price variable */}
                 <span className="font-semibold">Br. {totalPrice.toFixed(2)}</span> 
               </div>
+              <h2 className="text-center text-red-500">{language === "en" ? "Please don't forget to download your reciept" : "እባክዎን ደረሰኝዎን ማውረድዎን አይርሱ"}</h2>
 
               {/* Checkout Button */}
               <button

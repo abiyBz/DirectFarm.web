@@ -80,6 +80,7 @@ import ProductListing from "./Productlistings";
 import CreateAdmin from "./CreateAdmin";
 import Login from './LoginAdmin'; 
 import ProductForm from './addproduct';
+import Orders from "./Orders";
 
 const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -119,6 +120,7 @@ const AdminLayout: React.FC = () => {
             <Route path="/admin" element={<Login />} /> 
             <Route path="/createadmin" element={<CreateAdmin />} />
             <Route path="/ProductForm" element={<ProductForm />} />
+            <Route path="/orders" element={<Orders />} />
           </Routes>
         </div>
       </div>

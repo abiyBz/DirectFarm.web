@@ -112,7 +112,7 @@ const FarmersList: React.FC = () => {
 
   return (
 
-    <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
+    <div className="container mx-auto px-4 py-8 min-h-screen">
     <h1 className="text-4xl font-extrabold mb-8 text-center text-gray-800">Registered Farmers</h1>
 
     <div className="mb-4">
@@ -133,12 +133,6 @@ const FarmersList: React.FC = () => {
             className={`p-6 cursor-pointer relative hover:bg-green-50 ${farmer.status === 'active' ? 'border-4 border-green-500' : 'border-4 border-red-500'}`}
           >
             <h2 className="text-2xl font-semibold mb-2 text-black">{farmer.name}</h2>
-            <p className="text-gray-600 mb-2">
-              <span className="font-medium">Email:</span> {farmer.email || 'N/A'}
-            </p>
-            <p className="text-gray-600 mb-2">
-              <span className="font-medium">Location:</span> {farmer.location}
-            </p>
             <p className="text-gray-600 mb-2">
               <span className="font-medium">Phone:</span> {farmer.phone}
             </p>
