@@ -47,6 +47,7 @@ const FarmersList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [expandedFarmerId, setExpandedFarmerId] = useState<string | null>(null);
   const [products, setProducts] = useState<{ [key: string]: Product[] }>({});
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchFarmers = async () => {
@@ -100,17 +101,32 @@ const FarmersList: React.FC = () => {
     }
   };
 
+  const filteredFarmers = farmers.filter(farmer => 
+    farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    farmer.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (farmer.email && farmer.email.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-
 
   return (
 
     <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
     <h1 className="text-4xl font-extrabold mb-8 text-center text-gray-800">Registered Farmers</h1>
+
+    <div className="mb-4">
+        <input 
+          type="text" 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by name, phone, or email..."
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+      </div>
     
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {farmers.map((farmer) => (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {filteredFarmers.map((farmer) => (
         <div key={farmer.id} className="bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 ease-in-out">
           <div 
             onClick={() => toggleProducts(farmer.id)} 
@@ -122,6 +138,9 @@ const FarmersList: React.FC = () => {
             </p>
             <p className="text-gray-600 mb-2">
               <span className="font-medium">Location:</span> {farmer.location}
+            </p>
+            <p className="text-gray-600 mb-2">
+              <span className="font-medium">Phone:</span> {farmer.phone}
             </p>
             <p className="text-gray-600 mb-4">
               <span className="font-medium">Status:</span> 

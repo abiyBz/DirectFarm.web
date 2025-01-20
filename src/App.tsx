@@ -131,14 +131,14 @@ const dispatch: AppDispatch = useDispatch();
     <Router> 
       {/* The Router is only placed here */}
       <Routes>
-        {/* <Route path="*" element={<MainLayout />} />
+        <Route path="*" element={<MainLayout />} />
         <Route path="/admin" element={<AdminLayout />} />
-        <Route path="/warehouse" element={<WarehouseLayout />} /> */}
+        <Route path="/warehouse" element={<WarehouseLayout />} />
         
         {/* Use this to work on admin layouts */}
-        <Route path="/main" element={<MainLayout />} />
+        {/* <Route path="/main" element={<MainLayout />} />
         <Route path="*" element={<AdminLayout />} />
-        <Route path="/warehouse" element={<WarehouseLayout />} />
+        <Route path="/warehouse" element={<WarehouseLayout />} /> */}
        
         
         {/* Use this to work on warehouse layouts */}
