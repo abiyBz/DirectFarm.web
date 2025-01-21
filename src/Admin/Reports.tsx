@@ -1,160 +1,427 @@
-import React, { useState } from "react";
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
 
-type ReportData = {
-  id: number;
+// // Interfaces for API responses
+
+// interface CustomerApiResponse {
+//   responseStatus: number;
+//   systemMessage: null;
+//   isFailed: boolean;
+//   message: string;
+//   data: Customer[];
+// }
+
+// interface Customer {
+//   id: string;
+// }
+
+// interface OrderApiResponse {
+//   responseStatus: number;
+//   systemMessage: null;
+//   isFailed: boolean;
+//   message: string;
+//   data: Order[];
+// }
+
+// interface Order {
+//   id: string;
+//   totalAmount: number;
+//   status: string;
+//   orderdate: string;
+//   // other fields...
+// }
+
+// interface ProductApiResponse {
+//   responseStatus: number;
+//   systemMessage: null;
+//   isFailed: boolean;
+//   message: string;
+//   data: Product[];
+// }
+
+// interface Product {
+//   id: string;
+//   name: string;
+//   category: string;
+//   pricePerUnit: number;
+//   status: string;
+//   // other fields...
+// }
+
+// interface ProductLowStockApiResponse {
+//   responseStatus: number;
+//   systemMessage: null;
+//   isFailed: boolean;
+//   message: string;
+//   data: Product[];
+// }
+
+// const Reports: React.FC = () => {
+//   const [customers, setCustomers] = useState<Customer[]>([]);
+//   const [orders, setOrders] = useState<Order[]>([]);
+//   const [products, setProducts] = useState<Product[]>([]);
+//   const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
+//   const [loading, setLoading] = useState<boolean>(true);
+//   const [error, setError] = useState<string | null>(null);
+//   const [reportType, setReportType] = useState<string>('sales');
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const [customersResponse, ordersResponse, productsResponse, lowStockResponse] = await Promise.all([
+//           axios.get<CustomerApiResponse>('http://localhost:5122/api/Customer/GetAllCustomers'),
+//           axios.get<OrderApiResponse>('http://localhost:5122/api/Order/GetAllOrders'),
+//           axios.get<ProductApiResponse>('http://localhost:5122/api/Product/GetAllProducts'),
+//           axios.post<ProductLowStockApiResponse>('http://localhost:5122/api/Product/GetProductsBelow?quantity=100')
+//         ]);
+
+//         if (customersResponse.data.isFailed || ordersResponse.data.isFailed || productsResponse.data.isFailed || lowStockResponse.data.isFailed) {
+//           throw new Error(customersResponse.data.message || ordersResponse.data.message || productsResponse.data.message || lowStockResponse.data.message || 'Failed to fetch data');
+//         }
+
+//         setCustomers(customersResponse.data.data);
+//         setOrders(ordersResponse.data.data);
+//         setProducts(productsResponse.data.data);
+//         setLowStockProducts(lowStockResponse.data.data);
+//       } catch (err: any) {
+//         setError(`Error fetching data: ${err.message}`);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   const generateReport = () => {
+//     switch (reportType) {
+//       case 'sales':
+//         return generateSalesReport();
+//       case 'customers':
+//         return generateCustomerReport();
+//       case 'products':
+//         return generateProductReport();
+//       case 'lowStock':
+//         return generateLowStockReport();
+//       default:
+//         return <p>Select a report type</p>;
+//     }
+//   };
+
+//   const generateSalesReport = () => (
+//     <div>
+//       <h2 className="text-2xl font-bold mb-4">Sales Report</h2>
+//       <p>Total Sales: ${orders.reduce((sum, order) => sum + order.totalAmount, 0).toFixed(2)}</p>
+//       <p>Number of Orders: {orders.length}</p>
+//       <h3 className="text-lg font-semibold mt-4">Sales by Status:</h3>
+//       <ul>
+//         {Object.entries(orders.reduce((acc, order) => {
+//           acc[order.status] = (acc[order.status] || 0) + 1;
+//           return acc;
+//         }, {} as Record<string, number>)).map(([status, count]) => (
+//           <li key={status}>{status}: {count}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+
+//   const generateCustomerReport = () => (
+//     <div>
+//       <h2 className="text-2xl font-bold mb-4">Customer Report</h2>
+//       <p>Total Customers: {customers.length}</p>
+//     </div>
+//   );
+
+//   const generateProductReport = () => (
+//     <div>
+//       <h2 className="text-2xl font-bold mb-4">Product Report</h2>
+//       <p>Total Products: {products.length}</p>
+//       <h3 className="text-lg font-semibold mt-4">Products by Category:</h3>
+//       <ul>
+//         {Object.entries(products.reduce((acc, product) => {
+//           acc[product.category] = (acc[product.category] || 0) + 1;
+//           return acc;
+//         }, {} as Record<string, number>)).map(([category, count]) => (
+//           <li key={category}>{category}: {count}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+
+//   const generateLowStockReport = () => (
+//     <div>
+//       <h2 className="text-2xl font-bold mb-4">Low Stock Products Report</h2>
+//       <p>Products with less than 100 in stock: {lowStockProducts.length}</p>
+//       <ul className="list-disc pl-5">
+//         {lowStockProducts.map(product => (
+//           <li key={product.id}>{product.name} - {product.category}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+
+//   if (loading) return <div>Loading...</div>;
+//   if (error) return <div>Error: {error}</div>;
+
+//   return (
+//     <div className="bg-gray-50 min-h-screen p-8">
+//       <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">Reports</h1>
+
+//       <div className="mb-4 flex justify-center">
+//         <select 
+//           value={reportType} 
+//           onChange={(e) => setReportType(e.target.value)}
+//           className="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+//         >
+//           <option value="sales">Sales Report</option>
+//           <option value="customers">Customer Report</option>
+//           <option value="products">Product Report</option>
+//           <option value="lowStock">Low Stock Report</option>
+//         </select>
+//       </div>
+
+//       <div className="bg-white text-black p-6 rounded-lg shadow-md">
+//         {generateReport()}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Reports;
+
+
+
+
+
+
+
+
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+// Interfaces for API responses
+
+interface CustomerApiResponse {
+  responseStatus: number;
+  systemMessage: null;
+  isFailed: boolean;
+  message: string;
+  data: Customer[];
+}
+
+interface Customer {
+  id: string;
+}
+
+interface OrderApiResponse {
+  responseStatus: number;
+  systemMessage: null;
+  isFailed: boolean;
+  message: string;
+  data: Order[];
+}
+
+interface Order {
+  id: string;
+  totalAmount: number;
+  status: string;
+  orderdate: string;
+  // other fields...
+}
+
+interface ProductApiResponse {
+  responseStatus: number;
+  systemMessage: null;
+  isFailed: boolean;
+  message: string;
+  data: Product[];
+}
+
+interface Product {
+  id: string;
   name: string;
   category: string;
-  amount: number;
-  status: "Completed" | "Pending" | "Cancelled";
-  date: string;
-};
+  pricePerUnit: number;
+  status: string;
+  // other fields...
+}
 
-const initialReportData: ReportData[] = [
-  { id: 1, name: "Invoice #1001", category: "Sales", amount: 500, status: "Completed", date: "2024-12-20" },
-  { id: 2, name: "Invoice #1002", category: "Refund", amount: -200, status: "Cancelled", date: "2024-12-21" },
-  { id: 3, name: "Invoice #1003", category: "Sales", amount: 300, status: "Pending", date: "2024-12-22" },
-  { id: 4, name: "Invoice #1004", category: "Services", amount: 150, status: "Completed", date: "2024-12-23" },
-];
+interface ProductLowStockApiResponse {
+  responseStatus: number;
+  systemMessage: null;
+  isFailed: boolean;
+  message: string;
+  data: Product[];
+}
 
-const Report: React.FC = () => {
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("All");
-  const [filteredData, setFilteredData] = useState<ReportData[]>(initialReportData);
+const Reports: React.FC = () => {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reportType, setReportType] = useState<string>('sales');
 
-  const handleGenerateReport = () => {
-    let data = initialReportData;
-
-    if (startDate) {
-      data = data.filter((item) => new Date(item.date) >= new Date(startDate));
-    }
-
-    if (endDate) {
-      data = data.filter((item) => new Date(item.date) <= new Date(endDate));
-    }
-
-    if (statusFilter !== "All") {
-      data = data.filter((item) => item.status === statusFilter);
-    }
-
-    setFilteredData(data);
+  const colorPalette = {
+    sales: 'bg-green-500',
+    customers: 'bg-blue-500',
+    products: 'bg-yellow-500',
+    lowStock: 'bg-red-500'
   };
 
-  const handleDownloadReport = () => {
-    const csvContent = [
-      ["ID", "Name", "Category", "Amount", "Status", "Date"],
-      ...filteredData.map((item) => [
-        item.id,
-        item.name,
-        item.category,
-        item.amount,
-        item.status,
-        item.date,
-      ]),
-    ]
-      .map((row) => row.join(","))
-      .join("\n");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [customersResponse, ordersResponse, productsResponse, lowStockResponse] = await Promise.all([
+          axios.get<CustomerApiResponse>('http://localhost:5122/api/Customer/GetAllCustomers'),
+          axios.get<OrderApiResponse>('http://localhost:5122/api/Order/GetAllOrders'),
+          axios.get<ProductApiResponse>('http://localhost:5122/api/Product/GetAllProducts'),
+          axios.post<ProductLowStockApiResponse>('http://localhost:5122/api/Product/GetProductsBelow?quantity=100')
+        ]);
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
+        if (customersResponse.data.isFailed || ordersResponse.data.isFailed || productsResponse.data.isFailed || lowStockResponse.data.isFailed) {
+          throw new Error(customersResponse.data.message || ordersResponse.data.message || productsResponse.data.message || lowStockResponse.data.message || 'Failed to fetch data');
+        }
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "report.csv";
-    link.click();
+        setCustomers(customersResponse.data.data);
+        setOrders(ordersResponse.data.data);
+        setProducts(productsResponse.data.data);
+        setLowStockProducts(lowStockResponse.data.data);
+      } catch (err: any) {
+        setError(`Error fetching data: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    URL.revokeObjectURL(url);
+    fetchData();
+  }, []);
+
+  const generateReport = () => {
+    switch (reportType) {
+      case 'sales':
+        return generateSalesReport();
+      case 'customers':
+        return generateCustomerReport();
+      case 'products':
+        return generateProductReport();
+      case 'lowStock':
+        return generateLowStockReport();
+      default:
+        return <p className="text-center text-gray-600 font-semibold">Select a report type</p>;
+    }
   };
 
-  return (
-    <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Generate Report</h1>
+  const generateSalesReport = () => (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-3xl font-bold text-green-700 mb-4">Sales Report</h2>
+      <table className="w-full text-left">
+        <tbody>
+          <tr className="border-b border-gray-200">
+            <td className="py-2 text-black text-lg font-medium">Total Sales</td>
+            <td className="py-2 text-lg font-bold text-green-600">${orders.reduce((sum, order) => sum + order.totalAmount, 0).toFixed(2)}</td>
+          </tr>
+          <tr className="border-b border-gray-200">
+            <td className="py-2 text-black text-lg font-medium">Number of Orders</td>
+            <td className="py-2 text-lg font-bold">{orders.length}</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 className="text-black text-xl font-semibold mt-6 mb-2">Sales by Status</h3>
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {Object.entries(orders.reduce((acc, order) => {
+          acc[order.status] = (acc[order.status] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>)).map(([status, count]) => (
+          <li key={status} className="bg-gray-100 p-4 rounded-lg shadow-sm">
+            <span className="text-gray-800 font-medium">{status}: </span>
+            <span className="text-green-700 font-bold">{count}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 
-      {/* Filter Section */}
-      <div className="space-y-4 mb-6">
-        <div className="flex gap-4">
-          <label className="text-lg font-medium text-gray-700 w-32">Start Date:</label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none w-full"
-          />
-        </div>
-        <div className="flex gap-4">
-          <label className="text-lg font-medium text-gray-700 w-32">End Date:</label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none w-full"
-          />
-        </div>
-        <div className="flex gap-4">
-          <label className="text-lg font-medium text-gray-700 w-32">Status:</label>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none w-full"
-          >
-            <option value="All">All</option>
-            <option value="Completed">Completed</option>
-            <option value="Pending">Pending</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        </div>
-        <button
-          onClick={handleGenerateReport}
-          className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Generate Report
-        </button>
-      </div>
+  const generateCustomerReport = () => (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-3xl font-bold text-blue-700 mb-4">Customer Report</h2>
+      <p className="text-2xl text-blue-600 font-bold">Total Customers: {customers.length}</p>
+    </div>
+  );
 
-      {/* Report Table */}
-      <table className="min-w-full bg-gray-50 border border-gray-200 rounded-lg shadow-sm text-black">
-        <thead className="bg-gray-100 text-left text-black">
-          <tr>
-            <th className="px-4 py-3">ID</th>
-            <th className="px-4 py-3">Name</th>
-            <th className="px-4 py-3">Category</th>
-            <th className="px-4 py-3">Amount</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Date</th>
+  const generateProductReport = () => (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-3xl font-bold text-yellow-700 mb-4">Product Report</h2>
+      <p className="text-2xl text-yellow-600 font-bold">Total Products: {products.length}</p>
+      <h3 className="text-black text-xl font-semibold mt-6 mb-2">Products by Category</h3>
+      <table className="w-full text-left">
+        <thead>
+          <tr className="border-b border-gray-200">
+            <th className="py-2 text-black">Category</th>
+            <th className="py-2 text-black">Count</th>
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((item) => (
-            <tr
-              key={item.id}
-              className={`${
-                item.status === "Completed"
-                  ? "bg-green-100"
-                  : item.status === "Cancelled"
-                  ? "bg-red-100"
-                  : "bg-yellow-100"
-              } hover:bg-gray-200 transition-colors`}
-            >
-              <td className="px-4 py-3">{item.id}</td>
-              <td className="px-4 py-3">{item.name}</td>
-              <td className="px-4 py-3">{item.category}</td>
-              <td className="px-4 py-3">${item.amount}</td>
-              <td className="px-4 py-3 capitalize">{item.status}</td>
-              <td className="px-4 py-3">{item.date}</td>
+          {Object.entries(products.reduce((acc, product) => {
+            acc[product.category] = (acc[product.category] || 0) + 1;
+            return acc;
+          }, {} as Record<string, number>)).map(([category, count]) => (
+            <tr key={category} className="border-b border-gray-200">
+              <td className="py-2 text-black">{category}</td>
+              <td className="py-2 text-black font-bold">{count}</td>
             </tr>
           ))}
         </tbody>
       </table>
+    </div>
+  );
 
-      {/* Download Button */}
-      <button
-        onClick={handleDownloadReport}
-        className="mt-6 w-full py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-      >
-        Download Report
-      </button>
+  const generateLowStockReport = () => (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-3xl font-bold text-red-700 mb-4">Low Stock Products Report</h2>
+      <p className="text-2xl text-red-600 font-bold mb-4">Products with less than 100 in stock: {lowStockProducts.length}</p>
+      <ul className="list-disc pl-5">
+        {lowStockProducts.map(product => (
+          <li key={product.id} className="mb-2">
+            <span className="text-red-500 font-medium">{product.name} -</span> <span className="text-gray-700">{product.category}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+  if (loading) return <div className="flex justify-center items-center h-screen text-3xl text-gray-600">Loading...</div>;
+  if (error) return <div className="text-red-600 text-center mt-8 text-2xl">Error: {error}</div>;
+
+  return (
+    <div className="bg-gray-50 min-h-screen p-8">
+      <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">Reports</h1>
+
+      <div className="mb-8 flex justify-center">
+        <div className="relative">
+          <select 
+            value={reportType} 
+            onChange={(e) => setReportType(e.target.value)}
+            className={`p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-${colorPalette[reportType].split('-')[1]}-500 focus:border-transparent w-64 ${colorPalette[reportType]} text-white`}
+          >
+            <option value="sales" className="text-gray-900">Sales Report</option>
+            <option value="customers" className="text-gray-900">Customer Report</option>
+            <option value="products" className="text-gray-900">Product Report</option>
+            <option value="lowStock" className="text-gray-900">Low Stock Report</option>
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto">
+        {generateReport()}
+      </div>
     </div>
   );
 };
 
-export default Report;
+export default Reports;

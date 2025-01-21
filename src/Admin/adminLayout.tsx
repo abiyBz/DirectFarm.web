@@ -78,9 +78,12 @@ import Transactions from "./Transactions";
 import Reports from "./Reports";
 import ProductListing from "./Productlistings";
 import CreateAdmin from "./CreateAdmin";
-import Login from './LoginAdmin'; 
+import AdminLogin from "./LoginAdmin";
 import ProductForm from './addproduct';
 import Orders from "./Orders";
+import { ErrorLogger } from "./errorlogger";
+import Products from "./Products";
+import LowStockProducts from "./lowstockproducts";
 
 const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -90,6 +93,7 @@ const AdminLayout: React.FC = () => {
   };
 
   return (
+    <ErrorLogger>
     <div className="flex h-screen bg-gray-100">
       <button 
         onClick={toggleSidebar} 
@@ -117,14 +121,17 @@ const AdminLayout: React.FC = () => {
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/product-listings" element={<ProductListing />} />
-            <Route path="/admin" element={<Login />} /> 
+            <Route path="/login" element={<AdminLogin />} />
             <Route path="/createadmin" element={<CreateAdmin />} />
             <Route path="/ProductForm" element={<ProductForm />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/low-stock" element={<LowStockProducts />} />
           </Routes>
         </div>
       </div>
     </div>
+    </ErrorLogger>
   );
 };
 

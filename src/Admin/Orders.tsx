@@ -403,7 +403,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 interface OrderApiResponse {
   responseStatus: number;
@@ -423,24 +423,8 @@ interface Order {
   productOrders: null;
 }
 
-interface ProductApiResponse {
-  responseStatus: number;
-  systemMessage: null;
-  isFailed: boolean;
-  message: string;
-  data: Product[];
-}
-
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  // Add other product properties here if needed
-}
-
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -457,17 +441,6 @@ const Orders: React.FC = () => {
           throw new Error(ordersResponse.data.message || 'Failed to fetch orders');
         }
         setOrders(ordersResponse.data.data);
-
-        // Fetch Products
-        const productsResponse = await axios.get<ProductApiResponse>('http://localhost:5122/api/Product/GetAllProducts', {
-          headers: {
-            'accept': 'text/plain'
-          }
-        });
-        if (productsResponse.data.isFailed) {
-          throw new Error(productsResponse.data.message || 'Failed to fetch products');
-        }
-        setProducts(productsResponse.data.data);
       } catch (err: any) {
         setError(`Error fetching data: ${err.message}`);
       } finally {
@@ -499,17 +472,6 @@ const Orders: React.FC = () => {
     return acc;
   }, [] as { date: string, total: number }[]);
 
-  // Data for Product Category Pie Chart
-  const categoryCount = products.reduce((acc, product) => {
-    acc[product.category] = (acc[product.category] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const categoryData = Object.entries(categoryCount).map(([name, value], index) => ({
-    name,
-    value,
-    fill: COLORS[index % COLORS.length]
-  }));
 
   if (loading) return <div className="flex justify-center items-center h-screen text-3xl text-gray-600">Loading...</div>;
   if (error) return <div className="text-red-600 text-center mt-8 text-2xl">Error: {error}</div>;
@@ -531,7 +493,7 @@ const Orders: React.FC = () => {
             <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
             <XAxis dataKey="date" stroke="#8884d8" />
             <YAxis stroke="#8884d8" />
-            <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '4px' }} />
+            <Tooltip contentStyle={{ backgroundColor: "black", border: 'none', borderRadius: '4px' }} />
             <Legend />
             <Line type="monotone" dataKey="total" stroke="#00C49F" activeDot={{ r: 8 }} name="Total Sales" />
           </LineChart>
@@ -546,42 +508,17 @@ const Orders: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                 <XAxis dataKey="name" stroke="#8884d8" />
                 <YAxis stroke="#8884d8" />
-                <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '4px' }} />
+                <Tooltip contentStyle={{ backgroundColor: "black", border: 'solid', borderRadius: '4px' }} />
                 <Legend wrapperStyle={{ paddingTop: "20px" }} />
                 <Bar dataKey="value" fill="#8884d8" name="Count" />
             </BarChart>
         </ResponsiveContainer>
     </div>
-
-      {/* Product Categories Pie Chart */}
-      <div className="bg-gray-200 rounded-lg shadow-2xl p-6">
-        <h2 className="text-2xl font-bold text-gray-700 mb-4">Product Categories Distribution</h2>
-        <ResponsiveContainer width="100%" height={400}>
-          <PieChart>
-            <Pie 
-              data={categoryData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              label
-            >
-              {categoryData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
-              ))}
-            </Pie>
-            <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '4px' }} />
-            <Legend verticalAlign="bottom" height={36} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-
     </div>
   );
 };
 
 // Array of colors for the charts
-const COLORS = ['#eb9100', '#4CAF50', '#FF0707', '#113837', '#9C27B0', '#00BCD4', '#FF4081', '#8BC34A', '#795548', '#2196F3'];
+const COLORS = ['#4CAF50', '#FF0707', '#eb9100', '#113837', '#9C27B0', '#00BCD4', '#FF4081', '#8BC34A', '#795548', '#2196F3'];
 
 export default Orders;

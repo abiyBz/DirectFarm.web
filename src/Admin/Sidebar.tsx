@@ -6,7 +6,7 @@ const Sidebar: React.FC = () => {
     <div className="bg-gray-800 text-white h-screen w-60 fixed top-0 left-0 overflow-y-auto transition-transform transform ease-in-out duration-300 z-50" id="sidebar">
       {/* Sidebar Header */}
       <div className="p-6 flex items-center justify-between">
-        <Link to="/admin" className="flex items-center space-x-4">
+        <Link to="/login" className="flex items-center space-x-4">
           <img 
             src="../logo-bg-removed.png" 
             alt="Logo" 
@@ -27,7 +27,7 @@ const Sidebar: React.FC = () => {
           {[
             { path: "/", label: "Dashboard" },
             { path: "/manage-users", label: "Manage Farmers" },
-            { path: "/transactions", label: "Monitor Transactions" },
+            { path: "/transactions", label: "Monitor Order Status" },
             { path: "/product-listings", label: "Manage Products" },
             { path: "/reports", label: "Generate Reports" },
             { path: "/createadmin", label: "Register New Manager" },
