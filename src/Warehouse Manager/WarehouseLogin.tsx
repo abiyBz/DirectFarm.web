@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { loginSuccess } from "../redux/authSlice";
+import { useNavigate } from "react-router-dom";
+import { loginSuccess, logout } from "../redux/authSlice";
+import { AppDispatch, RootState } from "../redux/store";
+import { useSelector } from "react-redux";
 
-const LoginPage: React.FC = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+const WarehouseLogin: React.FC = () => {
+  const [formData, setFormData] = useState<LoginFormData>({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
-
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
-  // Check local storage for token on component mount
   useEffect(() => {
     const loginStatus = sessionStorage.getItem("managerLoggedIn");
     if (loginStatus) {
-      navigate("/"); // Redirect if already logged in
+      dispatch(loginSuccess(JSON.parse(loginStatus)));
+      navigate("/");
     }
-  }, [navigate]);
+  }, [dispatch, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,16 +32,12 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      const response = await fetch(
-        "http://localhost:5122/api/Warehouse/WarehouseLogin",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch("http://localhost:5122/api/Warehouse/WarehouseLogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       const data = await response.json();
 
@@ -44,6 +47,7 @@ const LoginPage: React.FC = () => {
       }
 
       sessionStorage.setItem("managerLoggedIn", JSON.stringify(data));
+      dispatch(loginSuccess(data));
       navigate("/");
     } catch {
       setError("An unexpected error occurred.");
@@ -57,9 +61,7 @@ const LoginPage: React.FC = () => {
           <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
             <div className="mt-12 flex flex-col items-center">
               <h1 className="text-2xl xl:text-3xl font-extrabold">Sign In</h1>
-              <p className="mt-2 text-center text-gray-600">
-                Sign in to continue!
-              </p>
+              <p className="mt-2 text-center text-gray-600">Sign in to continue!</p>
               <div className="w-full flex-1 mt-8">
                 <div className="mx-auto max-w-lg">
                   <form onSubmit={handleSubmit}>
@@ -112,4 +114,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default WarehouseLogin;

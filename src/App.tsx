@@ -8,12 +8,11 @@ import {
 import AdminLayout from "./Admin/adminLayout";
 import MainLayout from "./Layout/MainLayout";
 import WarehouseLayout from "./Warehouse Manager/WarehouseLayout";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "./redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "./redux/store";
 import { fetchProducts } from "./redux/productsSlice";
 import { useEffect } from "react";
-import WarehouseLogin from "./Warehouse Manager/LogInPage";
-import ProtectedRoute from "./Warehouse Manager/ProtectedRoute";
+import WarehouseLogin from "./Warehouse Manager/WarehouseLogin";
 
 const App: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -21,6 +20,8 @@ const App: React.FC = () => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   return (
     <Router>
@@ -40,11 +41,8 @@ const App: React.FC = () => {
         <Route path="/admin" element={<AdminLayout />} />
         <Route path="*" element={<WarehouseLayout />} /> */}
 
-        <Route path="/WarehouseLogin" element={<WarehouseLogin />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="/*" element={<WarehouseLayout />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/WarehouseLogin" replace />} />
+        <Route path="/login" element={<WarehouseLogin />} />
+        <Route path="*" element={isLoggedIn ? <WarehouseLayout /> : <Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
