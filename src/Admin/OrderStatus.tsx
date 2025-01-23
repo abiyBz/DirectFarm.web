@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -27,7 +28,7 @@ interface OrderPickedUpResponse {
   data: boolean;
 }
 
-const Transaction: React.FC = () => {
+const OrderStatus: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,8 +50,12 @@ const Transaction: React.FC = () => {
         }
         setOrders(response.data.data);
         applyFilters(response.data.data); // Apply filters on initial load
-      } catch (err: any) {
-        setError(`Error fetching orders: ${err.message}`);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Error fetching orders: ${err.message}`);
+        } else {
+          setError('An unknown error occurred while fetching orders');
+        }
       } finally {
         setLoading(false);
       }
@@ -108,8 +113,12 @@ const Transaction: React.FC = () => {
           order.id === orderId ? {...order, status: 'picked up'} : order
         )
       );
-    } catch (err: any) {
-      alert(`Error: ${err.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(`Error: ${err.message}`);
+      } else {
+        alert('An unknown error occurred');
+      }
     }
   };
 
@@ -196,4 +205,4 @@ const Transaction: React.FC = () => {
   );
 };
 
-export default Transaction;
+export default OrderStatus;

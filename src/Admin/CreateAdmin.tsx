@@ -43,8 +43,21 @@ const CreateAdmin: React.FC = () => {
         toast.success('Warehouse Manager registered successfully');
         reset(); // Reset form after successful submission
       }
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.message) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else if (
+        typeof error === 'object' && 
+        error !== null && 
+        'response' in error &&
+        error.response &&
+        typeof error.response === 'object' &&
+        'data' in error.response &&
+        error.response.data &&
+        typeof error.response.data === 'object' &&
+        'message' in error.response.data &&
+        typeof error.response.data.message === 'string'
+      ) {
         toast.error(error.response.data.message);
       } else {
         toast.error('Registration failed due to an unexpected error');

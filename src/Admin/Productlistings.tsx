@@ -44,8 +44,12 @@ const Productlistings: React.FC = () => {
           throw new Error(response.data.message || "Failed to fetch products");
         }
         setProducts(response.data.data);
-      } catch (err: any) {
-        setError(`Error fetching products: ${err.message}`);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Error fetching products: ${err.message}`);
+        } else {
+          setError('Error fetching products: An unknown error occurred');
+        }
       } finally {
         setLoading(false);
       }

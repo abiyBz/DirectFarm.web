@@ -61,8 +61,12 @@ const FarmersList: React.FC = () => {
           throw new Error(response.data.message || 'Failed to fetch farmers');
         }
         setFarmers(response.data.data);
-      } catch (err: any) {
-        setError(`Error fetching farmers: ${err.message}`);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Error fetching farmers: ${err.message}`);
+        } else {
+          setError('Error fetching farmers: An unknown error occurred');
+        }
       } finally {
         setLoading(false);
       }
@@ -85,8 +89,12 @@ const FarmersList: React.FC = () => {
         throw new Error(response.data.message || 'Failed to fetch products');
       }
       setProducts(prev => ({ ...prev, [farmerId]: response.data.data }));
-    } catch (err: any) {
-      console.error('Error fetching products:', err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error('Error fetching products:', err.message);
+      } else {
+        console.error('Error fetching products:', String(err));
+      }
     }
   };
 
@@ -150,7 +158,7 @@ const FarmersList: React.FC = () => {
                 {products[farmer.id].map(product => (
                   <li key={product.id} className="p-2 bg-white rounded-lg shadow-sm flex justify-between items-center">
                     <div>
-                      <strong className="text-lg">{product.name}</strong>
+                      <strong className="text-lg text-black">{product.name}</strong>
                       <p className="text-sm text-gray-600">{product.category}</p>
                     </div>
                     <span className="text-gray-700">{product.pricePerUnit} {product.unit}</span>

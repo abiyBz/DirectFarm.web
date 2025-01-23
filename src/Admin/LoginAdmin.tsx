@@ -52,8 +52,12 @@ const LoginAdmin: React.FC = () => {
       // Store the token securely (e.g., in localStorage for this example)
       localStorage.setItem('adminToken', response.data.data.token);
       navigate('/dashboard'); // Redirect to dashboard or wherever admin should go after login
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during login');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'An error occurred during login');
+      } else {
+        setError('An unknown error occurred during login');
+      }
     } finally {
       setLoading(false);
     }

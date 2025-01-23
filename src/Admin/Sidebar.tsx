@@ -27,7 +27,7 @@ const Sidebar: React.FC = () => {
           {[
             { path: "/", label: "Dashboard" },
             { path: "/manage-users", label: "Manage Farmers" },
-            { path: "/transactions", label: "Monitor Order Status" },
+            { path: "/OrderStatus", label: "Monitor Order Status" },
             { path: "/product-listings", label: "Manage Products" },
             { path: "/reports", label: "Generate Reports" },
             { path: "/createadmin", label: "Register New Manager" },

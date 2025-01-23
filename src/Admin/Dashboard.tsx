@@ -262,7 +262,7 @@ const Dashboard: React.FC = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
-            <Tooltip />
+            <Tooltip contentStyle={{ backgroundColor: "black", border: 'none', borderRadius: '4px' }} />
             <Legend />
             <Line
               type="monotone"

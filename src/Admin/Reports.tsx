@@ -1,202 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-
-// // Interfaces for API responses
-
-// interface CustomerApiResponse {
-//   responseStatus: number;
-//   systemMessage: null;
-//   isFailed: boolean;
-//   message: string;
-//   data: Customer[];
-// }
-
-// interface Customer {
-//   id: string;
-// }
-
-// interface OrderApiResponse {
-//   responseStatus: number;
-//   systemMessage: null;
-//   isFailed: boolean;
-//   message: string;
-//   data: Order[];
-// }
-
-// interface Order {
-//   id: string;
-//   totalAmount: number;
-//   status: string;
-//   orderdate: string;
-//   // other fields...
-// }
-
-// interface ProductApiResponse {
-//   responseStatus: number;
-//   systemMessage: null;
-//   isFailed: boolean;
-//   message: string;
-//   data: Product[];
-// }
-
-// interface Product {
-//   id: string;
-//   name: string;
-//   category: string;
-//   pricePerUnit: number;
-//   status: string;
-//   // other fields...
-// }
-
-// interface ProductLowStockApiResponse {
-//   responseStatus: number;
-//   systemMessage: null;
-//   isFailed: boolean;
-//   message: string;
-//   data: Product[];
-// }
-
-// const Reports: React.FC = () => {
-//   const [customers, setCustomers] = useState<Customer[]>([]);
-//   const [orders, setOrders] = useState<Order[]>([]);
-//   const [products, setProducts] = useState<Product[]>([]);
-//   const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
-//   const [loading, setLoading] = useState<boolean>(true);
-//   const [error, setError] = useState<string | null>(null);
-//   const [reportType, setReportType] = useState<string>('sales');
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const [customersResponse, ordersResponse, productsResponse, lowStockResponse] = await Promise.all([
-//           axios.get<CustomerApiResponse>('http://localhost:5122/api/Customer/GetAllCustomers'),
-//           axios.get<OrderApiResponse>('http://localhost:5122/api/Order/GetAllOrders'),
-//           axios.get<ProductApiResponse>('http://localhost:5122/api/Product/GetAllProducts'),
-//           axios.post<ProductLowStockApiResponse>('http://localhost:5122/api/Product/GetProductsBelow?quantity=100')
-//         ]);
-
-//         if (customersResponse.data.isFailed || ordersResponse.data.isFailed || productsResponse.data.isFailed || lowStockResponse.data.isFailed) {
-//           throw new Error(customersResponse.data.message || ordersResponse.data.message || productsResponse.data.message || lowStockResponse.data.message || 'Failed to fetch data');
-//         }
-
-//         setCustomers(customersResponse.data.data);
-//         setOrders(ordersResponse.data.data);
-//         setProducts(productsResponse.data.data);
-//         setLowStockProducts(lowStockResponse.data.data);
-//       } catch (err: any) {
-//         setError(`Error fetching data: ${err.message}`);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchData();
-//   }, []);
-
-//   const generateReport = () => {
-//     switch (reportType) {
-//       case 'sales':
-//         return generateSalesReport();
-//       case 'customers':
-//         return generateCustomerReport();
-//       case 'products':
-//         return generateProductReport();
-//       case 'lowStock':
-//         return generateLowStockReport();
-//       default:
-//         return <p>Select a report type</p>;
-//     }
-//   };
-
-//   const generateSalesReport = () => (
-//     <div>
-//       <h2 className="text-2xl font-bold mb-4">Sales Report</h2>
-//       <p>Total Sales: ${orders.reduce((sum, order) => sum + order.totalAmount, 0).toFixed(2)}</p>
-//       <p>Number of Orders: {orders.length}</p>
-//       <h3 className="text-lg font-semibold mt-4">Sales by Status:</h3>
-//       <ul>
-//         {Object.entries(orders.reduce((acc, order) => {
-//           acc[order.status] = (acc[order.status] || 0) + 1;
-//           return acc;
-//         }, {} as Record<string, number>)).map(([status, count]) => (
-//           <li key={status}>{status}: {count}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-
-//   const generateCustomerReport = () => (
-//     <div>
-//       <h2 className="text-2xl font-bold mb-4">Customer Report</h2>
-//       <p>Total Customers: {customers.length}</p>
-//     </div>
-//   );
-
-//   const generateProductReport = () => (
-//     <div>
-//       <h2 className="text-2xl font-bold mb-4">Product Report</h2>
-//       <p>Total Products: {products.length}</p>
-//       <h3 className="text-lg font-semibold mt-4">Products by Category:</h3>
-//       <ul>
-//         {Object.entries(products.reduce((acc, product) => {
-//           acc[product.category] = (acc[product.category] || 0) + 1;
-//           return acc;
-//         }, {} as Record<string, number>)).map(([category, count]) => (
-//           <li key={category}>{category}: {count}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-
-//   const generateLowStockReport = () => (
-//     <div>
-//       <h2 className="text-2xl font-bold mb-4">Low Stock Products Report</h2>
-//       <p>Products with less than 100 in stock: {lowStockProducts.length}</p>
-//       <ul className="list-disc pl-5">
-//         {lowStockProducts.map(product => (
-//           <li key={product.id}>{product.name} - {product.category}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-
-//   if (loading) return <div>Loading...</div>;
-//   if (error) return <div>Error: {error}</div>;
-
-//   return (
-//     <div className="bg-gray-50 min-h-screen p-8">
-//       <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">Reports</h1>
-
-//       <div className="mb-4 flex justify-center">
-//         <select 
-//           value={reportType} 
-//           onChange={(e) => setReportType(e.target.value)}
-//           className="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-//         >
-//           <option value="sales">Sales Report</option>
-//           <option value="customers">Customer Report</option>
-//           <option value="products">Product Report</option>
-//           <option value="lowStock">Low Stock Report</option>
-//         </select>
-//       </div>
-
-//       <div className="bg-white text-black p-6 rounded-lg shadow-md">
-//         {generateReport()}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Reports;
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -255,6 +56,8 @@ interface ProductLowStockApiResponse {
   data: Product[];
 }
 
+type ReportType = 'sales' | 'customers' | 'products' | 'lowStock';
+
 const Reports: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -262,9 +65,9 @@ const Reports: React.FC = () => {
   const [lowStockProducts, setLowStockProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [reportType, setReportType] = useState<string>('sales');
+  const [reportType, setReportType] = useState<ReportType>('sales');
 
-  const colorPalette = {
+  const colorPalette: Record<ReportType, string> = {
     sales: 'bg-green-500',
     customers: 'bg-blue-500',
     products: 'bg-yellow-500',
@@ -289,8 +92,8 @@ const Reports: React.FC = () => {
         setOrders(ordersResponse.data.data);
         setProducts(productsResponse.data.data);
         setLowStockProducts(lowStockResponse.data.data);
-      } catch (err: any) {
-        setError(`Error fetching data: ${err.message}`);
+      } catch (err: unknown) {
+        setError(`Error fetching data: ${err instanceof Error ? err.message : String(err)}`);
       } finally {
         setLoading(false);
       }
@@ -403,7 +206,7 @@ const Reports: React.FC = () => {
         <div className="relative">
           <select 
             value={reportType} 
-            onChange={(e) => setReportType(e.target.value)}
+            onChange={(e) => setReportType(e.target.value as ReportType)}
             className={`p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-${colorPalette[reportType].split('-')[1]}-500 focus:border-transparent w-64 ${colorPalette[reportType]} text-white`}
           >
             <option value="sales" className="text-gray-900">Sales Report</option>

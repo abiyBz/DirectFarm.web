@@ -173,8 +173,8 @@ const ProductForm: React.FC = () => {
             required
           >
             <option value="">Select a category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
+            {categories.map((cat, index) => (
+              <option key={index} value={index}>
                 {cat.en} / {cat.am}
               </option>
             ))}

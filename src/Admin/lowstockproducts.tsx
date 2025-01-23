@@ -41,8 +41,12 @@ const LowStockProducts: React.FC = () => {
           );
         }
         setLowStockProducts(response.data.data);
-      } catch (err: any) {
-        setError(`Error fetching low stock products: ${err.message}`);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Error fetching low stock products: ${err.message}`);
+        } else {
+          setError('Error fetching low stock products');
+        }
       } finally {
         setLoading(false);
       }
