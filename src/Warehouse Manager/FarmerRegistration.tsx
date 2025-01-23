@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const FarmerRegistration: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loginStatus = sessionStorage.getItem("managerLoggedIn");
+    if (!loginStatus) {
+      navigate("/WarehouseLogin"); // Redirect if already logged in
+    }
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -122,7 +133,7 @@ const FarmerRegistration: React.FC = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+              className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
               placeholder="Enter email"
             />
           </div>

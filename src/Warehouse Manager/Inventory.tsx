@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Define the interfaces as per your structure
 interface Warehouse {
@@ -42,6 +43,15 @@ const Inventory: React.FC = () => {
   // State for error messages
   const [error, setError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loginStatus = sessionStorage.getItem("managerLoggedIn");
+    if (!loginStatus) {
+      navigate("/WarehouseLogin"); // Redirect if already logged in
+    }
+  }, [navigate]);
+
   useEffect(() => {
     const fetchFarmers = async () => {
       try {
@@ -80,13 +90,14 @@ const Inventory: React.FC = () => {
         const response = await fetch(
           "http://localhost:5122/api/Warehouse/GetAllWarehouses",
           {
-            method: "POST", // Set the method to POST
+            method: "GET", // Set the method to POST
             headers: {
               "Content-Type": "application/json", // Specify the content type
             },
             body: JSON.stringify({
               /* Any required payload can go here */
-            }), // Add payload if needed
+            }),
+            // Add payload if needed
           }
         );
 

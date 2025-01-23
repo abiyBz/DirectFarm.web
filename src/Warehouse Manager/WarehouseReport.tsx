@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 type ReportData = {
   id: number;
@@ -10,17 +11,55 @@ type ReportData = {
 };
 
 const initialReportData: ReportData[] = [
-  { id: 1, itemName: "Tomatoes", category: "Fresh Produce", quantity: 500, status: "In Stock", date: "2024-12-20" },
-  { id: 2, itemName: "Potatoes", category: "Fresh Produce", quantity: 50, status: "Low Stock", date: "2024-12-21" },
-  { id: 3, itemName: "Cabbages", category: "Fresh Produce", quantity: 0, status: "Out of Stock", date: "2024-12-22" },
-  { id: 4, itemName: "Rice", category: "Dry Goods", quantity: 1000, status: "In Stock", date: "2024-12-23" },
+  {
+    id: 1,
+    itemName: "Tomatoes",
+    category: "Fresh Produce",
+    quantity: 500,
+    status: "In Stock",
+    date: "2024-12-20",
+  },
+  {
+    id: 2,
+    itemName: "Potatoes",
+    category: "Fresh Produce",
+    quantity: 50,
+    status: "Low Stock",
+    date: "2024-12-21",
+  },
+  {
+    id: 3,
+    itemName: "Cabbages",
+    category: "Fresh Produce",
+    quantity: 0,
+    status: "Out of Stock",
+    date: "2024-12-22",
+  },
+  {
+    id: 4,
+    itemName: "Rice",
+    category: "Dry Goods",
+    quantity: 1000,
+    status: "In Stock",
+    date: "2024-12-23",
+  },
 ];
 
 const WarehouseReport: React.FC = () => {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("All");
-  const [filteredData, setFilteredData] = useState<ReportData[]>(initialReportData);
+  const [filteredData, setFilteredData] =
+    useState<ReportData[]>(initialReportData);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loginStatus = sessionStorage.getItem("managerLoggedIn");
+    if (!loginStatus) {
+      navigate("/WarehouseLogin"); // Redirect if already logged in
+    }
+  }, [navigate]);
 
   const handleGenerateReport = () => {
     let data = initialReportData;
@@ -68,12 +107,16 @@ const WarehouseReport: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">Warehouse Stock Report</h1>
+      <h1 className="text-3xl font-semibold text-gray-800 mb-6">
+        Warehouse Stock Report
+      </h1>
 
       {/* Filter Section */}
       <div className="space-y-4 mb-6">
         <div className="flex gap-4">
-          <label className="text-lg font-medium text-gray-700 w-32">Start Date:</label>
+          <label className="text-lg font-medium text-gray-700 w-32">
+            Start Date:
+          </label>
           <input
             type="date"
             value={startDate}
@@ -82,7 +125,9 @@ const WarehouseReport: React.FC = () => {
           />
         </div>
         <div className="flex gap-4">
-          <label className="text-lg font-medium text-gray-700 w-32">End Date:</label>
+          <label className="text-lg font-medium text-gray-700 w-32">
+            End Date:
+          </label>
           <input
             type="date"
             value={endDate}
@@ -91,7 +136,9 @@ const WarehouseReport: React.FC = () => {
           />
         </div>
         <div className="flex gap-4">
-          <label className="text-lg font-medium text-gray-700 w-32">Status:</label>
+          <label className="text-lg font-medium text-gray-700 w-32">
+            Status:
+          </label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}

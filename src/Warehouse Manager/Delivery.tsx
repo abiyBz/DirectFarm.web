@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Delivery = {
   id: string;
@@ -33,6 +34,13 @@ const deliveries: Delivery[] = [
 ];
 
 const TrackDeliveries: React.FC = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const loginStatus = sessionStorage.getItem("managerLoggedIn");
+    if (!loginStatus) {
+      navigate("/WarehouseLogin"); // Redirect if already logged in
+    }
+  }, [navigate]);
   return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-2xl font-semibold mb-4">Track Deliveries</h1>
@@ -40,18 +48,32 @@ const TrackDeliveries: React.FC = () => {
         <table className="min-w-full table-auto">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Delivery ID</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Date</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Status</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Carrier</th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Items</th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">
+                Delivery ID
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">
+                Date
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">
+                Carrier
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">
+                Items
+              </th>
             </tr>
           </thead>
           <tbody>
             {deliveries.map((delivery) => (
               <tr key={delivery.id} className="border-t">
-                <td className="px-6 py-4 text-sm font-medium text-gray-900">{delivery.id}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{delivery.date}</td>
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                  {delivery.id}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {delivery.date}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -65,8 +87,12 @@ const TrackDeliveries: React.FC = () => {
                     {delivery.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-700">{delivery.carrier}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{delivery.items}</td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {delivery.carrier}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {delivery.items}
+                </td>
               </tr>
             ))}
           </tbody>
