@@ -14,6 +14,7 @@ import { ErrorLogger } from "./errorlogger";
 import Products from "./Products";
 import LowStockProducts from "./lowstockproducts";
 import EditProduct from "./EditProduct";
+import WarehouseList from "./WarehouseList";
 
 const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -74,12 +75,19 @@ const AdminLayout: React.FC = () => {
               <Route path="/reports" element={<Reports />} />
               <Route path="/product-listings" element={<ProductListing />} />
               <Route path="/login" element={<AdminLogin />} />
-              <Route path="/registerwarehouse" element={<RegisterWarehouse />} />
+              <Route
+                path="/registerwarehouse"
+                element={<RegisterWarehouse />}
+              />
               <Route path="/ProductForm" element={<ProductForm />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/products" element={<Products />} />
               <Route path="/low-stock" element={<LowStockProducts />} />
-              <Route path="/edit-product/:productId" element={<EditProduct />} />
+              <Route
+                path="/edit-product/:productId"
+                element={<EditProduct />}
+              />
+              <Route path="/warehouse-list" element={<WarehouseList />} />
             </Routes>
           </div>
         </div>

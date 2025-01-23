@@ -45,7 +45,7 @@ const LowStockProducts: React.FC = () => {
         if (err instanceof Error) {
           setError(`Error fetching low stock products: ${err.message}`);
         } else {
-          setError('Error fetching low stock products');
+          setError("Error fetching low stock products");
         }
       } finally {
         setLoading(false);
@@ -55,12 +55,14 @@ const LowStockProducts: React.FC = () => {
     fetchLowStockProducts();
   }, [quantityThreshold]);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-3xl text-gray-600">
-        Loading...
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
+  }
+
   if (error)
     return (
       <div className="text-red-600 text-center mt-8 text-2xl">

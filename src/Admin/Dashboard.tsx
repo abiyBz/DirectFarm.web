@@ -212,12 +212,14 @@ const Dashboard: React.FC = () => {
     return { thisMonthSales, salesTrend };
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-3xl text-gray-600">
-        Loading...
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
+  }
+
   if (error)
     return (
       <div className="text-red-600 text-center mt-8 text-2xl">
@@ -262,7 +264,13 @@ const Dashboard: React.FC = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
-            <Tooltip contentStyle={{ backgroundColor: "black", border: 'none', borderRadius: '4px' }} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "black",
+                border: "none",
+                borderRadius: "4px",
+              }}
+            />
             <Legend />
             <Line
               type="monotone"

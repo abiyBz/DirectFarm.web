@@ -34,7 +34,12 @@ const App: React.FC = () => {
 
         {/* Use this to work on admin layouts */}
         <Route path="/login" element={<LoginAdmin />} />
-        <Route path="*" element={isLoggedIn ? <AdminLayout /> : <Navigate to="/login" replace />} />
+        <Route
+          path="*"
+          element={
+            isLoggedIn ? <AdminLayout /> : <Navigate to="/login" replace />
+          }
+        />
 
         {/* Use this to work on warehouse layouts */}
         {/* <Route path="/login" element={<WarehouseLogin />} />

@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Cell, Legend, Pie, Tooltip } from "recharts";
-import { PieChart } from "recharts";
-import { ResponsiveContainer } from "recharts";
+import { Cell, Legend, Pie, Tooltip, Bar, BarChart, XAxis, YAxis, CartesianGrid, LabelList } from "recharts";
+import { PieChart, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
 
 interface ProductApiResponse {
@@ -17,7 +16,7 @@ interface Product {
   id: string;
   name: string;
   category: string;
-  // Add other product properties here if needed
+  quantity: number; // Assuming quantity is available in the product data
 }
 
 const Products = () => {
@@ -29,7 +28,6 @@ const Products = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Products
         const productsResponse = await axios.get<ProductApiResponse>(
           "http://localhost:5122/api/Product/GetAllProducts",
           {
@@ -48,7 +46,7 @@ const Products = () => {
         if (err instanceof Error) {
           setError(`Error fetching data: ${err.message}`);
         } else {
-          setError('An unknown error occurred');
+          setError("An unknown error occurred");
         }
       } finally {
         setLoading(false);
@@ -72,24 +70,86 @@ const Products = () => {
     })
   );
 
-  if (loading)
+  // Data for Product Quantity Bar Chart
+  const productQuantityData = products.map((product, index) => ({
+    name: product.name,
+    quantity: product.quantity,
+    fill: COLORS[index % COLORS.length],
+  }));
+
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-3xl text-gray-600">
-        Loading...
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
-  if (error)
+  }
+
+  if (error) {
     return (
       <div className="text-red-600 text-center mt-8 text-2xl">
         Error: {error}
       </div>
     );
+  }
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
+      {/* Product Quantities Bar Chart */}
+      <div className="bg-white rounded-lg shadow-2xl p-6 mb-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          Product Quantities
+        </h2>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart 
+            data={productQuantityData}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis 
+              dataKey="name" 
+              interval={0} 
+              angle={-45} 
+              textAnchor="end" 
+              height={100} 
+              stroke="#374151"
+              tick={{ fill: '#6b7280', fontSize: 12 }}
+            />
+            <YAxis 
+              stroke="#374151" 
+              tick={{ fill: '#6b7280', fontSize: 12 }}
+            />
+            <Tooltip 
+              contentStyle={{
+                backgroundColor: "rgba(255,255,255,0.8)",
+                border: "none",
+                borderRadius: "4px",
+                color: "#333",
+              }}
+            />
+            <Legend verticalAlign="top" align="right" wrapperStyle={{ fontSize: '12px' }} />
+            <Bar 
+              dataKey="quantity" 
+              name="Quantity" 
+              maxBarSize={50}
+              label={{ position: 'top', fill: '#6b7280', fontSize: 10 }}
+            >
+              {productQuantityData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
       {/* Product Categories Pie Chart */}
-      <div className="bg-gray-200 rounded-lg shadow-2xl p-6">
-        <h2 className="text-2xl font-bold text-gray-700 mb-4">
+      <div className="bg-white rounded-lg shadow-2xl p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           Product Categories Distribution
         </h2>
         <ResponsiveContainer width="100%" height={400}>
@@ -100,8 +160,9 @@ const Products = () => {
               nameKey="name"
               cx="50%"
               cy="50%"
-              fill="#82ca9d"
+              outerRadius={150}
               paddingAngle={1}
+              label
             >
               {categoryData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -112,17 +173,37 @@ const Products = () => {
                 backgroundColor: "rgba(255,255,255,0.8)",
                 border: "none",
                 borderRadius: "4px",
+                color: "#333",
               }}
             />
             <Legend verticalAlign="bottom" height={36} />
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <button className="bg-green-500 text-white px-4 py-2 rounded-md mt-4" onClick={() => navigate('/low-stock')}>Check Low Stock Products</button>
+
+      <button
+        className="bg-green-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-green-600 transition-colors duration-300"
+        onClick={() => navigate("/low-stock")}
+      >
+        Check Low Stock Products
+      </button>
     </div>
   );
 };
 
-const COLORS = ['#4CAF50', '#FF0707', '#eb9100', '#113837', '#9C27B0', '#00BCD4', '#FF4081', '#8BC34A', '#795548', '#2196F3'];
+const COLORS = [
+  "#4CAF50",
+  "#FF0707",
+  "#eb9100",
+  "#113837",
+  "#9C27B0",
+  "#00BCD4",
+  "#FF4081",
+  "#8BC34A",
+  "#795548",
+  "#2196F3",
+  "#673AB7",
+  "#03A9F4",
+];
 
 export default Products;
