@@ -8,8 +8,8 @@ const Sidebar: React.FC = () => {
       <div className="p-6 flex items-center justify-between">
         <Link to="/login" className="flex items-center space-x-4">
           <img 
-            src="../logo-bg-removed.png" 
-            alt="Logo" 
+            src="../logo-bg-removed.png"
+            alt="Logo"
             className="w-12 h-12 object-contain"
           />
           <span className="font-semibold text-white">DIRECT FARM</span>
