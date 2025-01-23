@@ -30,7 +30,7 @@ const initialState: ProductsState = {
 
 // Async thunk to fetch products and their images
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-  const response = await axios.get<Product[]>(`http://localhost:5122/api/Product/GetAllProducts`);
+  const response = await axios.get<Product[]>(`http://localhost:5122/api/Product/GetAvailableProducts`);
   
   const productsWithImages = await Promise.all(response.data.data.map(async (product) => {
     try {

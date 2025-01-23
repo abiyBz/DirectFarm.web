@@ -1,7 +1,29 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, loginSuccess } from "../redux/authSlice";
+import { AppDispatch, RootState } from "../redux/store";
 
 const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    const loginStatus = sessionStorage.getItem("adminLoggedIn");
+    if (loginStatus) {
+      dispatch(loginSuccess(JSON.parse(loginStatus)));
+    }
+  }, [dispatch]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("adminLoggedIn");
+    dispatch(logout());
+    navigate("/");
+  };
+
+  if (!isLoggedIn) return null;
+
   return (
     <div className="bg-gray-800 text-white h-screen w-60 fixed top-0 left-0 overflow-y-auto transition-transform transform ease-in-out duration-300 z-50" id="sidebar">
       {/* Sidebar Header */}
@@ -45,6 +67,7 @@ const Sidebar: React.FC = () => {
           ))}
         </ul>
       </nav>
+      <button onClick={handleLogout} className="absolute bottom-4 left-4 text-white">Logout</button>
     </div>
   );
 };

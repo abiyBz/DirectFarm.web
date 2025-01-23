@@ -1,131 +1,117 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { loginSuccess, logout } from "../redux/authSlice";
+import { AppDispatch, RootState } from "../redux/store";
+import { useSelector } from "react-redux";
 
-interface LoginResponse {
-  responseStatus: number;
-  systemMessage: {
-    culture: string;
-    messageType: number;
-    type: string;
-    message: string;
-    messageCode: string;
-    systemMessageCode: string;
-    hasDetail: boolean;
-    moduleCode: string;
-    exceptionMessage: string;
-  } | null;
-  isFailed: boolean;
-  message: string;
-  data: {
-    token: string; // Assuming the API returns a token on successful login
-  };
+interface LoginFormData {
+  email: string;
+  password: string;
 }
 
 const LoginAdmin: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [formData, setFormData] = useState<LoginFormData>({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
+  useEffect(() => {
+    const loginStatus = sessionStorage.getItem("adminLoggedIn");
+    if (loginStatus) {
+      dispatch(loginSuccess(JSON.parse(loginStatus)));
+      navigate("/");
+    }
+  }, [dispatch, navigate]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
     try {
-      const response = await axios.post<LoginResponse>('http://localhost:5122/api/Admin/AdminLogin', {
-        email,
-        password
-      }, {
-        headers: {
-          'accept': 'text/plain',
-          'Content-Type': 'application/json',
-        }
+      const response = await fetch("http://localhost:5122/api/Admin/AdminLogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
-      if (response.data.isFailed) {
-        throw new Error(response.data.message || 'Login failed');
+      const data = await response.json();
+
+      if (data.isFailed) {
+        setError(data.message || "Login failed.");
+        return;
       }
 
-      // Store the token securely (e.g., in localStorage for this example)
-      localStorage.setItem('adminToken', response.data.data.token);
-      navigate('/dashboard'); // Redirect to dashboard or wherever admin should go after login
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || 'An error occurred during login');
-      } else {
-        setError('An unknown error occurred during login');
-      }
-    } finally {
-      setLoading(false);
+      sessionStorage.setItem("adminLoggedIn", JSON.stringify(data));
+      dispatch(loginSuccess(data));
+      navigate("/");
+    } catch {
+      setError("An unexpected error occurred.");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Admin Login
-          </h2>
+    <>
+      <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center items-center">
+        <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+          <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+            <div className="mt-12 flex flex-col items-center">
+              <h1 className="text-2xl xl:text-3xl font-extrabold">Sign In</h1>
+              <p className="mt-2 text-center text-gray-600">Sign in to continue!</p>
+              <div className="w-full flex-1 mt-8">
+                <div className="mx-auto max-w-lg">
+                  <form onSubmit={handleSubmit}>
+                    <input
+                      className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                      type="email"
+                      name="email"
+                      placeholder="Email Address"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                    <input
+                      className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      className="mt-5 tracking-wide font-semibold bg-green-500 text-gray-100 w-full py-4 rounded-lg hover:bg-green-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                      type="submit"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                        />
+                      </svg>
+                      <span className="ml-3">Sign In</span>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
-              <input 
-                id="email-address" 
-                name="email" 
-                type="email" 
-                autoComplete="email" 
-                required 
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-white rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input 
-                id="password" 
-                name="password" 
-                type="password" 
-                autoComplete="current-password" 
-                required 
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-center py-2">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <button 
-              type="submit" 
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              disabled={loading}
-            >
-              {loading ? 
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                </div> 
-                : 'Sign in'}
-            </button>
-          </div>
-        </form>
       </div>
-    </div>
+    </>
   );
 };
 

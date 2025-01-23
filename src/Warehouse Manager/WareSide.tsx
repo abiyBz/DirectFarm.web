@@ -89,6 +89,7 @@ const Sidebar: React.FC = () => {
           ))}
         </ul>
       </nav>
+      <button onClick={handleLogout} className="absolute bottom-4 left-4 text-white">Logout</button>
     </div>
   );
 };

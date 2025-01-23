@@ -28,7 +28,7 @@ const LatestProductsPage: React.FC = () => {
   useEffect(() => {
     const fetchLatestProducts = async () => {
       try {
-        const response = await axios.get<Product[]>(`http://localhost:5122/api/Product/GetAllProducts`);
+        const response = await axios.get<Product[]>(`http://localhost:5122/api/Product/GetAvailableProducts`);
 
         const productsWithImages = await Promise.all(
           response.data.data.map(async (product: Product) => {

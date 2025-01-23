@@ -6,13 +6,14 @@ import ManageUsers from "./Manageuser";
 import OrderStatus from "./OrderStatus";
 import Reports from "./Reports";
 import ProductListing from "./Productlistings";
-import CreateAdmin from "./CreateAdmin";
+import RegisterWarehouse from "./RegisterWarehouse";
 import AdminLogin from "./LoginAdmin";
 import ProductForm from "./addproduct";
 import Orders from "./Orders";
 import { ErrorLogger } from "./errorlogger";
 import Products from "./Products";
 import LowStockProducts from "./lowstockproducts";
+import EditProduct from "./EditProduct";
 
 const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -69,15 +70,16 @@ const AdminLayout: React.FC = () => {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/manage-users" element={<ManageUsers />} />
-              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/OrderStatus" element={<OrderStatus />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/product-listings" element={<ProductListing />} />
               <Route path="/login" element={<AdminLogin />} />
-              <Route path="/createadmin" element={<CreateAdmin />} />
+              <Route path="/registerwarehouse" element={<RegisterWarehouse />} />
               <Route path="/ProductForm" element={<ProductForm />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/products" element={<Products />} />
               <Route path="/low-stock" element={<LowStockProducts />} />
+              <Route path="/edit-product/:productId" element={<EditProduct />} />
             </Routes>
           </div>
         </div>
