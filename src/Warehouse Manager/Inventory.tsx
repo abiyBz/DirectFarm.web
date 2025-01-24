@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Define the interfaces as per your structure
@@ -15,6 +15,7 @@ interface Product {
 interface Farmer {
   id: string;
   name: string;
+  phone: string;
 }
 
 interface FarmerProductInfo {
@@ -39,6 +40,9 @@ const Inventory: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product[]>([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse[]>([]);
   const [selectedFarmer, setSelectedFarmer] = useState<Farmer[]>([]);
+  const [user, setUser] = useState<String>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   // State for error messages
   const [error, setError] = useState<string | null>(null);
@@ -53,18 +57,31 @@ const Inventory: React.FC = () => {
   }, [navigate]);
 
   useEffect(() => {
+    const storedLoginResponse = sessionStorage.getItem("managerLoggedIn");
+
+    if (storedLoginResponse) {
+      try {
+        const parsedResponse = JSON.parse(storedLoginResponse);
+
+        const managerId = parsedResponse.data.object.id;
+        setUser(managerId);
+      } catch (error) {
+        console.error("Failed to parse login response:", error);
+      }
+    }
+  }, []); // Empty dependency array to run only once on mount
+
+  useEffect(() => {
     const fetchFarmers = async () => {
       try {
         const response = await fetch(
           "http://localhost:5122/api/Farmer/GetAllFarmers",
           {
-            method: "POST", // Set the method to POST
+            method: "GET", // Set the method to POST
             headers: {
               "Content-Type": "application/json", // Specify the content type
             },
-            body: JSON.stringify({
-              /* Any required payload can go here */
-            }), // Add payload if needed
+            // Add payload if needed
           }
         );
 
@@ -88,16 +105,15 @@ const Inventory: React.FC = () => {
     const fetchWarehouses = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5122/api/Warehouse/GetAllWarehouses",
+          "http://localhost:5122/api/Warehouse/GetManagersWarehouses",
           {
-            method: "GET", // Set the method to POST
+            method: "POST",
             headers: {
-              "Content-Type": "application/json", // Specify the content type
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              /* Any required payload can go here */
+              id: user, // Directly use the string ID
             }),
-            // Add payload if needed
           }
         );
 
@@ -106,16 +122,20 @@ const Inventory: React.FC = () => {
         }
 
         const data = await response.json();
-        setWarehouses(data.data); // Update state with fetched data
+        setWarehouses(data.data);
       } catch (err) {
-        setError("Failed"); // Update error state if fetching fails
+        console.error("Fetch Error:", err);
+        setError("Failed");
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
 
-    fetchWarehouses(); // Call the fetch function
-  }, []);
+    if (user) {
+      // Add check to ensure user ID exists
+      fetchWarehouses();
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -147,21 +167,16 @@ const Inventory: React.FC = () => {
       id: "00000000-0000-0000-0000-000000000000", // Placeholder ID; adjust as needed
       farmer: {
         id: selectedFarmer.length > 0 ? selectedFarmer[0].id : "", // Use selected farmer ID
-        name: "", // Use selected farmer name
+        name: "",
+        phone: "", // Use selected farmer name
       },
       product: {
-        id:
-          selectedProduct.length > 0
-            ? selectedProduct[0].id
-            : "019465f6-e2bf-748f-96df-33b359a5dd92", // Use selected product ID or placeholder
+        id: selectedProduct.length > 0 ? selectedProduct[0].id : "", // Use selected product ID or placeholder
         name: "", // Use selected product name
       },
       quantityAvailable: productQuantity,
       warehouse: {
-        id:
-          selectedWarehouse.length > 0
-            ? selectedWarehouse[0].id
-            : "21ea1744-e06c-4185-bd87-48f9e06b5b49", // Use selected warehouse ID or placeholder
+        id: selectedWarehouse.length > 0 ? selectedWarehouse[0].id : "", // Use selected warehouse ID or placeholder
         name: "", // Use selected warehouse name
       },
       addedAt: new Date().toISOString(), // Current date in ISO format
@@ -232,13 +247,17 @@ const Inventory: React.FC = () => {
     }
   };
 
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [products, searchTerm]);
+
   return (
-    <div className="max-w-6xl mx-auto p-8 text-black">
-      <h1 className="text-3xl font-bold mb-6">
+    <div className="max-w-xl mx-auto p-8 text-black">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
         Warehouse Manager - Add Product
       </h1>
-
-      {error && <p className="text-red-500">{error}</p>}
 
       {/* Form to add a new product */}
       <form onSubmit={handleAddProduct} className="space-y-6 mb-8">
@@ -250,17 +269,14 @@ const Inventory: React.FC = () => {
             id="products"
             onChange={handleSelectedProduct}
             required
-            className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full px-8 py-4 rounded-lg font-medium   border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
           >
             <option value="" disabled>
               Select a product
-            </option>{" "}
-            {/* Placeholder option */}
-            {products.map((product) => (
+            </option>
+            {filteredProducts.map((product) => (
               <option key={product.id} value={product.id}>
-                {" "}
-                {/* Use product.id as value */}
-                {product.name} {/* Display product name */}
+                {product.name}
               </option>
             ))}
           </select>
@@ -274,7 +290,7 @@ const Inventory: React.FC = () => {
             id="farmers"
             onChange={handleSelectedFarmer}
             required
-            className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full px-8 py-4 rounded-lg font-medium   border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
           >
             <option value="" disabled>
               Select a Farmer
@@ -284,7 +300,7 @@ const Inventory: React.FC = () => {
               <option key={farmer.id} value={farmer.id}>
                 {" "}
                 {/* Use farmer.id as value */}
-                {farmer.name} {/* Display farmer name */}
+                {farmer.name} - {farmer.phone} {/* Display farmer name */}
               </option>
             ))}
           </select>
@@ -301,7 +317,7 @@ const Inventory: React.FC = () => {
             onChange={(e) => setProductQuantity(Number(e.target.value))}
             required
             min={1}
-            className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-8 py-4 rounded-lg font-medium   border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
           />
         </div>
 
@@ -313,17 +329,12 @@ const Inventory: React.FC = () => {
             id="warehouses"
             onChange={handleSelectedWarehouse}
             required
-            className="mt-2 p-3 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full px-8 py-4 rounded-lg font-medium   border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
           >
-            <option value="" disabled>
-              Select a Warehouse
-            </option>{" "}
-            {/* Placeholder option */}
             {warehouses.map((warehouse) => (
               <option key={warehouse.id} value={warehouse.id}>
                 {" "}
-                {/* Use warehouse.id as value */}
-                {warehouse.name} {/* Display warehouse name */}
+                {warehouse.name}
               </option>
             ))}
           </select>
@@ -337,11 +348,6 @@ const Inventory: React.FC = () => {
           Add Product
         </button>
       </form>
-
-      {/* Inventory Table: Display added products */}
-      <h2 className="text-2xl font-semibold mb-4">Inventory in Warehouse</h2>
-
-      {/* Here you can implement a table or list to display added products */}
     </div>
   );
 };

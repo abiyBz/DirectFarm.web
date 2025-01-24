@@ -19,7 +19,7 @@ const Sidebar: React.FC = () => {
   const handleLogout = () => {
     sessionStorage.removeItem("managerLoggedIn");
     dispatch(logout());
-    navigate("/"); // Adjust this path based on your routing structure
+    navigate("/");
   };
 
   if (!isLoggedIn) return null; // Only render if logged in
@@ -39,7 +39,6 @@ const Sidebar: React.FC = () => {
           />
           <span className="font-semibold text-white">DIRECT FARM</span>
         </Link>
-        <button onClick={handleLogout}>Logout</button>
 
         {/* Toggle Button for Mobile */}
         <button
@@ -70,7 +69,7 @@ const Sidebar: React.FC = () => {
           {[
             { path: "/", label: "Dashboard" },
             { path: "/delivery", label: "Delivery" },
-            { path: "/inventory", label: "WareHouse" },
+            { path: "/inventory", label: "Add Farmer's Product" },
             { path: "/registerfarmer", label: "Farmer Registration" },
             { path: "/warehousereport", label: "Warehouse Reports" },
           ].map((item, index) => (
@@ -89,7 +88,12 @@ const Sidebar: React.FC = () => {
           ))}
         </ul>
       </nav>
-      <button onClick={handleLogout} className="absolute bottom-4 left-4 text-white">Logout</button>
+      <button
+        onClick={handleLogout}
+        className="absolute bottom-4 left-4 text-white bg-red-600 hover:bg-red-800 p-3 rounded-md"
+      >
+        Logout
+      </button>
     </div>
   );
 };

@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const FarmerRegistration: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const loginStatus = sessionStorage.getItem("managerLoggedIn");
     if (!loginStatus) {
-      navigate("/WarehouseLogin"); // Redirect if already logged in
+      navigate("/WarehouseLogin"); // Redirect if not logged in
     }
   }, [navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    phone: "",
+    email: null as string | null, // Initialize email as null
+    phone: "+251", // Set default value with country code
     location: "",
     status: "active", // Default status is 'active'
   });
@@ -28,13 +26,35 @@ const FarmerRegistration: React.FC = () => {
     location: "",
   });
 
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  // Ethiopian phone number regex
+  const ethiopianPhoneRegex = /^(?:\+251|251)?[1-9]\d{8}$/;
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    // If the email input is empty, set it to null
+    if (name === "email" && value.trim() === "") {
+      setFormData({ ...formData, email: null });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+
+    // Real-time validation for phone number
+    if (name === "phone") {
+      const phone = value;
+      if (!ethiopianPhoneRegex.test(phone)) {
+        setPhoneError("Invalid Ethiopian phone number");
+      } else {
+        setPhoneError(null); // Clear error if valid
+      }
+    }
   };
 
   const validateForm = () => {
@@ -46,8 +66,11 @@ const FarmerRegistration: React.FC = () => {
       isValid = false;
     }
 
-    if (!formData.phone) {
-      newErrors.phone = "Phone is required";
+    if (!formData.phone || formData.phone.length <= 4) {
+      newErrors.phone = "Phone number must include digits after +251";
+      isValid = false;
+    } else if (phoneError) {
+      newErrors.phone = phoneError; // Use real-time error message
       isValid = false;
     }
 
@@ -65,7 +88,7 @@ const FarmerRegistration: React.FC = () => {
 
     // Final check before submission
     if (!validateForm()) {
-      setError("Fill in the fields");
+      setError("Fill in the fields correctly");
       return;
     }
 
@@ -83,126 +106,124 @@ const FarmerRegistration: React.FC = () => {
 
       if (data.isFailed) {
         setError(data.message || "Registration failed.");
-        alert(error);
+        alert(data.message || error);
         return;
       }
 
       alert("Farmer Registered");
+
+      // Optionally reset form data after successful registration
+      setFormData({
+        name: "",
+        email: null, // Reset to null
+        phone: "+251", // Reset to default value with country code
+        location: "",
+        status: "active",
+      });
+
+      setErrors({ name: "", phone: "", location: "" }); // Clear errors
+      setPhoneError(null); // Clear phone error
     } catch (error) {
       setError("An unexpected error occurred.");
     }
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-          Farmer Registration
-        </h1>
+    <div className="max-w-xl mx-auto p-8 text-black">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+        Farmer Registration
+      </h1>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-        <form onSubmit={handleSubmit}>
-          {/* Name */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                errors.name ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Enter name"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
+      <form onSubmit={handleSubmit}>
+        {/* Name */}
+        <div className="mb-4">
+          <label className="block text-lg font-semibold">Name</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full px-8 py-4 rounded-lg font-medium border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+            placeholder="Enter name"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+          )}
+        </div>
 
-          {/* Email (optional) */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">
-              Email (optional)
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-              placeholder="Enter email"
-            />
-          </div>
+        {/* Email (optional) */}
+        <div className="mb-4">
+          <label className="block text-lg font-semibold">
+            Email (optional)
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email || ""} // Set value to an empty string if email is null
+            onChange={handleChange}
+            className="w-full px-8 py-4 rounded-lg font-medium border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+            placeholder="Enter email"
+          />
+        </div>
 
-          {/* Phone */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">
-              Phone
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                errors.phone ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Enter phone number"
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-            )}
-          </div>
+        {/* Phone */}
+        <div className="mb-4">
+          <label className="block text-lg font-semibold">Phone</label>
+          <input
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className={`w-full px-8 py-4 rounded-lg font-medium border ${
+              phoneError ? "border-red-500" : "border-gray-200"
+            } placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white`}
+            placeholder="Enter Ethiopian phone number"
+          />
+          {phoneError && (
+            <p className="text-red-500 text-sm mt-1">{phoneError}</p>
+          )}
+        </div>
 
-          {/* Location */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">
-              Location
-            </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 ${
-                errors.location ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="Enter location"
-            />
-            {errors.location && (
-              <p className="text-red-500 text-sm mt-1">{errors.location}</p>
-            )}
-          </div>
+        {/* Location */}
+        <div className="mb-4">
+          <label className="block text-lg font-semibold">Location</label>
+          <input
+            type="text"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            className="w-full px-8 py-4 rounded-lg font-medium border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+            placeholder="Enter location"
+          />
+          {errors.location && (
+            <p className="text-red-500 text-sm mt-1">{errors.location}</p>
+          )}
+        </div>
 
-          {/* Status */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">
-              Status
-            </label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200 shadow-md transform hover:-translate-y-px"
+        {/* Status */}
+        <div className="mb-4">
+          <label className="block text-lg font-semibold">Status</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full px-8 py-4 rounded-lg font-medium border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
           >
-            Register Farmer
-          </button>
-        </form>
-      </div>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
+          Register Farmer
+        </button>
+      </form>
     </div>
   );
 };
