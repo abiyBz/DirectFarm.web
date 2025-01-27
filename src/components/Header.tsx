@@ -45,14 +45,14 @@ const Header: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = sessionStorage.getItem("authToken");
     if (token) {
       dispatch(loginSuccess(token)); // Update Redux state if token exists
     }
   }, [dispatch]);
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
     dispatch(logout());
     navigate("/"); // Adjust this path based on your routing structure
   };

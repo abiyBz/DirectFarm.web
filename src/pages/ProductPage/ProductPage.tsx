@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useCart } from '../../Context/CartContext';
+import { useCart } from "../../Context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../Context/LanguageContext";
 interface Product {
@@ -50,18 +50,24 @@ const ProductPage = () => {
     const value = Math.max(1, Number(event.target.value)); // Ensure quantity is at least 1
     setProdQty(value);
   };
-  
-useEffect(() => {
+
+  useEffect(() => {
     const fetchProductAndReviews = async () => {
       try {
         if (id) {
           // Fetch product details
-          const productResponse = await axios.post<Product>(`http://localhost:5122/api/Product/GetProduct`, { id });
+          const productResponse = await axios.post<Product>(
+            `http://localhost:5122/api/Product/GetProduct`,
+            { id }
+          );
           let productData = productResponse.data.data;
 
           if (productData) {
             // Fetch product image
-            const imageResponse = await axios.post(`http://localhost:5122/api/Product/GetProductImage`, { id });
+            const imageResponse = await axios.post(
+              `http://localhost:5122/api/Product/GetProductImage`,
+              { id }
+            );
             productData = {
               ...productData,
               image: `data:image/jpg;base64,${imageResponse.data.data}`,
@@ -70,17 +76,23 @@ useEffect(() => {
             setProduct(productData);
 
             // Fetch reviews
-            const reviewsResponse = await axios.post<{ 
-              responseStatus: number; 
-              isFailed: boolean; 
-              data: Review[]
+            const reviewsResponse = await axios.post<{
+              responseStatus: number;
+              isFailed: boolean;
+              data: Review[];
             }>(`http://localhost:5122/api/Product/GetProductReview`, { id });
             if (!reviewsResponse.data.isFailed) {
               setReviews(reviewsResponse.data.data);
 
               // Calculate average rating
-              const sum = reviewsResponse.data.data.reduce((acc, review) => acc + review.rating, 0);
-              const avg = reviewsResponse.data.data.length > 0 ? sum / reviewsResponse.data.data.length : 0;
+              const sum = reviewsResponse.data.data.reduce(
+                (acc, review) => acc + review.rating,
+                0
+              );
+              const avg =
+                reviewsResponse.data.data.length > 0
+                  ? sum / reviewsResponse.data.data.length
+                  : 0;
               setAverageRating(Number(avg.toFixed(1)));
             }
           }
@@ -94,17 +106,23 @@ useEffect(() => {
 
     fetchProductAndReviews();
   }, [id]);
-  
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         // Fetch product details based on the ID from the URL
-        const response = await axios.post<Product>(`http://localhost:5122/api/Product/GetProduct`, { id: id });
+        const response = await axios.post<Product>(
+          `http://localhost:5122/api/Product/GetProduct`,
+          { id: id }
+        );
         const productData = response.data.data; // Assuming a single product object is returned
         console.log(productData);
         // Fetch the product image (optional, if needed)
         if (productData) {
-          const imageResponse = await axios.post(`http://localhost:5122/api/Product/GetProductImage`, { id });
+          const imageResponse = await axios.post(
+            `http://localhost:5122/api/Product/GetProductImage`,
+            { id }
+          );
           const image = `data:image/jpg;base64,${imageResponse.data.data}`;
 
           setProduct({
@@ -113,7 +131,6 @@ useEffect(() => {
             createdAt: new Date(productData.createdAt).toLocaleDateString(),
           });
         }
-
       } catch (error) {
         console.error("Fetch error:", error);
         setError(error instanceof Error ? error.message : "An error occurred");
@@ -125,7 +142,6 @@ useEffect(() => {
     if (id) {
       fetchProduct();
     }
-
   }, [id]); // Run effect when `id` changes
 
   if (loading) {
@@ -154,61 +170,78 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-10">
-    <div className="max-w-7xl mx-36 p-6 bg-white shadow-lg rounded-lg flex flex-col lg:flex-row gap-10">
-    {/* Product Image */}
-    <div className="lg:w-1/2 flex items-start justify-center">
-      <div className="relative align-top w-full h-96 max-w-lg bg-gray-100 rounded-lg overflow-hidden shadow-sm">
-        <img
-          className="w-full h-full object-cover"
-          src={product.image || "https://via.placeholder.com/500"}
-          alt="Product Image"
-        />
-      </div>
-    </div>
-
-    {/* Product Details */}
-    <div className="lg:w-1/2 space-y-6">
-      {/* Product Name */}
-      <h1 className="text-3xl font-semibold text-gray-800">
-        {language === "en" ? product.name : product.nameAmharic}
-      </h1>
-
-      {/* Description */}
-      <p className="text-gray-600 leading-relaxed">
-        {language === "en" ? product.description : product.descriptionAmharic}
-      </p>
-
-      {/* Price and Unit */}
-      <div className="flex items-center space-x-4">
-        <div>
-          <p className="text-lg text-gray-600">Price:</p>
-          <p className="text-2xl font-bold text-gray-900">Br {product.pricePerUnit}</p>
+      <div className="max-w-7xl mx-36 p-6 bg-white shadow-lg rounded-lg flex flex-col lg:flex-row gap-10">
+        {/* Product Image */}
+        <div className="lg:w-1/2 flex items-start justify-center">
+          <div className="relative align-top w-full h-96 max-w-lg bg-gray-100 rounded-lg overflow-hidden shadow-sm">
+            <img
+              className="w-full h-full object-cover"
+              src={product.image || "https://via.placeholder.com/500"}
+              alt="Product Image"
+            />
+          </div>
         </div>
-        <div className="w-12 md:w-14 lg:w-16"></div>
-        <div>
-          <p className="text-lg text-gray-600">Unit:</p>
-          <p className="text-xl font-semibold text-gray-800">{product.unit}</p>
-        </div>
-      </div>
 
-      {/* Status and Category */}
-      <div className="flex items-center space-x-6">
-        <div>
-          <p className="text-lg text-gray-600">Status:</p>
-          <p className={`text-xl font-semibold ${product.status === "Available" || product.status === "available" ? "text-green-600" : "text-red-600"}`}>
-            {product.status}
+        {/* Product Details */}
+        <div className="lg:w-1/2 space-y-6">
+          {/* Product Name */}
+          <h1 className="text-3xl font-semibold text-gray-800">
+            {language === "en" ? product.name : product.nameAmharic}
+          </h1>
+
+          {/* Description */}
+          <p className="text-gray-600 leading-relaxed">
+            {language === "en"
+              ? product.description
+              : product.descriptionAmharic}
           </p>
-        </div>
-        <div className="w-12 md:w-14 lg:w-16"></div>
-        <div>
-          <p className="text-lg text-gray-600">Category:</p>
-          <p className="text-xl font-semibold text-gray-800">{product.category}</p>
-        </div>
-      </div>
 
-      {/* Quantity Input */}
-      <div className="flex items-center space-x-4">
-            <label htmlFor="quantity" className="text-lg text-gray-600">Quantity:</label>
+          {/* Price and Unit */}
+          <div className="flex items-center space-x-4">
+            <div>
+              <p className="text-lg text-gray-600">Price:</p>
+              <p className="text-2xl font-bold text-gray-900">
+                Br {product.pricePerUnit}
+              </p>
+            </div>
+            <div className="w-12 md:w-14 lg:w-16"></div>
+            <div>
+              <p className="text-lg text-gray-600">Unit:</p>
+              <p className="text-xl font-semibold text-gray-800">
+                {product.unit}
+              </p>
+            </div>
+          </div>
+
+          {/* Status and Category */}
+          <div className="flex items-center space-x-6">
+            <div>
+              <p className="text-lg text-gray-600">Status:</p>
+              <p
+                className={`text-xl font-semibold ${
+                  product.status === "Available" ||
+                  product.status === "available"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {product.status}
+              </p>
+            </div>
+            <div className="w-12 md:w-14 lg:w-16"></div>
+            <div>
+              <p className="text-lg text-gray-600">Category:</p>
+              <p className="text-xl font-semibold text-gray-800">
+                {product.category}
+              </p>
+            </div>
+          </div>
+
+          {/* Quantity Input */}
+          <div className="flex items-center space-x-4">
+            <label htmlFor="quantity" className="text-lg text-gray-600">
+              Quantity:
+            </label>
             <input
               id="quantity"
               type="number"
@@ -219,37 +252,8 @@ useEffect(() => {
             />
           </div>
 
-      {/* Display Average Rating */}
-      <div className="text-2xl font-bold text-gray-800 mb-4">
-            {language === "en" ? `Average Rating` : `አማካይ ግምገማ`}
-            <p className="text-yellow-500 text-4xl">
-                    {Array(5).fill(0).map((_, index) => 
-                      index < averageRating ? '★' : '☆').join('')}
-            </p>
-          </div>
-
-          {/* Display Reviews */}
-          <div className="space-y-2">
-            <h2 className="text-3xl text-black font-bold mb-2">{language === "en" ? "Reviews" : "አስተያየቶች"}</h2>
-            {reviews.length > 0 ? (
-              reviews.map((review) => (
-                <div key={review.customer.id} className="border p-4 rounded-lg shadow-sm">
-                  <p className="text-gray-700 font-semibold">{review.customer.name || "Anonymous"}</p>
-                  <p className="text-yellow-500 text-sm">
-                    {Array(5).fill(0).map((_, index) => 
-                      index < review.rating ? '★' : '☆').join('')}
-                  </p>
-                  <p className="text-gray-600">{review.comment}</p>
-                  <p className="text-xs text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-600">{language === "en" ? "No reviews yet." : "ምርቶች የሉም።"}</p>
-            )}
-          </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-4">
+          {/* Action Buttons */}
+          <div className="flex gap-4">
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -280,12 +284,54 @@ useEffect(() => {
               Checkout
             </button>
           </div>
-    </div>
-  </div>
-</div>
 
+          {/* Display Average Rating */}
+          <div className="text-2xl font-bold text-gray-800 mb-4">
+            {language === "en" ? `Average Rating` : `አማካይ ግምገማ`}
+            <p className="text-yellow-500 text-4xl">
+              {Array(5)
+                .fill(0)
+                .map((_, index) => (index < averageRating ? "★" : "☆"))
+                .join("")}
+            </p>
+          </div>
+
+          {/* Display Reviews */}
+          <div className="space-y-2">
+            <h2 className="text-3xl text-black font-bold mb-2">
+              {language === "en" ? "Reviews" : "አስተያየቶች"}
+            </h2>
+            {reviews.length > 0 ? (
+              reviews.map((review) => (
+                <div
+                  key={review.customer.id}
+                  className="border p-4 rounded-lg shadow-sm"
+                >
+                  <p className="text-gray-700 font-semibold">
+                    {review.customer.name || "Anonymous"}
+                  </p>
+                  <p className="text-yellow-500 text-sm">
+                    {Array(5)
+                      .fill(0)
+                      .map((_, index) => (index < review.rating ? "★" : "☆"))
+                      .join("")}
+                  </p>
+                  <p className="text-gray-600">{review.comment}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-600">
+                {language === "en" ? "No reviews yet." : "ምርቶች የሉም።"}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
-  
 };
 
 export default ProductPage;

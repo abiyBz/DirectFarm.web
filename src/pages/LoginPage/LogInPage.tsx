@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
 
   // Check local storage for token on component mount
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     if (token) {
       dispatch(loginSuccess(token)); // Update Redux state if token exists
       navigate("/"); // Redirect if already logged in
@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
         return;
       }
 
-      localStorage.setItem('authToken', JSON.stringify(data)); // Store token
+      sessionStorage.setItem('authToken', JSON.stringify(data)); // Store token
       dispatch(loginSuccess(data.data.accessToken)); // Update Redux state with token
       navigate("/");
     } catch {

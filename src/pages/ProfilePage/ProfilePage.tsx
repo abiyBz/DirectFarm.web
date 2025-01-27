@@ -40,11 +40,11 @@ const ProfilePage: React.FC = () => {
 
   // Fetch User Details
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
+    const authToken = sessionStorage.getItem("authToken");
     if (authToken) {
       try {
         const parsedToken = JSON.parse(authToken);
-        const customer = parsedToken.data?.customer;
+        const customer = parsedToken.data?.object;
 
         if (customer) {
           setUser({
@@ -297,12 +297,14 @@ const ProfilePage: React.FC = () => {
                     <span
                       className={`px-2 py-1 text-sm font-medium rounded-md ${
                         order.status === "Delivered"
-                          ? "bg-green-100 text-green-800"
+                          ? "bg-green-200 text-green-800"
                           : order.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
+                          ? "bg-yellow-200 text-yellow-800"
                           : order.status === "success"
                           ? "bg-green-200 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          : order.status === "picked up"
+                          ? "bg-gray-200 text-gray-800"
+                          : "bg-red-200 text-red-800"
                       }`}
                     >
                       {order.status}
@@ -358,7 +360,7 @@ const ProfilePage: React.FC = () => {
                             </p>
                             <button
                               onClick={() => handleProductSelect(product)}
-                              className="mt-2 px-4 py-2 bg-blue-700 text-white outline hover:text-blue-700 hover:bg-white font-medium transition hover:scale-105 rounded-full"
+                              className="mt-2 px-4 py-2 bg-green-700 text-white outline hover:text-green-700 hover:bg-white font-medium transition hover:scale-105 rounded-full"
                             >
                               {language === "en" ? "Review" : "አስተያየት መስጫ"}
                             </button>
