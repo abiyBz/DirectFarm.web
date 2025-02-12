@@ -358,12 +358,15 @@ const ProfilePage: React.FC = () => {
                               </strong>{" "}
                               Br {product.pricePerUnit}
                             </p>
-                            <button
-                              onClick={() => handleProductSelect(product)}
-                              className="mt-2 px-4 py-2 bg-green-700 text-white outline hover:text-green-700 hover:bg-white font-medium transition hover:scale-105 rounded-full"
-                            >
-                              {language === "en" ? "Review" : "አስተያየት መስጫ"}
-                            </button>
+                            {/* Only show the review button if the order status is "picked up" */}
+                            {order.status.toLowerCase() === "picked up" && (
+                              <button
+                                onClick={() => handleProductSelect(product)}
+                                className="mt-2 px-4 py-2 bg-green-700 text-white outline hover:text-green-700 hover:bg-white font-medium transition hover:scale-105 rounded-full"
+                              >
+                                {language === "en" ? "Review" : "አስተያየት መስጫ"}
+                              </button>
+                            )}
                           </li>
                         )) || (
                           <p>

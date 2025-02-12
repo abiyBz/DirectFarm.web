@@ -15,6 +15,8 @@ import Products from "./Products";
 import LowStockProducts from "./lowstockproducts";
 import EditProduct from "./EditProduct";
 import WarehouseList from "./WarehouseList";
+import CheckReviews from "./CheckReviews";
+
 
 const AdminLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -25,7 +27,7 @@ const AdminLayout: React.FC = () => {
 
   return (
     <ErrorLogger>
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-white">
         <button
           onClick={toggleSidebar}
           className="fixed top-4 left-4 md:hidden z-50 p-2 bg-green-500 text-white rounded-full"
@@ -75,19 +77,14 @@ const AdminLayout: React.FC = () => {
               <Route path="/reports" element={<Reports />} />
               <Route path="/product-listings" element={<ProductListing />} />
               <Route path="/login" element={<AdminLogin />} />
-              <Route
-                path="/registerwarehouse"
-                element={<RegisterWarehouse />}
-              />
+              <Route path="/registerwarehouse" element={<RegisterWarehouse />} />
               <Route path="/ProductForm" element={<ProductForm />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/products" element={<Products />} />
               <Route path="/low-stock" element={<LowStockProducts />} />
-              <Route
-                path="/edit-product/:productId"
-                element={<EditProduct />}
-              />
+              <Route path="/edit-product/:productId" element={<EditProduct />} />
               <Route path="/warehouse-list" element={<WarehouseList />} />
+              <Route path="/check-reviews" element={<CheckReviews />} />
             </Routes>
           </div>
         </div>

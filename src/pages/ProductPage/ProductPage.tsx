@@ -310,7 +310,7 @@ const ProductPage = () => {
                   <p className="text-gray-700 font-semibold">
                     {review.customer.name || "Anonymous"}
                   </p>
-                  <p className="text-yellow-500 text-sm">
+                  <p className="text-yellow-500 text-lg">
                     {Array(5)
                       .fill(0)
                       .map((_, index) => (index < review.rating ? "★" : "☆"))
@@ -323,8 +323,8 @@ const ProductPage = () => {
                 </div>
               ))
             ) : (
-              <p className="text-gray-600">
-                {language === "en" ? "No reviews yet." : "ምርቶች የሉም።"}
+              <p className="text-gray-600 text-lg">
+                {language === "en" ? "No reviews yet." : "ምንም አስተያየት አልተሰጠበትም።"}
               </p>
             )}
           </div>

@@ -1,50 +1,69 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../Context/LanguageContext";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../../redux/productsSlice';
 import ProductCard from '../../components/ProductCard';
 import type { AppDispatch, RootState } from '../../redux/store';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  pricePerUnit: number;
-  unit: string;
-  createdAt: string;
-  status: string;
-  image?: string;
-  nameAmharic: string;
-  descriptionAmharic: string;
-}
-
 const AllProductsPage: React.FC = () => {
   const { language } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   
-  // Use Redux state directly
+  // Redux state
   const { items, status, error } = useSelector((state: RootState) => state.products);
 
-  // Local state for filters
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  // Filter and pagination state
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 1000 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
-  const fetchCategories = (items: Product[]): string[] => {
-    return Array.from(new Set(items.map(product => product.category)));
-  };
+  // Memoized derived data
+  const categories = useMemo(() => 
+    Array.from(new Set(items?.map(product => product.category) || [])), 
+    [items]
+  );
 
+  // Update price range when items load
   useEffect(() => {
-    if (items) {
-      const uniqueCategories = fetchCategories(items);
-      console.log("Unique Categories:", uniqueCategories); // Log for debugging
-      setCategories(uniqueCategories);
+    if (items?.length) {
+      const prices = items.map(p => p.pricePerUnit);
+      setPriceRange({
+        min: Math.min(...prices),
+        max: Math.max(...prices)
+      });
     }
   }, [items]);
-  
-  
+
+  // Memoized filtered products
+  const filteredProducts = useMemo(() => {
+    if (!items) return [];
+    
+    return items.filter(product => {
+      const categoryMatch = selectedCategories.length === 0 || 
+        selectedCategories.includes(product.category);
+      const priceMatch = product.pricePerUnit >= priceRange.min && 
+        product.pricePerUnit <= priceRange.max;
+      
+      return categoryMatch && priceMatch;
+    });
+  }, [items, selectedCategories, priceRange]);
+
+  // Pagination calculations
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredProducts, currentPage, itemsPerPage]);
+
+  const totalPages = useMemo(() => 
+    Math.ceil(filteredProducts.length / itemsPerPage), 
+    [filteredProducts.length, itemsPerPage]
+  );
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategories, priceRange]);
 
   // Fetch products on mount
   useEffect(() => {
@@ -54,136 +73,221 @@ const AllProductsPage: React.FC = () => {
   }, [status, dispatch]);
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategories((prevSelectedCategories) => {
-      if (prevSelectedCategories.includes(category)) {
-        return prevSelectedCategories.filter(item => item !== category); // Remove category if already selected
-      } else {
-        return [...prevSelectedCategories, category]; // Add category to the list
-      }
-    });
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category) 
+        : [...prev, category]
+    );
   };
-  
-  
-  
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, type: "min" | "max") => {
     const value = Number(e.target.value);
-    setPriceRange((prevRange) => {
-      if (type === "min") {
-        return {
-          ...prevRange,
-          min: Math.min(value, prevRange.max),
-        };
-      } else {
-        return {
-          ...prevRange,
-          max: Math.max(value, prevRange.min),
-        };
-      }
-    });
+    setPriceRange(prev => ({
+      min: type === "min" ? Math.min(value, prev.max) : prev.min,
+      max: type === "max" ? Math.max(value, prev.min) : prev.max
+    }));
   };
 
-  // Filter products whenever items or filters change
-  useEffect(() => {
-    if (items) {
-      const filtered = items.filter((product) => {
-        const isCategoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-        const isPriceMatch = product.pricePerUnit >= priceRange.min && product.pricePerUnit <= priceRange.max;
-
-        return isCategoryMatch && isPriceMatch;
+  const PaginationControls = () => (
+    <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-6">
+      <div className="flex gap-2 flex-wrap">
+        <button
+          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 text-black bg-white border rounded-md disabled:opacity-50 hover:bg-gray-50"
+        >
+          {language === "en" ? "Previous" : "ቀዳሚ"}
+        </button>
         
-      });
-      setFilteredProducts(filtered);
-    }
-  }, [items, selectedCategories, priceRange]);
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i + 1}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-4 py-2 text-black border rounded-md ${
+              currentPage === i + 1 
+                ? "bg-green-500 text-white border-green-500" 
+                : "bg-white hover:bg-gray-50"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+        
+        <button
+          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 text-black bg-white border rounded-md disabled:opacity-50 hover:bg-gray-50"
+        >
+          {language === "en" ? "Next" : "ቀጣይ"}
+        </button>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-sm">
+          {language === "en" ? "Items per page:" : "በአንድ ገጽ ያሉ እቃዎች፡"}
+        </span>
+        <select
+          value={itemsPerPage}
+          onChange={(e) => {
+            setItemsPerPage(Number(e.target.value));
+            setCurrentPage(1);
+          }}
+          className="border rounded-md px-2 py-1 text-sm"
+        >
+          {[10, 20, 30, 40].map(size => (
+            <option key={size} value={size}>{size}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
 
   if (status === 'loading') {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
-  
-  if (status === 'failed') return <div>Error: {error}</div>;
 
-return (
-  <div className="p-6 bg-gray-100 min-h-screen flex justify-between">
-  {/* Sidebar for Filters */}
-  <div className="rounded w-3/7 max-h-fit w-72 bg-white p-4 border-r border-gray-300 text-black">
-    <h2 className="text-2xl font-semibold mb-4">{language === "en" ? "Categories" : "ምድቦች"}</h2>
-    <div className="rounded max-h-fit bg-white p-4 border-r border-gray-300 text-black">
-  
-      <div className="space-y-2">
-        {categories.length > 0 ? (
-        categories.map((category) => (
-        <div key={category}>
-          <label className="flex items-center space-x-2 lg:space-x-4">
-            <input 
-              type="checkbox"
-              checked={selectedCategories.includes(category)}
-              onChange={() => handleCategoryChange(category)}
-              className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-            />
-            <span>{category}</span>
-          </label>
-        </div>
-        ))) : (
-        <div>No categories available</div>
-        )}
-        <div>
-          <button 
-            onClick={() => setSelectedCategories([])} 
-            className="w-3/4 text-center py-2 px-4 rounded-md bg-gray-600"
-          >
-            {language === "en" ? "Clear All" : "ሁሉንም አጽዳ"}
-          </button>
-        </div>
-      </div>
-    </div>
+  if (status === 'failed') {
+    return <ErrorDisplay message={error} />;
+  }
 
-
-    <div className="border-t border-gray-700 my-6"></div>
-    <h2 className="text-2xl font-semibold mt-6 mb-4">{language === "en" ? "Price Range" : "የዋጋ ተመን"}</h2>
-    <div className="mb-4">
-      <label className="block text-sm mb-1">{language === "en" ? "Min Price" : "አነስተኛ የተመን"}</label>
-      <input 
-        type="range"
-        min="0"
-        max="5000"
-        step="1"
-        value={priceRange.min}
-        onChange={(e) => handlePriceChange(e, "min")}
-        className="w-full"
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen flex gap-6">
+      <FiltersSidebar
+        language={language}
+        categories={categories}
+        selectedCategories={selectedCategories}
+        priceRange={priceRange}
+        onCategoryChange={handleCategoryChange}
+        onPriceChange={handlePriceChange}
       />
-      <span>{`Br. ${priceRange.min}`}</span>
-    </div>
-    <div className="mb-4">
-      <label className="block text-sm mb-1">{language === "en" ? "Max Price" : "ከፍተኛ ተመን"}</label>
-      <input 
-        type="range"
-        min="0"
-        max="5000"
-        step="1"
-        value={priceRange.max}
-        onChange={(e) => handlePriceChange(e, "max")}
-        className="w-full"
-      />
-      <span>{`Br. ${priceRange.max}`}</span>
-    </div>
-  </div>
 
-      {/* Gap between sidebar and products */}
-      <div className="w-4 md:w-6 lg:w-8"></div>
+      <div className="flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {paginatedProducts.map(product => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
 
-      {/* Products Grid */}
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {filteredProducts.length > 0 && totalPages > 1 && <PaginationControls />}
       </div>
     </div>
   );
 };
+
+const FiltersSidebar: React.FC<{
+  language: string;
+  categories: string[];
+  selectedCategories: string[];
+  priceRange: { min: number; max: number };
+  onCategoryChange: (category: string) => void;
+  onPriceChange: (e: React.ChangeEvent<HTMLInputElement>, type: "min" | "max") => void;
+}> = ({ language, categories, selectedCategories, priceRange, onCategoryChange, onPriceChange }) => (
+  <div className="w-72 bg-white p-4 rounded-lg shadow-sm">
+    <h2 className="text-2xl font-semibold mb-4">
+      {language === "en" ? "Filters" : "ማጣሪያዎች"}
+    </h2>
+
+    <CategoryFilter
+      language={language}
+      categories={categories}
+      selectedCategories={selectedCategories}
+      onCategoryChange={onCategoryChange}
+    />
+
+    <div className="border-t border-gray-200 my-6" />
+
+    <PriceFilter
+      language={language}
+      priceRange={priceRange}
+      onPriceChange={onPriceChange}
+    />
+  </div>
+);
+
+const CategoryFilter: React.FC<{
+  language: string;
+  categories: string[];
+  selectedCategories: string[];
+  onCategoryChange: (category: string) => void;
+}> = ({ language, categories, selectedCategories, onCategoryChange }) => (
+  <div>
+    <h3 className="text-lg font-medium mb-3">
+      {language === "en" ? "Categories" : "ምድቦች"}
+    </h3>
+    <div className="space-y-2">
+      {categories.map(category => (
+        <label key={category} className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={selectedCategories.includes(category)}
+            onChange={() => onCategoryChange(category)}
+            className="h-4 w-4 text-indigo-600 rounded border-gray-300"
+          />
+          <span className="text-sm">{category}</span>
+        </label>
+      ))}
+    </div>
+  </div>
+);
+
+const PriceFilter: React.FC<{
+  language: string;
+  priceRange: { min: number; max: number };
+  onPriceChange: (e: React.ChangeEvent<HTMLInputElement>, type: "min" | "max") => void;
+}> = ({ language, priceRange, onPriceChange }) => (
+  <div>
+    <h3 className="text-lg font-medium mb-3">
+      {language === "en" ? "Price Range" : "የዋጋ ተመን"}
+    </h3>
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm mb-1">
+          {language === "en" ? "Min Price" : "አነስተኛ የተመን"}
+        </label>
+        <div className="flex items-center gap-2">
+          <input 
+            type="range"
+            min="0"
+            max="5000"
+            step="100"
+            value={priceRange.min}
+            onChange={(e) => onPriceChange(e, "min")}
+            className="flex-1"
+          />
+          <span className="text-sm w-20">Br. {priceRange.min}</span>
+        </div>
+      </div>
+      <div>
+        <label className="block text-sm mb-1">
+          {language === "en" ? "Max Price" : "ከፍተኛ ተመን"}
+        </label>
+        <div className="flex items-center gap-2">
+          <input 
+            type="range"
+            min="0"
+            max="5000"
+            step="100"
+            value={priceRange.max}
+            onChange={(e) => onPriceChange(e, "max")}
+            className="flex-1"
+          />
+          <span className="text-sm w-20">Br. {priceRange.max}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const LoadingSpinner: React.FC = () => (
+  <div className="flex justify-center items-center h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-green-500" />
+  </div>
+);
+
+const ErrorDisplay: React.FC<{ message?: string }> = ({ message }) => (
+  <div className="text-red-500 p-4 text-center">
+    {message || "Error loading products"}
+  </div>
+);
 
 export default AllProductsPage;
