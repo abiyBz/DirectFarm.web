@@ -1,12 +1,23 @@
-import { useState } from "react";
-import React from "react";
-import { useCart } from "../../Context/CartContext";
+import React, { useState } from 'react';
+import { useCart, CartItem } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { loginSuccess } from "../../redux/authSlice";
 import { RootState } from "../../redux/store";
+
+// Define types for clarity
+type DeliveryOption = 'pickup' | 'delivery';
+
+const MIN_QUANTITY = 50;
+
+interface APIResponse {
+  data: {
+    id?: string;
+    data?: any;
+  };
+}
 
 const CartPage: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -17,9 +28,14 @@ const CartPage: React.FC = () => {
   const [verified, setVerified] = useState<string | null>(null);
   const [urlSent, setUrlSent] = useState<boolean>(false);
   const [newOrder, setNewOrder] = useState<string | null>(null);
-  const [deliveryOption, setDeliveryOption] = useState<string>(""); // State for delivery option
+  const [deliveryOption, setDeliveryOption] = useState<DeliveryOption>('');
 
-  const checkoutCart = cart.map((item) => ({
+  interface CheckoutItem {
+    productID: string;
+    quantity: number;
+  }
+
+  const checkoutCart: CheckoutItem[] = cart.map((item: CartItem) => ({
     productID: item.id,
     quantity: item.quantity,
   }));
@@ -27,7 +43,7 @@ const CartPage: React.FC = () => {
   interface CheckoutData {
     id: string;
     customerID: string;
-    details: any[];
+    details: CheckoutItem[];
   }
 
   const authToken = sessionStorage.getItem("authToken");
@@ -51,45 +67,54 @@ const CartPage: React.FC = () => {
   });
 
   const totalPrice = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum: number, item: CartItem) => sum + item.price * item.quantity,
     0
   );
 
-  // State to track payment status
-
   const handleQuantityChange = (id: string, value: number) => {
-    if (value > 0) {
-      updateQuantity(id, value);
-    }
+    const newQuantity = Math.max(value, MIN_QUANTITY);
+    updateQuantity(id, newQuantity);
   };
 
   const handleCheckout = async () => {
     const token = sessionStorage.getItem("authToken");
     if (!token) {
       navigate("/login");
-    } else if (deliveryOption === "pickup") {
-      // Only proceed if 'pickup' is selected
+      return;
+    }
+
+    // Check if any product's quantity is below the minimum limit
+    const belowMinQuantityItems = cart.filter((item: CartItem) => item.quantity < MIN_QUANTITY);
+    
+    if (belowMinQuantityItems.length > 0) {
+      const itemNames = belowMinQuantityItems.map(item => language === "en" ? item.name : item.nameAmharic).join(', ');
+      alert(language === "en" 
+        ? `The following products are below the minimum quantity of ${MIN_QUANTITY}: ${itemNames}` 
+        : `የሚከተሉት ምርቶች በብዛት ከሚፈቀደው ${MIN_QUANTITY} በታች ናቸው: ${itemNames}`
+      );
+      return;
+    }
+
+    if (deliveryOption === "pickup") {
       try {
-        // Step 1: Place order and get order ID
-        console.log(checkoutData)
-        const saveProductResponse = await axios.post(
+        console.log(checkoutData);
+        const saveProductResponse = await axios.post<APIResponse>(
           "http://localhost:5122/api/Order/PlaceOrder",
           checkoutData
         );
-        const orderId = saveProductResponse.data.data.id; // Get order ID directly
-        setNewOrder(saveProductResponse.data.data.id); // Store the new order ID
+        const orderId = saveProductResponse.data.data.id;
+        setNewOrder(orderId);
         console.log(newOrder);
-        // Step 2: Initialize payment and get payment URL
-        const paymentResponse = await axios.post(
+        const paymentResponse = await axios.post<APIResponse>(
           `http://localhost:5122/api/Order/IntializePayment`,
           { id: orderId }
         );
         const url = paymentResponse.data.data;
         setUrlSent(true);
-        // Step 3: Open the payment URL in a new tab
         window.open(url, "_blank");
       } catch (error) {
         console.error("Error during checkout:", error);
+        alert(language === "en" ? "An error occurred during checkout." : "በመክፈል ላይ ስህተት አካባቢ እንደገና");
       }
     } else {
       alert(
@@ -107,14 +132,12 @@ const CartPage: React.FC = () => {
     }
 
     try {
-      // Step 4: Verify payment using the stored order ID
-      const verificationResponse = await axios.post(
+      const verificationResponse = await axios.post<APIResponse>(
         `http://localhost:5122/api/Order/VerifyPayment`,
         { id: newOrder }
       );
       if (verificationResponse.data.data) setVerified("verified");
-      setNewOrder("");
-      // Handle verification response as needed (e.g., update UI or notify user)
+      setNewOrder(null);
     } catch (error) {
       console.error("Error verifying payment:", error);
     }
@@ -133,7 +156,7 @@ const CartPage: React.FC = () => {
               {language === "en" ? "Cart is empty!" : "ቅርጫትዎ ባዶ ነው!"}
             </p>
             <button
-              onClick={() => navigate("/all-products")} // Navigate to products
+              onClick={() => navigate("/all-products")}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               {language === "en" ? "Go to Products" : "ወደ ምርቶች ይሂዱ"}
@@ -146,38 +169,20 @@ const CartPage: React.FC = () => {
                 <table className="w-full">
                   <thead>
                     <tr>
-                      <th className="text-left font-semibold">
-                        {language === "en" ? "Product" : "ምርት"}
-                      </th>
-                      <th className="text-left font-semibold">
-                        {language === "en" ? "Price" : "ዋጋ"}
-                      </th>
-                      <th className="text-left font-semibold">
-                        {language === "en" ? "Quantity" : "ብዛት"}
-                      </th>
-                      <th className="text-left font-semibold">
-                        {language === "en" ? "Total" : "ጠቅላላ"}
-                      </th>
-                      <th className="text-left font-semibold">
-                        {language === "en" ? "Actions" : "እርምጃዎች"}
-                      </th>
+                      <th className="text-left font-semibold">{language === "en" ? "Product" : "ምርት"}</th>
+                      <th className="text-left font-semibold">{language === "en" ? "Price" : "ዋጋ"}</th>
+                      <th className="text-left font-semibold">{language === "en" ? "Quantity" : "ብዛት"}</th>
+                      <th className="text-left font-semibold">{language === "en" ? "Total" : "ጠቅላላ"}</th>
+                      <th className="text-left font-semibold">{language === "en" ? "Actions" : "እርምጃዎች"}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {cart.map((item) => (
+                    {cart.map((item: CartItem) => (
                       <tr key={item.id}>
                         <td className="py-4">
                           <div className="flex items-center">
-                            <img
-                              className="h-16 w-16 mr-4"
-                              src={
-                                item.image || "https://via.placeholder.com/150"
-                              }
-                              alt={item.name}
-                            />
-                            <span className="font-semibold">
-                              {language === "en" ? item.name : item.nameAmharic}
-                            </span>
+                            <img className="h-16 w-16 mr-4" src={item.image || "https://via.placeholder.com/150"} alt={item.name} />
+                            <span className="font-semibold">{language === "en" ? item.name : item.nameAmharic}</span>
                           </div>
                         </td>
                         <td className="py-4">Br. {item.price.toFixed(2)}</td>
@@ -185,32 +190,24 @@ const CartPage: React.FC = () => {
                           <div className="flex items-center">
                             <button
                               className="border rounded-md py-2 px-4 mr-2"
-                              onClick={() =>
-                                handleQuantityChange(item.id, item.quantity - 1)
-                              }
-                              disabled={item.quantity <= 1}
+                              onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                              disabled={item.quantity <= MIN_QUANTITY}
                             >
                               -
                             </button>
-                            <span className="text-center w-8">
-                              {item.quantity}
-                            </span>
+                            <span className="text-center w-8">{item.quantity}</span>
                             <button
                               className="border rounded-md py-2 px-4 ml-2"
-                              onClick={() =>
-                                handleQuantityChange(item.id, item.quantity + 1)
-                              }
+                              onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                             >
                               +
                             </button>
                           </div>
                         </td>
-                        <td className="py-4">
-                          Br. {(item.price * item.quantity).toFixed(2)}
-                        </td>
+                        <td className="py-4">Br. {(item.price * item.quantity).toFixed(2)}</td>
                         <td className="py-4 text-center">
                           <button
-                            onClick={() => removeFromCart(item.id)} // Existing remove function
+                            onClick={() => removeFromCart(item.id)}
                             className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md"
                           >
                             {language === "en" ? "Remove" : "አስወግድ"}
@@ -221,9 +218,8 @@ const CartPage: React.FC = () => {
                   </tbody>
                 </table>
 
-                {/* Clear Cart Button */}
                 <button
-                  onClick={clearCart} // Existing clear function
+                  onClick={clearCart}
                   className="flex mt-4 bg-red-500 text-white outline hover:bg-white hover:text-red-600 rounded p-4 font-medium transition hover:scale-105 float-right"
                 >
                   {language === "en" ? "Clear Cart" : "ጋሪን አጽዳ"}
@@ -237,7 +233,6 @@ const CartPage: React.FC = () => {
                 <h2 className="text-lg font-semibold mb-4">
                   {language === "en" ? "Summary" : "አጠቃላይ"}
                 </h2>
-                {/* Delivery Options */}
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">
                     {language === "en" ? "Delivery Option:" : "የማስረጃ ዝርዝር:"}
@@ -270,39 +265,27 @@ const CartPage: React.FC = () => {
                     </label>
                   </div>
                 </div>
-                {/* Example summary values */}
                 <div className="flex justify-between mb-2">
                   <span>{language === "en" ? "Subtotal" : "እንደ አጠቃላይ"}:</span>
-                  {/* Replace with actual subtotal variable */}
                   <span>
-                    Br.{" "}
-                    {cart
-                      .reduce(
-                        (total, item) => total + item.price * item.quantity,
-                        0
-                      )
-                      .toFixed(2)}
+                    Br. {cart.reduce((total, item: CartItem) => total + item.price * item.quantity, 0).toFixed(2)}
                   </span>
                 </div>
-                {/* Add taxes and shipping cost here */}
-                {/* Example Total */}
                 <hr className="my-2" />
                 <div className="flex justify-between mb-2">
                   <span className="font-semibold">
                     {language === "en" ? "Total" : "ጠቅላላ"}:
                   </span>
-                  {/* Replace with actual total price variable */}
                   <span className="font-semibold">
                     Br. {totalPrice.toFixed(2)}
                   </span>
                 </div>
                 <h2 className="text-center text-red-500">
                   {language === "en"
-                    ? "Please don't forget to download your reciept"
+                    ? "Please don't forget to download your receipt"
                     : "እባክዎን ደረሰኝዎን ማውረድዎን አይርሱ"}
                 </h2>
 
-                {/* Checkout Button */}
                 <button
                   onClick={handleCheckout}
                   className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full"

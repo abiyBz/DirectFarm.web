@@ -126,7 +126,14 @@ const Dashboard: React.FC = () => {
     });
   };
 
-  if (loading) return <div className="text-center mt-20 text-2xl text-gray-600">Loading...</div>;
+  if (status === 'loading') {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+  
   if (error) return <div className="text-center mt-20 text-2xl text-red-500">{error}</div>;
 
   const handleWarehouseSelect = (warehouseId: string) => {
