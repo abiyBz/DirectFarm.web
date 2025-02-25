@@ -38,26 +38,27 @@ const About: React.FC = () => {
           {/* Team Member */}
           <div className="bg-white shadow-md rounded-lg p-4">
             <img src="../../assets/IMG_0268.PNG" alt="Yonatan Teshome" className="rounded-full w-32 h-32 object-cover content-around" />
-            <h3 className="text-xl font-semibold text-gray-600">Yonatan Teshome</h3>
+            <h3 className="text-xl font-semibold text-gray-600">{language === "en" ? "Yonatan Teshome" : "ዮናታን ተሾመ"}</h3>
             <p className="text-gray-600">Chief Executive Officer</p>
             <p className="text-gray-600">CEO</p>
           </div>
           <div className="bg-white shadow-md rounded-lg p-4">
             <img src="../../assets/image.jpeg" alt="Abiy Bezuneh" className="rounded-full w-32 h-32 object-cover content-around" />
-            <h3 className="text-xl font-semibold text-gray-600">Abiy Bezuneh</h3>
+            <h3 className="text-xl font-semibold text-gray-600">{language === "en" ? "Abiy Bezuneh" : "አብይ ብዙነህ"}</h3>
             <p className="text-gray-600">Chief Corporate Service Officer</p>
             <p className="text-gray-600">CCSO</p>
           </div>
           <div className="bg-white shadow-md rounded-lg p-4">
           <img src="../../assets/image.jpeg" alt="Nebyou Yohannes" className="rounded-full w-32 h-32 object-cover content-around" />
-            <h3 className="text-xl font-semibold text-gray-600">Nebyou Yohannes</h3>
+            <h3 className="text-xl font-semibold text-gray-600">{language === "en" ? "Nebyou Yohannes" : "ነብዩ ዮሃንስ"}</h3>
             <p className="text-gray-600">Chief Technologies Officer</p>
             <p className="text-gray-600">CTO</p>
           </div>
           <div className="bg-white shadow-md rounded-lg p-4">
           <img src="../../assets/1.jpg" alt="Soliyana Abraham" className="rounded-full w-32 h-32 object-cover content-around" />
-            <h3 className="text-xl font-semibold text-gray-600">Soliyana Abraham</h3>
+            <h3 className="text-xl font-semibold text-gray-600">{language === "en" ? "Soliyana Abraham" : "ሶልያና አብርሃም"}</h3>
             <p className="text-gray-600">Head of Marketing</p>
+            <p className="text-gray-600">HOM</p>
           </div>
         </div>
       </div>

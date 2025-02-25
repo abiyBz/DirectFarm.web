@@ -12,7 +12,6 @@ import AllProductsPage from "../pages/AllProductsPage/AllProductsPage";
 import MiniCart from "../components/MiniCart";
 import CartPage from "../pages/CartPage/CartPage";
 import { CartProvider } from "../Context/CartContext";
-import ProductForm from "../pages/ProductForm/ProductForm";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
 import ProfilePage from "../pages/ProfilePage/ProfilePage";
@@ -32,7 +31,6 @@ const MainLayout: React.FC = () => {
           <Route path="/all-products" element={<AllProductsPage />} />
           <Route path="/minicart" element={<MiniCart />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/productForm" element={<ProductForm />} />
           <Route path="/profilepage" element={<ProfilePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
