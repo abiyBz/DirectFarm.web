@@ -85,11 +85,11 @@
 
 //     // Check if any product's quantity is below the minimum limit
 //     const belowMinQuantityItems = cart.filter((item: CartItem) => item.quantity < MIN_QUANTITY);
-    
+
 //     if (belowMinQuantityItems.length > 0) {
 //       const itemNames = belowMinQuantityItems.map(item => language === "en" ? item.name : item.nameAmharic).join(', ');
-//       alert(language === "en" 
-//         ? `The following products are below the minimum quantity of ${MIN_QUANTITY}: ${itemNames}` 
+//       alert(language === "en"
+//         ? `The following products are below the minimum quantity of ${MIN_QUANTITY}: ${itemNames}`
 //         : `የሚከተሉት ምርቶች በብዛት ከሚፈቀደው ${MIN_QUANTITY} በታች ናቸው: ${itemNames}`
 //       );
 //       return;
@@ -323,25 +323,7 @@
 
 // export default CartPage;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { useState, ChangeEvent, useCallback } from 'react';
+import React, { useState, ChangeEvent, useCallback } from "react";
 import { useCart, CartItem } from "../../Context/CartContext";
 import { useLanguage } from "../../Context/LanguageContext";
 import { useNavigate } from "react-router-dom";
@@ -349,10 +331,10 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { loginSuccess } from "../../redux/authSlice";
 import { RootState } from "../../redux/store";
-import debounce from 'lodash/debounce';
+import debounce from "lodash/debounce";
 
 // Define types
-type DeliveryOption = 'pickup' | 'delivery';
+type DeliveryOption = "pickup" | "delivery";
 
 const MIN_QUANTITY = 50;
 
@@ -383,7 +365,7 @@ const CartPage: React.FC = () => {
   const [verified, setVerified] = useState<string | null>(null);
   const [urlSent, setUrlSent] = useState<boolean>(false);
   const [newOrder, setNewOrder] = useState<string | null>(null);
-  const [deliveryOption, setDeliveryOption] = useState<DeliveryOption>('');
+  const [deliveryOption, setDeliveryOption] = useState<DeliveryOption>("");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -401,16 +383,27 @@ const CartPage: React.FC = () => {
   }
   const customerID = customer ? customer.id : "";
 
-  const checkoutCart: CheckoutItem[] = cart.map((item: CartItem) => ({
-    productID: item.id,
-    quantity: item.quantity,
-  }));
-
-  const [checkoutData] = useState<CheckoutData>({
+  // Update checkoutData whenever cart changes
+  const [checkoutData, setCheckoutData] = useState<CheckoutData>({
     id: "00000000-0000-0000-0000-000000000000",
     customerID: customerID,
-    details: checkoutCart,
+    details: cart.map((item: CartItem) => ({
+      productID: item.id,
+      quantity: item.quantity,
+    })),
   });
+
+  // Update checkoutData when cart changes
+  React.useEffect(() => {
+    setCheckoutData({
+      id: "00000000-0000-0000-0000-000000000000",
+      customerID: customerID,
+      details: cart.map((item: CartItem) => ({
+        productID: item.id,
+        quantity: item.quantity,
+      })),
+    });
+  }, [cart, customerID]);
 
   const totalPrice = cart.reduce(
     (sum: number, item: CartItem) => sum + item.price * item.quantity,
@@ -423,10 +416,13 @@ const CartPage: React.FC = () => {
     return Math.max(num, MIN_QUANTITY);
   };
 
-  const handleQuantityChange = useCallback((id: string, value: number | string) => {
-    const newQuantity = validateQuantity(value.toString());
-    updateQuantity(id, newQuantity);
-  }, [updateQuantity]);
+  const handleQuantityChange = useCallback(
+    (id: string, value: number | string) => {
+      const newQuantity = validateQuantity(value.toString());
+      updateQuantity(id, newQuantity);
+    },
+    [updateQuantity]
+  );
 
   const debouncedQuantityChange = useCallback(
     debounce((id: string, value: string) => {
@@ -438,7 +434,7 @@ const CartPage: React.FC = () => {
   const handleCheckout = async () => {
     setErrorMessage(null);
     setIsCheckingOut(true);
-    
+
     const token = sessionStorage.getItem("authToken");
     if (!token) {
       navigate("/login");
@@ -446,23 +442,27 @@ const CartPage: React.FC = () => {
       return;
     }
 
-    const belowMinQuantityItems = cart.filter((item: CartItem) => item.quantity < MIN_QUANTITY);
+    const belowMinQuantityItems = cart.filter(
+      (item: CartItem) => item.quantity < MIN_QUANTITY
+    );
     if (belowMinQuantityItems.length > 0) {
-      const itemNames = belowMinQuantityItems.map(item => 
-        language === "en" ? item.name : item.nameAmharic
-      ).join(', ');
-      setErrorMessage(language === "en"
-        ? `The following products are below the minimum quantity of ${MIN_QUANTITY}: ${itemNames}`
-        : `የሚከተሉት ምርቶች በብዛት ከሚፈቀደው ${MIN_QUANTITY} በታች ናቸው: ${itemNames}`
+      const itemNames = belowMinQuantityItems
+        .map((item) => (language === "en" ? item.name : item.nameAmharic))
+        .join(", ");
+      setErrorMessage(
+        language === "en"
+          ? `The following products are below the minimum quantity of ${MIN_QUANTITY}: ${itemNames}`
+          : `የሚከተሉት ምርቶች በብዛት ከሚፈቀደው ${MIN_QUANTITY} በታች ናቸው: ${itemNames}`
       );
       setIsCheckingOut(false);
       return;
     }
 
     if (!deliveryOption) {
-      setErrorMessage(language === "en"
-        ? "Please select a delivery option."
-        : "እባክዎን የመረከቢያ አማራጭ ይምረጡ።"
+      setErrorMessage(
+        language === "en"
+          ? "Please select a delivery option."
+          : "እባክዎን የመረከቢያ አማራጭ ይምረጡ።"
       );
       setIsCheckingOut(false);
       return;
@@ -486,9 +486,10 @@ const CartPage: React.FC = () => {
         window.open(url, "_blank");
       } catch (error) {
         console.error("Checkout error:", error);
-        setErrorMessage(language === "en" 
-          ? "An error occurred during checkout. Please try again."
-          : "በመክፈል ላይ ስህተት ተከስቷል። እባክዎ እንደገና ይሞክሩ።"
+        setErrorMessage(
+          language === "en"
+            ? "An error occurred during checkout. Please try again."
+            : "በመክፈል ላይ ስህተት ተከስቷል። እባክዎ እባክዎ እንደገና ይሞክሩ።"
         );
       } finally {
         setIsCheckingOut(false);
@@ -498,16 +499,17 @@ const CartPage: React.FC = () => {
 
   const handleVerification = async () => {
     if (!newOrder) {
-      setErrorMessage(language === "en"
-        ? "No order available to verify."
-        : "ለመረጋገጥ ምንም ትዕዛዝ የለም።"
+      setErrorMessage(
+        language === "en"
+          ? "No order available to verify."
+          : "ለመረጋገጥ ምንም ትዕዛዝ የለም።"
       );
       return;
     }
 
     setIsVerifying(true);
     setErrorMessage(null);
-    
+
     try {
       const verificationResponse = await axios.post<APIResponse>(
         `http://localhost:5122/api/Order/VerifyPayment`,
@@ -522,9 +524,10 @@ const CartPage: React.FC = () => {
       setNewOrder(null);
     } catch (error) {
       console.error("Verification error:", error);
-      setErrorMessage(language === "en"
-        ? "Payment verification failed. Please try again."
-        : "የክፍያ ማረጋገጫ አልተሳካም። እባክዎ እንደገና ይሞክሩ።"
+      setErrorMessage(
+        language === "en"
+          ? "Payment verification failed. Please try again."
+          : "የክፍያ ማረጋገጫ አልተሳካም። እባክዎ እባክዎ እንደገና ይሞክሩ።"
       );
       setVerified("failed");
     } finally {
@@ -533,10 +536,13 @@ const CartPage: React.FC = () => {
   };
 
   const handleClearCart = () => {
-    if (window.confirm(language === "en"
-      ? "Are you sure you want to clear your cart?"
-      : "ቅርጫትዎን ማጽዳት እንደሚፈልጉ እርግጠኛ ነዎት?"
-    )) {
+    if (
+      window.confirm(
+        language === "en"
+          ? "Are you sure you want to clear your cart?"
+          : "ቅርጫትዎን ማጽዳት እንደሚፈልጉ እርግጠኛ ነዎት?"
+      )
+    ) {
       clearCart();
     }
   };
@@ -573,22 +579,39 @@ const CartPage: React.FC = () => {
                 <table className="w-full table-auto">
                   <thead>
                     <tr className="text-left border-b">
-                      <th className="py-3 font-semibold">{language === "en" ? "Product" : "ምርት"}</th>
-                      <th className="py-3 font-semibold">{language === "en" ? "Price" : "ዋጋ"}</th>
-                      <th className="py-3 font-semibold">{language === "en" ? "Quantity" : "ብዛት"}</th>
-                      <th className="py-3 font-semibold">{language === "en" ? "Total" : "ጠቅላላ"}</th>
-                      <th className="py-3 font-semibold">{language === "en" ? "Actions" : "እርምጃዎች"}</th>
+                      <th className="py-3 font-semibold">
+                        {language === "en" ? "Product" : "ምርት"}
+                      </th>
+                      <th className="py-3 font-semibold">
+                        {language === "en" ? "Price" : "ዋጋ"}
+                      </th>
+                      <th className="py-3 font-semibold">
+                        {language === "en" ? "Quantity" : "ብዛት"}
+                      </th>
+                      <th className="py-3 font-semibold">
+                        {language === "en" ? "Total" : "ጠቅላላ"}
+                      </th>
+                      <th className="py-3 font-semibold">
+                        {language === "en" ? "Actions" : "እርምጃዎች"}
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {cart.map((item: CartItem) => (
-                      <tr key={item.id} className="border-b last:border-b-0 hover:bg-gray-50">
+                      <tr
+                        key={item.id}
+                        className="border-b last:border-b-0 hover:bg-gray-50"
+                      >
                         <td className="py-4">
                           <div className="flex items-center">
-                            <img 
-                              className="h-16 w-16 mr-4 rounded object-cover" 
-                              src={item.image || "https://via.placeholder.com/150"} 
-                              alt={language === "en" ? item.name : item.nameAmharic}
+                            <img
+                              className="h-16 w-16 mr-4 rounded object-cover"
+                              src={
+                                item.image || "https://via.placeholder.com/150"
+                              }
+                              alt={
+                                language === "en" ? item.name : item.nameAmharic
+                              }
                             />
                             <span className="font-medium">
                               {language === "en" ? item.name : item.nameAmharic}
@@ -600,7 +623,9 @@ const CartPage: React.FC = () => {
                           <div className="flex items-center space-x-2">
                             <button
                               className="border rounded-md py-1 px-2 hover:bg-gray-200 disabled:opacity-50 transition"
-                              onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                              onClick={() =>
+                                handleQuantityChange(item.id, item.quantity - 1)
+                              }
                               disabled={item.quantity <= MIN_QUANTITY}
                             >
                               -
@@ -609,20 +634,24 @@ const CartPage: React.FC = () => {
                               type="number"
                               min={MIN_QUANTITY}
                               value={item.quantity}
-                              onChange={(e: ChangeEvent<HTMLInputElement>) => 
+                              onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                 debouncedQuantityChange(item.id, e.target.value)
                               }
                               className="w-16 text-center border rounded py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <button
                               className="border rounded-md py-1 px-2 hover:bg-gray-200 transition"
-                              onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                              onClick={() =>
+                                handleQuantityChange(item.id, item.quantity + 1)
+                              }
                             >
                               +
                             </button>
                           </div>
                         </td>
-                        <td className="py-4">Br. {(item.price * item.quantity).toFixed(2)}</td>
+                        <td className="py-4">
+                          Br. {(item.price * item.quantity).toFixed(2)}
+                        </td>
                         <td className="py-4">
                           <button
                             onClick={() => removeFromCart(item.id)}
@@ -650,7 +679,7 @@ const CartPage: React.FC = () => {
                 <h2 className="text-lg font-semibold mb-4">
                   {language === "en" ? "Order Summary" : "የትዕዛዝ አጠቃላይ"}
                 </h2>
-                
+
                 <div className="mb-4">
                   <label className="block mb-2 font-semibold">
                     {language === "en" ? "Delivery Option:" : "የማስረጃ ዝርዝር:"}
@@ -702,14 +731,30 @@ const CartPage: React.FC = () => {
                 >
                   {isCheckingOut ? (
                     <span className="flex items-center">
-                      <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      <svg
+                        className="animate-spin h-5 w-5 mr-2"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
                       </svg>
                       {language === "en" ? "Processing..." : "በሂደት ላይ..."}
                     </span>
+                  ) : language === "en" ? (
+                    "Proceed to Checkout"
                   ) : (
-                    language === "en" ? "Proceed to Checkout" : "ወደ ክፍያ ይቀጥሉ"
+                    "ወደ ክፍያ ይቀጥሉ"
                   )}
                 </button>
 
@@ -721,26 +766,49 @@ const CartPage: React.FC = () => {
                   >
                     {isVerifying ? (
                       <span className="flex items-center">
-                        <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        <svg
+                          className="animate-spin h-5 w-5 mr-2"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
                         </svg>
                         {language === "en" ? "Verifying..." : "በማረጋገጥ ላይ..."}
                       </span>
+                    ) : language === "en" ? (
+                      "Verify Payment"
                     ) : (
-                      language === "en" ? "Verify Payment" : "ክፍያዎትን ያረጋግጡ"
+                      "ክፍያዎትን ያረጋግጡ"
                     )}
                   </button>
                 )}
 
                 {verified && (
-                  <div className={`mt-4 p-3 rounded text-center ${
-                    verified === "verified" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                  }`}>
-                    {verified === "verified" 
-                      ? (language === "en" ? "Payment Verified ✓" : "ክፍያ ተረጋግጧል ✓")
-                      : (language === "en" ? "Verification Failed ✗" : "ማረጋገጥ አልተሳካም ✗")
-                    }
+                  <div
+                    className={`mt-4 p-3 rounded text-center ${
+                      verified === "verified"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {verified === "verified"
+                      ? language === "en"
+                        ? "Payment Verified ✓"
+                        : "ክፍያ ተረጋግጧል ✓"
+                      : language === "en"
+                      ? "Verification Failed ✗"
+                      : "ማረጋገጥ አልተሳካም ✗"}
                   </div>
                 )}
               </div>
